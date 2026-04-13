@@ -50,7 +50,7 @@ async def test_agent_service_initialization():
         call_kwargs = MockAgent.call_args.kwargs
         assert call_kwargs['name'] == "lab-assistant"
         assert 'model' in call_kwargs
-        assert 'instructions' in call_kwargs
+        assert 'system_prompt' in call_kwargs
         assert 'tools' in call_kwargs
         assert len(call_kwargs['tools']) >= 2  # get_weather and calculate
 
@@ -61,15 +61,20 @@ async def test_agent_service_chat():
     with patch('backend.services.agent_service.Agent') as MockAgent:
         mock_agent_instance = Mock()
         mock_response = Mock()
-        mock_response.content = "Hello! I'm ready to help."
-        mock_agent_instance.run_async = AsyncMock(return_value=mock_response)
+        mock_response.to_dict = Mock(return_value={
+            'message': {
+                'role': 'assistant',
+                'content': [{'text': "Hello! I'm ready to help."}]
+            }
+        })
+        mock_agent_instance.invoke_async = AsyncMock(return_value=mock_response)
         MockAgent.return_value = mock_agent_instance
 
         service = AgentService()
         response = await service.chat("Hello")
 
         assert response == "Hello! I'm ready to help."
-        mock_agent_instance.run_async.assert_called_once_with("Hello")
+        mock_agent_instance.invoke_async.assert_called_once_with("Hello")
 
 
 @pytest.mark.asyncio
@@ -77,7 +82,7 @@ async def test_agent_service_chat_error_handling():
     """Test that chat method handles errors properly."""
     with patch('backend.services.agent_service.Agent') as MockAgent:
         mock_agent_instance = Mock()
-        mock_agent_instance.run_async = AsyncMock(side_effect=Exception("Test error"))
+        mock_agent_instance.invoke_async = AsyncMock(side_effect=Exception("Test error"))
         MockAgent.return_value = mock_agent_instance
 
         service = AgentService()

@@ -5,6 +5,15 @@ import pytest
 from fastapi.testclient import TestClient
 from backend.main import app
 from backend.config import Settings
+from backend.api.dependencies import get_agent_service
+
+
+@pytest.fixture(autouse=True)
+def clear_dependency_cache():
+    """Clear the lru_cache for get_agent_service before each test."""
+    get_agent_service.cache_clear()
+    yield
+    get_agent_service.cache_clear()
 
 
 @pytest.fixture

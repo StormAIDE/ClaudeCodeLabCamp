@@ -28,7 +28,7 @@ def test_agent_status_endpoint(test_client):
 
 def test_chat_endpoint_non_streaming(test_client):
     """Test chat endpoint with non-streaming response."""
-    with patch('backend.api.endpoints.agent.AgentService') as MockService:
+    with patch('backend.api.dependencies.AgentService') as MockService:
         mock_instance = Mock()
         mock_instance.chat = AsyncMock(return_value="This is a test response")
         MockService.return_value = mock_instance
@@ -47,7 +47,7 @@ def test_chat_endpoint_non_streaming(test_client):
 
 def test_chat_endpoint_streaming(test_client):
     """Test chat endpoint with streaming response."""
-    with patch('backend.api.endpoints.agent.AgentService') as MockService:
+    with patch('backend.api.dependencies.AgentService') as MockService:
         mock_instance = Mock()
 
         async def mock_stream(message):
@@ -68,17 +68,21 @@ def test_chat_endpoint_streaming(test_client):
 
 def test_chat_endpoint_missing_message(test_client):
     """Test chat endpoint with missing message field."""
-    response = test_client.post(
-        "/api/v1/agent/chat",
-        json={"stream": False}
-    )
+    with patch('backend.api.dependencies.AgentService') as MockService:
+        mock_instance = Mock()
+        MockService.return_value = mock_instance
 
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        response = test_client.post(
+            "/api/v1/agent/chat",
+            json={"stream": False}
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_chat_endpoint_empty_message(test_client):
     """Test chat endpoint with empty message."""
-    with patch('backend.api.endpoints.agent.AgentService') as MockService:
+    with patch('backend.api.dependencies.AgentService') as MockService:
         mock_instance = Mock()
         mock_instance.chat = AsyncMock(return_value="Please provide a message")
         MockService.return_value = mock_instance
@@ -94,7 +98,7 @@ def test_chat_endpoint_empty_message(test_client):
 
 def test_chat_endpoint_error_handling(test_client):
     """Test chat endpoint error handling."""
-    with patch('backend.api.endpoints.agent.AgentService') as MockService:
+    with patch('backend.api.dependencies.AgentService') as MockService:
         mock_instance = Mock()
         mock_instance.chat = AsyncMock(side_effect=Exception("Service error"))
         MockService.return_value = mock_instance
