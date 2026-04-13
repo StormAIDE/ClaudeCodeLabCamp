@@ -184,10 +184,11 @@ backend/
 ├── config.py            # Pydantic Settings for env vars
 ├── api/                 # API layer
 │   ├── routes.py       # Route aggregation
+│   ├── dependencies.py # Dependency injection (singleton AgentService)
 │   └── endpoints/
-│       └── agent.py    # Agent chat endpoints
+│       └── agent.py    # Agent chat endpoints with input validation
 └── services/            # Business logic
-    └── agent_service.py # Strands SDK agent service
+    └── agent_service.py # Strands SDK agent service with safe tools
 ```
 
 **OLD Implementation (legacy, DO NOT USE):**
@@ -198,6 +199,9 @@ backend/app/            # Legacy code - ignore this directory
 **Key architectural decisions:**
 - Configuration via Pydantic Settings (`backend/config.py`) loads from `.env`
 - Agent logic isolated in `agent_service.py` using Strands SDK
+- **Dependency injection** (`api/dependencies.py`) - Singleton AgentService pattern for performance
+- **Input validation** - Pydantic validators reject empty/whitespace messages
+- **Security** - Tools use safe implementations (AST parser for math, no eval())
 - API routes aggregated in `api/routes.py` and mounted with `/api/v1` prefix
 - CORS configured to allow frontend on localhost:5173 and localhost:3000
 
@@ -229,9 +233,15 @@ frontend/src/
 **How it works:**
 1. Import: `from strands import Agent, tool`
 2. Define tools with `@tool` decorator - these become callable by the agent
-3. Agent initialized with `model`, `instructions`, and `tools` list
+3. **Agent initialized with `model`, `system_prompt`, and `tools` list**
 4. Model ID configured in `.env` as `CLAUDE_MODEL_ID`
-5. Agent methods: `run_async()` for single response, `stream_async()` for streaming
+5. **Agent methods: `invoke_async()` for single response, `stream_async()` for streaming**
+6. **Response handling: Extract text from `AgentResult.to_dict()['message']['content']`**
+
+**Security Note:**
+- The `calculate` tool uses safe AST parsing (not `eval()`)
+- Only allows mathematical operators: +, -, *, /, ** (power), unary +/-
+- Rejects any code execution attempts (e.g., `__import__`, function calls)
 
 **Adding new tools:**
 ```python
@@ -245,9 +255,14 @@ def your_tool_name(param: str) -> str:
 self.agent = Agent(
     name="lab-assistant",
     model=settings.CLAUDE_MODEL_ID,
-    instructions="...",
+    system_prompt="...",  # Use system_prompt, not instructions
     tools=[get_weather, calculate, your_tool_name]  # Add here
 )
+
+# Calling the agent:
+response = await self.agent.invoke_async(message)  # Use invoke_async, not run_async
+result_dict = response.to_dict()
+text = result_dict['message']['content'][0]['text']  # Extract text from response
 ```
 
 ## Configuration Management

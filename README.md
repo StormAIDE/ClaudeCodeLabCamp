@@ -13,44 +13,45 @@ This application showcases how to build a modern, scalable AI agent platform wit
 
 ## ✨ Features
 
-- 🤖 **Multi-Agent Support** - Switch between different AI agents with specialized capabilities
-- 🔧 **Custom Tools** - Extensible tool system for agents (web search, calculator, and more)
-- 💬 **Real-Time Streaming** - Watch AI responses generate in real-time
-- 🎨 **Modern UI** - React + TypeScript with Tailwind CSS
-- 🚀 **FastAPI Backend** - High-performance async Python backend
-- 🧠 **Claude 4 Integration** - Powered by Anthropic's Claude 4 via Amazon Bedrock
-- 📦 **Modular Architecture** - Easy to extend with new agents and tools
+- 🤖 **AI Agent System** - Intelligent agent powered by Claude 4 via Amazon Bedrock
+- 🔧 **Safe Custom Tools** - Extensible tool system with security built-in (AST-based calculator, weather)
+- 💬 **Real-Time Streaming** - Watch AI responses generate in real-time with SSE
+- 🎨 **Modern UI** - React 19 + TypeScript with Tailwind CSS
+- 🚀 **FastAPI Backend** - High-performance async Python backend with dependency injection
+- 🧠 **Claude 4 Integration** - Powered by Strands Agents SDK and Amazon Bedrock
+- 🔒 **Security First** - Input validation, safe tool execution, no eval()
+- 📦 **Clean Architecture** - Dependency injection, clear separation of concerns
+- ✅ **Comprehensive Tests** - 73 tests (43 backend + 30 frontend) all passing
 
 ## 📊 Current Status
 
-### ✅ Implemented
+### ✅ Implemented & Verified
 - ✅ Backend FastAPI server with Strands SDK integration
-- ✅ Frontend React + TypeScript application with Vite
-- ✅ Agent service with custom tools (weather, calculator)
+- ✅ Frontend React 19 + TypeScript application with Vite
+- ✅ Agent service with safe custom tools (weather, AST-based calculator)
 - ✅ API endpoints: `/health`, `/api/v1/agent/chat`, `/api/v1/agent/status`
+- ✅ **Dependency Injection** - Singleton AgentService pattern for performance
+- ✅ **Input Validation** - Pydantic validators reject empty/whitespace messages
+- ✅ **Security Hardening** - Safe AST parser (no eval()), prevents code injection
 - ✅ Configuration management with Pydantic Settings
 - ✅ CORS configuration for local development
 - ✅ Environment-based configuration (.env)
+- ✅ **Comprehensive Test Suite** - 73 tests (43 backend + 30 frontend) all passing
 - ✅ Virtual environment setup (Python 3.14.0)
-- ✅ Git repository initialized with main and feature branches
-- ✅ Comprehensive documentation (README, SETUP, CLAUDE.md)
+- ✅ Git repository with main and feature/lab-work branches
+- ✅ Complete documentation (README, SETUP, CLAUDE.md, per-directory READMEs)
 - ✅ Quick start script (`start.sh`)
+- ✅ **Code Review Complete** - All critical issues resolved
 
-### 🚧 In Progress
-- 🚧 Frontend streaming support for real-time responses
-- 🚧 Message history persistence
-- 🚧 Enhanced UI with message timestamps and user indicators
-- 🚧 Additional custom tools and agent capabilities
-
-### 📋 Planned
+### 📋 Planned Enhancements
+- 📋 Frontend streaming UI support for token-by-token responses
+- 📋 Message history persistence (localStorage or database)
 - 📋 Authentication and authorization
 - 📋 Multi-agent switching in UI
-- 📋 Conversation history management
 - 📋 Tool usage visualization
-- 📋 Error boundary and better error handling
-- 📋 Unit and integration tests
+- 📋 Enhanced error boundaries
 - 📋 Docker containerization
-- 📋 CI/CD pipeline
+- 📋 CI/CD pipeline with GitHub Actions
 
 ## 🛠️ Tech Stack
 
@@ -61,12 +62,14 @@ This application showcases how to build a modern, scalable AI agent platform wit
 - **Python 3.14.0** - Latest Python features
 
 ### Frontend
-- **React 18+** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Fast build tool
-- **TanStack Query** - Server state management
+- **React 19** - Latest UI library with improved hooks
+- **TypeScript** - Full type safety
+- **Vite** - Fast build tool with HMR
+- **TanStack Query** - Server state management and caching
 - **Zustand** - Client state management
 - **Tailwind CSS** - Utility-first styling
+- **Vitest** - Fast unit testing framework
+- **Testing Library** - Component testing utilities
 
 ### AI Layer
 - **Claude 4** - Via Amazon Bedrock
@@ -154,39 +157,54 @@ Open your browser to [http://localhost:5173](http://localhost:5173)
 
 ```
 ClaudeCodeTest/
-├── backend/                      # Python FastAPI backend
-│   ├── main.py                  # FastAPI application entry point
-│   ├── config.py                # Configuration management (Pydantic Settings)
-│   ├── api/                     # API layer
-│   │   ├── routes.py           # Route aggregation
-│   │   └── endpoints/          # API endpoints
-│   │       └── agent.py        # Agent chat endpoints
-│   └── services/                # Business logic
-│       └── agent_service.py    # Agent service with Strands SDK
+├── backend/                         # Python FastAPI backend
+│   ├── main.py                     # FastAPI application entry point
+│   ├── config.py                   # Configuration management (Pydantic Settings)
+│   ├── api/                        # API layer
+│   │   ├── routes.py              # Route aggregation
+│   │   ├── dependencies.py        # Dependency injection (singleton AgentService)
+│   │   └── endpoints/             # API endpoints
+│   │       └── agent.py           # Agent chat endpoints with validation
+│   ├── services/                   # Business logic
+│   │   └── agent_service.py       # Agent service with Strands SDK & safe tools
+│   ├── tests/                      # Test suite (43 tests)
+│   │   ├── test_config.py         # Configuration tests
+│   │   ├── test_dependencies.py   # Package import tests
+│   │   ├── test_agent_service.py  # Agent and tool tests
+│   │   ├── test_endpoints.py      # API endpoint tests
+│   │   └── conftest.py            # Test fixtures
+│   ├── requirements.txt            # Python dependencies
+│   └── README.md                   # Backend-specific documentation
 │
-├── frontend/                    # React TypeScript frontend
+├── frontend/                       # React 19 TypeScript frontend
 │   ├── src/
-│   │   ├── components/         # React components
-│   │   │   ├── ChatInterface.tsx    # Main chat interface
-│   │   │   ├── MessageList.tsx      # Message display
-│   │   │   └── MessageInput.tsx     # Input component
-│   │   ├── api/                # API client
-│   │   │   └── agent.ts        # Agent API calls
-│   │   ├── store/              # Zustand state management
-│   │   │   └── agentStore.ts   # Agent state
-│   │   ├── App.tsx             # Main App component
-│   │   └── main.tsx            # React entry point
-│   ├── package.json            # Node.js dependencies
-│   └── vite.config.ts          # Vite configuration
+│   │   ├── components/            # React components
+│   │   │   ├── ChatInterface.tsx  # Main chat interface
+│   │   │   ├── MessageList.tsx    # Message display
+│   │   │   ├── MessageInput.tsx   # Input component
+│   │   │   └── StatusBadge.tsx    # Agent status indicator
+│   │   ├── api/                   # API client
+│   │   │   └── agent.ts           # Agent API calls (Axios)
+│   │   ├── store/                 # Zustand state management
+│   │   │   └── agentStore.ts      # Agent state
+│   │   ├── types/                 # TypeScript type definitions
+│   │   ├── hooks/                 # Custom React hooks
+│   │   ├── test/                  # Test files (30 tests)
+│   │   ├── App.tsx                # Main App component
+│   │   └── main.tsx               # React entry point with TanStack Query
+│   ├── package.json               # Node.js dependencies & scripts
+│   ├── vite.config.ts             # Vite configuration
+│   ├── vitest.config.ts           # Vitest test configuration
+│   └── README.md                  # Frontend-specific documentation
 │
-├── claudecodeenv/              # Python virtual environment (gitignored)
-├── requirements.txt            # Python dependencies
-├── .env                        # Environment variables (create from .env.example)
-├── .env.example                # Environment variables template
-├── start.sh                    # Quick start script
-├── SETUP.md                    # Detailed setup instructions
-├── README.md                   # This file
-└── CLAUDE.md                   # Claude Code workflow documentation
+├── claudecodeenv/                 # Python virtual environment (gitignored)
+├── .env                           # Environment variables (create from .env.example)
+├── .env.example                   # Environment variables template
+├── start.sh                       # Quick start script (both services)
+├── pytest.ini                     # Pytest configuration
+├── SETUP.md                       # Detailed setup instructions
+├── README.md                      # This file (project overview)
+└── CLAUDE.md                      # Claude Code workflow documentation
 ```
 
 ## 🔌 API Endpoints
@@ -285,7 +303,39 @@ aws sts get-caller-identity
 - Look for: `VITE v[version] ready in [time]ms`
 - Look for: `➜ Local: http://localhost:5173/`
 
-## 🧪 Try It Out
+## 🧪 Testing
+
+### Run Tests
+
+**Backend Tests (43 tests):**
+```bash
+source claudecodeenv/bin/activate
+python -m pytest backend/tests/ -v
+```
+
+**Frontend Tests (30 tests):**
+```bash
+cd frontend
+npm test
+```
+
+**Run All Tests (73 total):**
+```bash
+source claudecodeenv/bin/activate && \
+python -m pytest backend/tests/ -v && \
+cd frontend && npm test -- --run
+```
+
+**Test Coverage:**
+```bash
+# Backend coverage
+python -m pytest backend/tests/ --cov=backend --cov-report=html
+
+# Frontend coverage
+cd frontend && npm run test:coverage
+```
+
+### Try It Out
 
 Once both services are running, try these example queries in the UI:
 
@@ -294,20 +344,28 @@ Once both services are running, try these example queries in the UI:
    What's the weather in San Francisco?
    ```
 
-2. **Calculator:**
+2. **Safe Calculator (AST-based, no eval!):**
    ```
    Calculate 25 * 4 + 10
    ```
+   Expected result: 110
 
-3. **General Chat:**
+3. **Complex Math:**
+   ```
+   What is (100 - 25) * 3 + 50?
+   ```
+   Expected result: 275
+
+4. **General Chat:**
    ```
    Hello! What can you help me with?
    ```
 
-4. **Tool Testing:**
+5. **Security Test (should be rejected):**
    ```
-   Can you search the web for latest AI news?
+   Calculate __import__('os').system('echo test')
    ```
+   Expected: Error message about unsupported expression
 
 ## 🛠️ Extending the Application
 
@@ -322,6 +380,7 @@ from strands import tool
 def my_new_tool(param: str) -> str:
     """
     Description of what this tool does.
+    The docstring is shown to Claude as the tool description.
     
     Args:
         param: Parameter description
@@ -330,6 +389,7 @@ def my_new_tool(param: str) -> str:
         Result description
     """
     # Implementation here
+    # IMPORTANT: Validate inputs and implement safely
     return f"Result for {param}"
 ```
 
@@ -338,18 +398,28 @@ Then add the tool to the Agent initialization:
 ```python
 self.agent = Agent(
     name="lab-assistant",
-    instructions="...",
+    model=settings.CLAUDE_MODEL_ID,
+    system_prompt="...",  # Use system_prompt, not instructions
     tools=[get_weather, calculate, my_new_tool]  # Add your tool here
 )
 ```
+
+**Important Security Notes:**
+- Never use `eval()` or `exec()` in tools
+- Validate all inputs
+- Use type hints for parameters
+- Handle errors gracefully
+- Document security considerations
 
 ### Customizing the Agent
 
 Modify the agent's behavior in `backend/services/agent_service.py`:
 
-- **Change instructions:** Edit the `instructions` parameter
+- **Change system prompt:** Edit the `system_prompt` parameter (not `instructions`)
 - **Add/remove tools:** Modify the `tools` list
-- **Change model:** Update the Agent configuration (defaults to Claude 4 via Bedrock)
+- **Change model:** Update `CLAUDE_MODEL_ID` in `.env` file
+- **Call the agent:** Use `invoke_async(message)` (not `run_async`)
+- **Extract response:** Parse `AgentResult.to_dict()['message']['content']`
 
 ## 🐛 Troubleshooting
 
