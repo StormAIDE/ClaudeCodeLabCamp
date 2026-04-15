@@ -11,6 +11,27 @@ echo "================================================"
 # Get the project root directory
 PROJECT_ROOT=$(pwd)
 
+# Cleanup function to ensure servers are stopped
+cleanup_servers() {
+    echo ""
+    echo "🧹 Cleaning up any running servers..."
+
+    # Kill processes on development ports
+    lsof -ti:8000 2>/dev/null | xargs kill -9 2>/dev/null || true
+    lsof -ti:5173 2>/dev/null | xargs kill -9 2>/dev/null || true
+
+    # Kill any remaining backend processes
+    pkill -f "python.*backend.main" 2>/dev/null || true
+
+    # Kill any remaining vite processes
+    pkill -f "vite" 2>/dev/null || true
+
+    echo "✅ Server cleanup complete"
+}
+
+# Register cleanup to run on script exit
+trap cleanup_servers EXIT
+
 # Check if we're in the right directory
 if [ ! -f "CLAUDE.md" ]; then
     echo "❌ Error: Not in project root directory"
@@ -45,7 +66,7 @@ echo ""
 echo "🎨 FRONTEND TESTING"
 echo "=================="
 
-if run_with_status "Frontend test suite (30 tests)" "cd \"$PROJECT_ROOT/frontend\" && npm test -- --run --reporter=verbose"; then
+if run_with_status "Frontend test suite (19 tests)" "cd \"$PROJECT_ROOT/frontend\" && npm test -- --run --reporter=verbose"; then
     echo "✅ All frontend tests passed!"
 else
     echo "❌ Frontend tests failed!"
@@ -99,7 +120,7 @@ echo "==============="
 
 if [ $OVERALL_SUCCESS -eq 0 ]; then
     echo "🎉 ALL TESTS PASSED!"
-    echo "   ✅ Frontend: 30 tests passing"
+    echo "   ✅ Frontend: 19 tests passing"
     echo "   ✅ Backend: 43 tests passing"
     echo "   ✅ Servers: Startup tests passing"
     echo "   ✅ Build: Frontend builds successfully"

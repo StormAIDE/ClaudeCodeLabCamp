@@ -123,7 +123,8 @@ cd ..
 
 **Option 1: Quick Start Script**
 ```bash
-./start.sh
+./start.sh    # Start both services
+./stop.sh     # Stop all services (kills processes on ports 8000 and 5173)
 ```
 
 **Option 2: Manual Start (2 terminals)**
@@ -648,15 +649,40 @@ Model Context Protocol servers that connect Claude Code to external services (di
 **Configured MCP Servers:**
 
 #### MCP #1: drawio
-**Purpose:** Create diagrams (flowcharts, architecture diagrams, UML)
+**Purpose:** Create and edit diagrams (flowcharts, architecture diagrams, UML, ERD, network diagrams)
 **Command:** `npx -y @drawio/mcp`
+**Package:** `@drawio/mcp` (auto-installed via npx)
+
+**What it does:**
+- Create diagrams from natural language descriptions using 3 specialized tools:
+  - **XML format** - Full control with draw.io XML syntax (most powerful)
+  - **CSV format** - Structured data to generate flowcharts/org charts (easiest)
+  - **Mermaid format** - Text-based diagram syntax (most readable)
+- Edit existing .drawio files (round-trip editing)
+- Support for multiple diagram types: flowcharts, sequence diagrams, component diagrams, ERD, network topologies
+- Output to .drawio, .xml, .svg, .png formats
+- Professional styling and automatic layout
 
 **Try it:**
 ```
-You: "Create an architecture diagram showing backend, frontend, and Bedrock"
-Claude: [Uses drawio MCP server]
-Result: Generates .drawio file with visual diagram
+You: "Create an architecture diagram showing FastAPI backend (port 8000), React frontend (port 5173), and AWS Bedrock connection with Claude Sonnet. Save as architecture.drawio"
+Claude: [Uses drawio MCP server with CSV format]
+Result: Generates architecture.drawio with 3-tier architecture diagram
+
+You: "Create a sequence diagram for the chat API flow using Mermaid syntax"
+Claude: [Uses drawio MCP server with Mermaid format]
+Result: Generates sequence-diagram.drawio with API interaction flow
+
+You: "Edit architecture.drawio and add a database component connected to the backend"
+Claude: [Reads existing XML, modifies it, writes back]
+Result: Updates architecture.drawio with database node
 ```
+
+**Educational Value:**
+- **Visual documentation:** Generate architecture diagrams automatically from code
+- **Design communication:** Create flowcharts for complex algorithms
+- **Team collaboration:** Convert discussions into visual diagrams
+- **Format flexibility:** Choose between XML (power), CSV (structure), or Mermaid (readability)
 
 #### MCP #2: chrome-devtools
 **Purpose:** Browser automation (screenshots, console logs, network requests)
@@ -807,8 +833,9 @@ ClaudeCodeLabCamp/
 ├── .env.example                 # Environment template
 ├── CLAUDE.md                    # Project documentation for Claude Code
 ├── README.md                    # This file (labcamp guide)
-├── start.sh                     # Quick start script
-├── run-all-tests.sh            # Test orchestration
+├── start.sh                     # Quick start script (both servers)
+├── stop.sh                      # Stop all services (cleanup script)
+├── run-all-tests.sh            # Test orchestration (with auto-cleanup)
 └── requirements.txt             # Python dependencies
 ```
 

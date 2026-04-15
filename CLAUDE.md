@@ -101,7 +101,7 @@ python -m pytest backend/tests/ --cov=backend --cov-report=html
 ptw backend/tests/
 ```
 
-**Current coverage:** 35 tests total covering config, dependencies, agent service, endpoints, API client, and store
+**Current coverage:** 62 tests total (43 backend + 19 frontend) covering config, dependencies, agent service, endpoints, API client, store, and React components
 
 **Run all tests:**
 ```bash
@@ -113,7 +113,7 @@ ptw backend/tests/
 **CRITICAL - Run tests before every change:**
 1. **Before making any code changes:** Run the full test suite
 2. **After making changes:** Re-run tests to ensure nothing broke
-3. **Before committing:** All tests must pass (35 tests total)
+3. **Before committing:** All tests must pass (62 tests total (43 backend + 19 frontend))
 4. **When adding new features:** Write tests for new functionality
 5. **When fixing bugs:** Add tests that reproduce the bug, then fix it
 
