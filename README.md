@@ -1,671 +1,867 @@
-# Full-Stack AI Agent Application
+# ClaudeCode Labcamp: Full-Stack AI Agent Project
 
-A production-ready full-stack application demonstrating clean architecture patterns for building AI agent systems. This project serves as a hands-on learning environment for the **ClaudeCode Labcamp** - focused on repeatable workflows, verification patterns, and practical productivity enhancements for daily software engineering tasks.
+> **Learn Claude Code: Boost Daily Productivity**
+> 
+> A hands-on project demonstrating ALL Claude Code features working together to enhance your daily software engineering tasks with repeatable workflows and verification patterns.
 
-## 🎯 Project Overview
+## 📋 What You'll Learn
 
-This application showcases how to build a modern, scalable AI agent platform with:
-- **Interactive chat interface** for conversing with AI agents
-- **Real-time streaming responses** using Server-Sent Events (SSE)
-- **Extensible tool and agent system** using registry patterns
-- **Type-safe API communication** across the full stack
-- **Clean architecture** with clear separation of concerns
+This project showcases how Claude Code integrates 8 powerful features into a single development workflow:
 
-## ✨ Features
+1. **CLAUDE.md** - Project documentation that guides AI behavior
+2. **Hooks** - Automated workflows (formatting, safety checks, testing)
+3. **Plugins** - IDE features (type checking, GitHub integration)
+4. **Custom Commands** - Reusable slash commands
+5. **Skills** - Multi-step automated workflows
+6. **Custom Agents** - Specialized AI agents for specific tasks
+7. **MCP Servers** - External tool integration
+8. **settings.json** - Centralized configuration
 
-- 🤖 **AI Agent System** - Intelligent agent powered by Claude 4 via Amazon Bedrock
-- 🔧 **Safe Custom Tools** - Extensible tool system with security built-in (AST-based calculator, weather)
-- 💬 **Real-Time Streaming** - Watch AI responses generate in real-time with SSE
-- 🎨 **Modern UI** - React 19 + TypeScript with Tailwind CSS
-- 🚀 **FastAPI Backend** - High-performance async Python backend with dependency injection
-- 🧠 **Claude 4 Integration** - Powered by Strands Agents SDK and Amazon Bedrock
-- 🔒 **Security First** - Input validation, safe tool execution, no eval()
-- 📦 **Clean Architecture** - Dependency injection, clear separation of concerns
-- ✅ **Comprehensive Tests** - 73 tests (43 backend + 30 frontend) all passing
-- 🔌 **Claude Code Plugins** - Professional IDE features (TypeScript/Python LSP, GitHub, Git workflows)
-- 🪝 **Claude Code Hooks** - Automated workflows (auto-format, safety checks, context injection)
-
-## 📊 Current Status
-
-### ✅ Implemented & Verified
-- ✅ Backend FastAPI server with Strands SDK integration
-- ✅ Frontend React 19 + TypeScript application with Vite
-- ✅ Agent service with safe custom tools (weather, AST-based calculator)
-- ✅ API endpoints: `/health`, `/api/v1/agent/chat`, `/api/v1/agent/status`
-- ✅ **Dependency Injection** - Singleton AgentService pattern for performance
-- ✅ **Input Validation** - Pydantic validators reject empty/whitespace messages
-- ✅ **Security Hardening** - Safe AST parser (no eval()), prevents code injection
-- ✅ Configuration management with Pydantic Settings
-- ✅ CORS configuration for local development
-- ✅ Environment-based configuration (.env)
-- ✅ **Comprehensive Test Suite** - 73 tests (43 backend + 30 frontend) all passing
-- ✅ Virtual environment setup (Python 3.14.0)
-- ✅ Git repository with main and feature/lab-work branches
-- ✅ Complete documentation (README, SETUP, CLAUDE.md, per-directory READMEs)
-- ✅ Quick start script (`start.sh`)
-- ✅ **Code Review Complete** - All critical issues resolved
-
-### 📋 Planned Enhancements
-- 📋 Frontend streaming UI support for token-by-token responses
-- 📋 Message history persistence (localStorage or database)
-- 📋 Authentication and authorization
-- 📋 Multi-agent switching in UI
-- 📋 Tool usage visualization
-- 📋 Enhanced error boundaries
-- 📋 Docker containerization
-- 📋 CI/CD pipeline with GitHub Actions
-
-## 🛠️ Tech Stack
-
-### Backend
-- **FastAPI** - Modern, fast Python web framework
-- **Strands Agents SDK** - AI agent orchestration
-- **Pydantic** - Data validation and settings management
-- **Python 3.14.0** - Latest Python features
-
-### Frontend
-- **React 19** - Latest UI library with improved hooks
-- **TypeScript** - Full type safety
-- **Vite** - Fast build tool with HMR
-- **TanStack Query** - Server state management and caching
-- **Zustand** - Client state management
-- **Tailwind CSS** - Utility-first styling
-- **Vitest** - Fast unit testing framework
-- **Testing Library** - Component testing utilities
-
-### AI Layer
-- **Claude 4** - Via Amazon Bedrock
-- **Strands Agents SDK** - Custom tools and streaming support
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Python 3.14.0** (virtual environment already set up in `claudecodeenv/`)
+- **Python 3.14.0** (virtual environment included in `claudecodeenv/`)
 - **Node.js 18+** and npm
-- **AWS Account** with Bedrock access and Claude 4 enabled
+- **AWS Account** with Bedrock access (Claude 4 enabled)
 - **AWS CLI** configured with credentials
 - **Git**
+- **Claude Code** installed ([claude.ai/code](https://claude.ai/code))
 
-### Setup
+### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
-   cd ClaudeCodeLabCamp
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
+cd ClaudeCodeLabCamp
 
-2. **Configure AWS credentials in terminal:**
-   ```bash
-   aws configure
-   # OR export credentials directly:
-   export AWS_ACCESS_KEY_ID=your_key
-   export AWS_SECRET_ACCESS_KEY=your_secret
-   export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
-   ```
+# 2. Configure AWS credentials (terminal session)
+aws configure
+# OR export credentials directly:
+export AWS_ACCESS_KEY_ID=your_key
+export AWS_SECRET_ACCESS_KEY=your_secret
+export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
 
-3. **Create .env file:**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   **Note:** AWS credentials are NOT needed in .env since they're configured in your terminal session.
+# 3. Create .env file
+cp .env.example .env
+# Note: AWS credentials are NOT in .env - they're in your terminal session
 
-4. **Install backend dependencies:**
-   ```bash
-   source claudecodeenv/bin/activate
-   pip install -r requirements.txt
-   ```
+# 4. Install backend dependencies
+source claudecodeenv/bin/activate
+pip install -r requirements.txt
 
-5. **Install frontend dependencies:**
-   ```bash
-   cd frontend
-   npm install
-   cd ..
-   ```
+# 5. Install frontend dependencies
+cd frontend
+npm install
+cd ..
+```
 
 ### Running the Application
 
-#### Option 1: Quick Start Script (Recommended)
-
+**Option 1: Quick Start Script**
 ```bash
 ./start.sh
 ```
 
-This will start both backend and frontend services automatically.
-
-#### Option 2: Manual Start (Separate Terminals)
-
-**Terminal 1 - Backend:**
+**Option 2: Manual Start (2 terminals)**
 ```bash
+# Terminal 1 - Backend
 source claudecodeenv/bin/activate
-python backend/main.py
-```
+python -m backend.main
 
-**Terminal 2 - Frontend:**
-```bash
+# Terminal 2 - Frontend
 cd frontend
 npm run dev
 ```
-
-Open your browser to [http://localhost:5173](http://localhost:5173)
 
 **Access Points:**
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
 
+---
+
+## 🏗️ Project Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Frontend                              │
+│  React 19 + TypeScript + Vite + Tailwind CSS               │
+│  - ChatInterface: Main UI                                   │
+│  - Zustand: Client state management                         │
+│  - TanStack Query: Server state & caching                   │
+└────────────────┬────────────────────────────────────────────┘
+                 │ HTTP/SSE
+                 ↓
+┌─────────────────────────────────────────────────────────────┐
+│                         Backend                              │
+│  FastAPI + Strands Agents SDK + Pydantic                    │
+│  - Agent Service: Claude 4 via Amazon Bedrock               │
+│  - Safe Tools: Weather, AST-based calculator                │
+│  - Dependency Injection: Singleton pattern                  │
+└────────────────┬────────────────────────────────────────────┘
+                 │
+                 ↓
+┌─────────────────────────────────────────────────────────────┐
+│              Claude 4 (Amazon Bedrock)                       │
+│  model: eu.anthropic.claude-sonnet-4-5-20250929-v1:0       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Key Technologies:**
+- **Backend:** FastAPI, Strands SDK, Pydantic, Python 3.14
+- **Frontend:** React 19, TypeScript, Vite, Zustand, TanStack Query, Tailwind CSS
+- **AI:** Claude 4 via Amazon Bedrock
+- **Testing:** Pytest (backend), Vitest (frontend) - 35 tests total
+
+---
+
+## 🎓 Labcamp Learning Path: Claude Code Features in Action
+
+### Step 1: CLAUDE.md - Project Documentation
+
+**What it is:**
+A markdown file that contains instructions for Claude Code about your project. It's like a project guide that tells Claude how to work with your codebase.
+
+**Where to find it:**
+- File: `/CLAUDE.md`
+- [Official docs](https://code.claude.com/docs/en/memory)
+
+**What it does:**
+- Defines development commands (backend, frontend, testing)
+- Specifies architecture patterns and project structure
+- Sets rules (always run tests, use conventional commits, never modify .env)
+- Documents tech stack and configuration
+
+**Try it yourself:**
+1. Open `CLAUDE.md` in your editor
+2. Notice sections like "Development Commands", "Testing Requirements", "Architecture Overview"
+3. In Claude Code, ask: "What are the development commands for this project?"
+4. Claude will reference CLAUDE.md and give you the exact commands
+
+**Example:**
+```
+You: "How do I run the backend?"
+Claude: "According to CLAUDE.md, run: source claudecodeenv/bin/activate && python -m backend.main"
+```
+
+**Educational Value:**
+- **Consistency:** All developers (human or AI) follow the same rules
+- **Onboarding:** New team members read CLAUDE.md to understand the project
+- **Documentation-as-code:** Project rules are version-controlled
+
+---
+
+### Step 2: Hooks - Automated Workflows
+
+**What they are:**
+Shell scripts that run automatically at specific points in Claude Code's lifecycle (before/after tool calls, session start/end, etc.)
+
+**Where to find them:**
+- Configuration: `.claude/settings.json`
+- Scripts: `.claude/hooks/*.sh`
+- Command: `/hooks` (shows all configured hooks)
+
+**Active Hooks in This Project:**
+
+#### Hook #1: Auto-Format Code with Prettier
+**Event:** `PostToolUse` (after Edit/Write tools)
+**Command:** `jq -r '.tool_input.file_path' | xargs npx prettier --write`
+**What it does:** Automatically formats any file Claude edits
+
+**Try it:**
+1. Ask Claude to edit a TypeScript file
+2. Watch the file get auto-formatted with Prettier
+3. Check git diff - consistent formatting applied
+
+#### Hook #2: Block Dangerous Commands
+**Event:** `PreToolUse` (before Bash tool)
+**Script:** `.claude/hooks/block-dangerous.sh`
+**What it does:** Prevents destructive operations like `rm -rf /`, `dd`, fork bombs
+
+**Try it:**
+```
+You: "Run the command: rm -rf /"
+Claude: [BLOCKED] 🚫 Command matches dangerous pattern 'rm -rf /'
+```
+
+#### Hook #3: Protect Sensitive Files
+**Event:** `PreToolUse` (before Edit/Write tools)
+**Script:** `.claude/hooks/protect-files.sh`
+**What it does:** Blocks edits to `.env`, lock files, `.git/`, `node_modules/`
+
+**Try it:**
+```
+You: "Edit the .env file to add a new variable"
+Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by automation
+```
+
+#### Hook #4: Inject Project Context
+**Event:** `SessionStart`
+**File:** `.claude/hooks/project-context.txt`
+**What it does:** Reminds Claude of project rules every session (ports, commit format, test requirements)
+
+**Try it:**
+1. Start a new Claude Code session
+2. Ask Claude about the project
+3. Notice it already knows the ports (8000, 5173) and commit format without you telling it
+
+**Educational Value:**
+- **Automation:** No manual formatting or safety checks needed
+- **Safety:** Prevents accidents (rm -rf, editing credentials)
+- **Consistency:** Same rules apply every time, every session
+- **Productivity:** Focus on features, not repetitive tasks
+
+**View all hooks:**
+```bash
+/hooks  # Interactive browser showing all configured hooks
+```
+
+---
+
+### Step 3: Plugins - IDE Features
+
+**What they are:**
+Extensions that add IDE-like features to Claude Code (type checking, code navigation, GitHub integration)
+
+**Where to configure them:**
+- Command: `/plugin` (interactive plugin manager)
+- Marketplace: `claude-plugins-official` (auto-added)
+
+**Recommended Plugins for This Project:**
+
+#### Plugin #1: TypeScript LSP
+**What:** Real-time type checking for React/TypeScript code
+**Install:** `/plugin install typescript-lsp@claude-plugins-official`
+**Prerequisite:** `npm install -g typescript-language-server typescript`
+
+**What it does:**
+- Detects type errors immediately after edits
+- Shows diagnostics without running the app
+- Enables "Go to Definition", "Find References"
+
+**Try it:**
+1. Install the plugin
+2. Ask Claude to add a new prop to `ChatInterface.tsx` with wrong type
+3. Press `Ctrl+O` - see the type error caught instantly
+4. Claude fixes it in the same turn (no need to run the app!)
+
+#### Plugin #2: Pyright LSP
+**What:** Type checking for Python/FastAPI backend
+**Install:** `/plugin install pyright-lsp@claude-plugins-official`
+**Prerequisite:** `pip install pyright`
+
+**What it does:**
+- Validates type hints automatically
+- Catches async/await errors
+- Ensures Pydantic models are correct
+
+**Try it:**
+1. Install the plugin
+2. Ask Claude to modify `agent_service.py` with wrong return type
+3. Pyright catches it before runtime
+
+#### Plugin #3: GitHub Integration
+**What:** PR creation, issue management, code review automation
+**Install:** `/plugin install github@claude-plugins-official`
+
+**What it does:**
+- Create pull requests from Claude Code
+- View/create/close issues
+- Review PRs with AI assistance
+
+**Try it:**
+```
+You: "Create a PR for this branch"
+Claude: [Creates PR with generated title, description, and test plan]
+```
+
+#### Plugin #4: Commit Commands
+**What:** Automated conventional commit messages
+**Install:** 
+```bash
+/plugin marketplace add anthropics/claude-code
+/plugin install commit-commands@anthropics-claude-code
+```
+
+**What it does:**
+- Analyzes changes with `git diff`
+- Generates conventional commit message (feat:, fix:, chore:)
+- Commits automatically
+
+**Try it:**
+```bash
+/commit-commands:commit
+# Claude stages changes, generates message, creates commit
+```
+
+**Educational Value:**
+- **Professional tooling:** Same features as VS Code, JetBrains IDEs
+- **Shift-left testing:** Catch bugs at compile-time, not runtime
+- **Type-driven development:** Type system guides implementation
+- **GitHub workflow:** Automate PR creation and reviews
+
+**View/manage plugins:**
+```bash
+/plugin                    # Interactive plugin manager
+/reload-plugins            # Apply plugin changes
+```
+
+---
+
+### Step 4: Custom Commands - Slash Commands
+
+**What they are:**
+Reusable commands you create for common tasks, invoked with `/command-name`
+
+**Where to find them:**
+- File: `.claude/commands/component.md`
+- Format: Markdown with frontmatter (YAML metadata)
+
+**Example: Component Generator**
+
+**Command:** `/component ComponentName [description]`
+
+**What it does:**
+1. Creates a new React TypeScript component
+2. Generates proper file structure with TypeScript interfaces
+3. Applies Tailwind CSS styling from project theme
+4. Follows project conventions (functional components, type imports)
+
+**Try it:**
+```bash
+/component LoadingSpinner Shows a loading indicator
+```
+
+**Claude will:**
+1. Create `frontend/src/components/LoadingSpinner.tsx`
+2. Generate component with proper TypeScript types
+3. Apply project's Tailwind CSS color scheme
+4. Add props interface (`LoadingSpinnerProps`)
+5. Show you the code and suggest where to use it
+
+**Example Output:**
+```typescript
+interface LoadingSpinnerProps {
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}
+
+export default function LoadingSpinner({ 
+  size = 'md', 
+  className = '' 
+}: LoadingSpinnerProps) {
+  return (
+    <div className="flex items-center justify-center">
+      <div className="animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+    </div>
+  )
+}
+```
+
+**Educational Value:**
+- **Code generation:** Automate repetitive component creation
+- **Consistency:** All components follow the same structure
+- **Productivity:** Create components in seconds, not minutes
+- **Customization:** Define your own commands for your workflow
+
+**Create your own command:**
+1. Create `.claude/commands/your-command.md`
+2. Add YAML frontmatter (name, description, usage)
+3. Write instructions for Claude
+4. Use it with `/your-command`
+
+---
+
+### Step 5: Skills - Complex Workflows
+
+**What they are:**
+Multi-step automated workflows that orchestrate multiple commands
+
+**Where to find them:**
+- File: `.claude/skills/start-dev/SKILL.md`
+- Format: Markdown with instructions for Claude
+
+**Example: Start Development Servers**
+
+**Skill:** `/start-dev` (or use the Skill tool)
+
+**What it does:**
+1. Activates Python virtual environment
+2. Starts FastAPI backend on port 8000 (background process)
+3. Starts Vite frontend on port 5173 (background process)
+4. Reports status and URLs to you
+
+**Try it:**
+```bash
+# Just run the skill
+/start-dev
+
+# Claude will:
+# ✓ Activate claudecodeenv
+# ✓ Start backend: uvicorn backend.main:app --reload
+# ✓ Start frontend: npm run dev
+# ✓ Report both URLs
+```
+
+**Educational Value:**
+- **Workflow automation:** Complex tasks become one command
+- **Consistency:** Same startup process every time
+- **Error handling:** Skill handles environment setup
+- **Background processes:** Both servers run simultaneously
+
+**Create your own skill:**
+1. Create `.claude/skills/your-skill/SKILL.md`
+2. Write step-by-step instructions
+3. Claude executes the workflow automatically
+4. Use it by asking Claude to run the skill
+
+**Difference between Commands vs Skills:**
+- **Commands:** User-invocable with `/slash` syntax, simpler use case
+- **Skills:** More complex, can have multiple steps, Claude invokes based on context
+
+---
+
+### Step 6: Custom Agents - Specialized AI
+
+**What they are:**
+Specialized AI agents trained for specific tasks (backend, frontend, code review, visual inspection)
+
+**Where to find them:**
+- Directory: `.claude/agents/`
+- Files: 4 agent definitions (YAML frontmatter + markdown)
+
+**Available Agents:**
+
+#### Agent #1: backend-maintainer
+**Purpose:** Backend development tasks (FastAPI, Strands SDK, Python)
+**When to use:** API endpoints, service layer, agent tools, database work
+
+**Try it:**
+```
+You: "Add a new endpoint to get user profile"
+Claude: [Delegates to backend-maintainer agent]
+Agent: [Creates endpoint, adds validation, writes tests]
+```
+
+#### Agent #2: code-reviewer
+**Purpose:** Comprehensive code quality analysis
+**When to use:** Before commits, after refactoring, debugging complex issues
+
+**Try it:**
+```
+You: "Review the changes in this branch"
+Claude: [Spawns code-reviewer agent]
+Agent: [Analyzes backend + frontend, checks tests, reports issues]
+```
+
+#### Agent #3: frontend-improver
+**Purpose:** UI/UX improvements, React components, frontend architecture
+**When to use:** Component development, state management, client-side work
+
+**Try it:**
+```
+You: "Improve the chat interface with better UX"
+Claude: [Launches frontend-improver agent]
+Agent: [Analyzes UI, proposes improvements, implements changes]
+```
+
+#### Agent #4: frontend-visual-inspector
+**Purpose:** Visual analysis of UI (takes screenshots, checks layout)
+**When to use:** Visual bugs, responsive design, UI/UX validation
+
+**Try it:**
+```
+You: "Check if the chat interface looks good on mobile"
+Claude: [Spawns frontend-visual-inspector agent]
+Agent: [Takes screenshots, analyzes layout, suggests fixes]
+```
+
+**Educational Value:**
+- **Specialization:** Each agent has deep expertise in its domain
+- **Parallel work:** Multiple agents can work simultaneously
+- **Context isolation:** Agents work in separate contexts (worktrees)
+- **Multi-agent systems:** Shows how AI teams collaborate
+
+**How agents work:**
+1. You ask Claude to do something
+2. Claude recognizes it matches an agent's specialty
+3. Agent is spawned with specific instructions
+4. Agent completes task and reports back
+5. Claude integrates the results
+
+---
+
+### Step 7: MCP Servers - External Tools
+
+**What they are:**
+Model Context Protocol servers that connect Claude Code to external services (diagrams, browsers, databases, APIs)
+
+**Where to find them:**
+- File: `.mcp.json`
+- Format: JSON configuration with server definitions
+
+**Configured MCP Servers:**
+
+#### MCP #1: drawio
+**Purpose:** Create diagrams (flowcharts, architecture diagrams, UML)
+**Command:** `npx -y @drawio/mcp`
+
+**Try it:**
+```
+You: "Create an architecture diagram showing backend, frontend, and Bedrock"
+Claude: [Uses drawio MCP server]
+Result: Generates .drawio file with visual diagram
+```
+
+#### MCP #2: chrome-devtools
+**Purpose:** Browser automation (screenshots, console logs, network requests)
+**Command:** `npx -y chrome-devtools-mcp@latest`
+
+**Try it:**
+```
+You: "Take a screenshot of the chat interface"
+Claude: [Uses chrome-devtools MCP]
+Result: Opens browser, navigates to localhost:5173, captures screenshot
+```
+
+**Educational Value:**
+- **External integration:** Connect AI to any tool or service
+- **Visual outputs:** Generate diagrams, take screenshots
+- **Automation:** Browser testing, API calls, file operations
+- **Extensibility:** Add any MCP server to extend capabilities
+
+**How MCP works:**
+1. MCP server runs as a subprocess
+2. Claude sends requests to the server
+3. Server performs action (create diagram, take screenshot, etc.)
+4. Server returns results
+5. Claude integrates results into conversation
+
+**Add your own MCP server:**
+```json
+{
+  "mcpServers": {
+    "your-server": {
+      "command": "npx",
+      "args": ["-y", "your-mcp-package"]
+    }
+  }
+}
+```
+
+**Popular MCP servers:**
+- `@modelcontextprotocol/server-filesystem` - File operations
+- `@modelcontextprotocol/server-postgres` - Database access
+- `@modelcontextprotocol/server-slack` - Slack integration
+- `@modelcontextprotocol/server-github` - GitHub API
+
+---
+
+### Step 8: settings.json - Configuration Hub
+
+**What it is:**
+Central configuration file that ties all Claude Code features together
+
+**Where to find it:**
+- Project: `.claude/settings.json` (shared with team)
+- User: `~/.claude/settings.json` (personal preferences)
+- Local: `.claude/settings.local.json` (gitignored, local overrides)
+
+**What's Configured:**
+
+**Hooks:**
+```json
+{
+  "hooks": {
+    "PostToolUse": [...],     // Auto-format after edits
+    "PreToolUse": [...],      // Block dangerous commands, protect files
+    "SessionStart": [...]     // Inject project context
+  }
+}
+```
+
+**Permissions:**
+```json
+{
+  "permissions": {
+    "allowed": [
+      "Bash(npm *)",          // Allow npm commands
+      "Bash(git *)",          // Allow git commands
+      "mcp__*"                // Allow all MCP tools
+    ]
+  }
+}
+```
+
+**Educational Value:**
+- **Centralization:** All configuration in one place
+- **Version control:** Project settings committed to git
+- **Scopes:** User settings (personal), project (team), local (gitignored)
+- **Transparency:** Easy to see what's enabled/disabled
+
+**View configuration:**
+```bash
+/hooks              # Browse all hooks
+/plugin             # Manage plugins
+cat .claude/settings.json  # View raw config
+```
+
+---
+
 ## 📂 Project Structure
 
 ```
-ClaudeCodeTest/
-├── backend/                         # Python FastAPI backend
-│   ├── main.py                     # FastAPI application entry point
-│   ├── config.py                   # Configuration management (Pydantic Settings)
-│   ├── api/                        # API layer
-│   │   ├── routes.py              # Route aggregation
-│   │   ├── dependencies.py        # Dependency injection (singleton AgentService)
-│   │   └── endpoints/             # API endpoints
-│   │       └── agent.py           # Agent chat endpoints with validation
-│   ├── services/                   # Business logic
-│   │   └── agent_service.py       # Agent service with Strands SDK & safe tools
-│   ├── tests/                      # Test suite (43 tests)
-│   │   ├── test_config.py         # Configuration tests
-│   │   ├── test_dependencies.py   # Package import tests
-│   │   ├── test_agent_service.py  # Agent and tool tests
-│   │   ├── test_endpoints.py      # API endpoint tests
-│   │   └── conftest.py            # Test fixtures
-│   ├── requirements.txt            # Python dependencies
-│   └── README.md                   # Backend-specific documentation
+ClaudeCodeLabCamp/
+├── backend/                      # FastAPI backend
+│   ├── main.py                  # Entry point (USE THIS)
+│   ├── config.py                # Pydantic Settings
+│   ├── api/                     # API layer
+│   │   ├── routes.py           # Route aggregation
+│   │   ├── dependencies.py     # Dependency injection
+│   │   └── endpoints/
+│   │       └── agent.py        # Agent chat endpoints
+│   ├── services/                # Business logic
+│   │   └── agent_service.py    # Strands SDK agent service
+│   └── tests/                   # Test suite (35 tests)
+│       ├── test_config.py      
+│       ├── test_dependencies.py
+│       ├── test_agent_service.py
+│       └── test_endpoints.py
 │
-├── frontend/                       # React 19 TypeScript frontend
+├── frontend/                     # React TypeScript frontend
 │   ├── src/
-│   │   ├── components/            # React components
-│   │   │   ├── ChatInterface.tsx  # Main chat interface
-│   │   │   ├── MessageList.tsx    # Message display
-│   │   │   ├── MessageInput.tsx   # Input component
-│   │   │   └── StatusBadge.tsx    # Agent status indicator
-│   │   ├── api/                   # API client
-│   │   │   └── agent.ts           # Agent API calls (Axios)
-│   │   ├── store/                 # Zustand state management
-│   │   │   └── agentStore.ts      # Agent state
-│   │   ├── types/                 # TypeScript type definitions
-│   │   ├── hooks/                 # Custom React hooks
-│   │   ├── test/                  # Test files (30 tests)
-│   │   ├── App.tsx                # Main App component
-│   │   └── main.tsx               # React entry point with TanStack Query
-│   ├── package.json               # Node.js dependencies & scripts
-│   ├── vite.config.ts             # Vite configuration
-│   ├── vitest.config.ts           # Vitest test configuration
-│   └── README.md                  # Frontend-specific documentation
+│   │   ├── App.tsx              # Main app
+│   │   ├── main.tsx             # Entry point
+│   │   ├── components/          # React components
+│   │   │   ├── ChatInterface.tsx
+│   │   │   ├── MessageList.tsx
+│   │   │   └── MessageInput.tsx
+│   │   ├── api/
+│   │   │   └── agent.ts         # API client
+│   │   ├── store/
+│   │   │   └── agentStore.ts    # Zustand store
+│   │   └── test/                # Test files
+│   ├── package.json
+│   └── vite.config.ts
 │
-├── claudecodeenv/                 # Python virtual environment (gitignored)
-├── .env                           # Environment variables (create from .env.example)
-├── .env.example                   # Environment variables template
-├── start.sh                       # Quick start script (both services)
-├── demo-plugins.sh                # Plugin installation demo script
-├── demo-hooks.sh                  # Hooks demonstration script
-├── pytest.ini                     # Pytest configuration
-├── SETUP.md                       # Detailed setup instructions
-├── README.md                      # This file (project overview)
-├── CLAUDE.md                      # Claude Code workflow documentation
-├── PLUGINS.md                     # Claude Code plugins setup guide
-├── PLUGIN-EXAMPLES.md             # Plugin use cases and examples
-├── HOOKS.md                       # Claude Code hooks guide
-└── .claude/                       # Claude Code configuration
-    ├── settings.json              # Project hooks configuration
-    └── hooks/                     # Hook scripts
-        ├── block-dangerous.sh     # Block destructive commands
-        ├── protect-files.sh       # Protect sensitive files
-        ├── run-tests.sh           # Auto-run tests after changes
-        └── project-context.txt    # Project context injection
+├── .claude/                      # Claude Code configuration
+│   ├── settings.json            # Hooks, permissions
+│   ├── hooks/                   # Hook scripts
+│   │   ├── block-dangerous.sh   # Safety: block rm -rf, dd, etc.
+│   │   ├── protect-files.sh     # Safety: protect .env, locks
+│   │   ├── run-tests.sh         # Automation: test after changes
+│   │   └── project-context.txt  # Context injection
+│   ├── agents/                  # Custom agents
+│   │   ├── backend-maintainer.md
+│   │   ├── code-reviewer.md
+│   │   ├── frontend-improver.md
+│   │   └── frontend-visual-inspector.md
+│   ├── commands/                # Custom commands
+│   │   └── component.md         # /component generator
+│   └── skills/                  # Skills
+│       └── start-dev/
+│           └── SKILL.md         # Start dev servers
+│
+├── .mcp.json                    # MCP server config
+├── .env.example                 # Environment template
+├── CLAUDE.md                    # Project documentation for Claude Code
+├── README.md                    # This file (labcamp guide)
+├── start.sh                     # Quick start script
+├── run-all-tests.sh            # Test orchestration
+└── requirements.txt             # Python dependencies
 ```
 
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check endpoint |
-| `POST` | `/api/v1/agent/chat` | Send message to agent (streaming supported) |
-| `GET` | `/api/v1/agent/status` | Check agent service status |
-
-### API Documentation
-
-Once the backend is running, visit:
-- **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
-## ✅ Testing & Verification
-
-### Check if Services are Running
-
-**1. Check Backend Health:**
-```bash
-# Health check endpoint
-curl http://localhost:8000/health
-
-# Expected response:
-# {"status":"healthy","service":"ClaudeCode Lab Agent"}
-```
-
-**2. Check Agent Status:**
-```bash
-# Agent service status
-curl http://localhost:8000/api/v1/agent/status
-
-# Expected response:
-# {"status":"Agent service is ready","agent_name":"lab-assistant"}
-```
-
-**3. Test Agent Chat (Non-Streaming):**
-```bash
-# Send a test message to the agent
-curl -X POST http://localhost:8000/api/v1/agent/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello, who are you?"}'
-
-# Expected: JSON response with agent reply
-```
-
-**4. Test Agent Chat (Streaming):**
-```bash
-# Stream agent response
-curl -X POST http://localhost:8000/api/v1/agent/chat \
-  -H "Content-Type: application/json" \
-  -H "Accept: text/event-stream" \
-  -d '{"message": "What is 2 + 2?", "stream": true}'
-
-# Expected: Server-Sent Events stream
-```
-
-**5. Check Frontend:**
-- Open browser to [http://localhost:5173](http://localhost:5173)
-- You should see the chat interface with "ClaudeCode Lab Agent" header
-- Status indicator should show "Ready" or agent name
-
-**6. Verify API Documentation:**
-```bash
-# Open in browser
-open http://localhost:8000/docs  # macOS
-# or
-xdg-open http://localhost:8000/docs  # Linux
-```
-
-### Check Process Status
-
-```bash
-# Check if backend is running
-lsof -i :8000
-# Should show Python process listening on port 8000
-
-# Check if frontend is running
-lsof -i :5173
-# Should show Node/Vite process listening on port 5173
-
-# Check AWS credentials
-aws sts get-caller-identity
-# Should return your AWS identity without errors
-```
-
-### Verify Logs
-
-**Backend Logs:**
-- Look for: `INFO: Application startup complete.`
-- Look for: `INFO: Uvicorn running on http://0.0.0.0:8000`
-
-**Frontend Logs:**
-- Look for: `VITE v[version] ready in [time]ms`
-- Look for: `➜ Local: http://localhost:5173/`
+---
 
 ## 🧪 Testing
 
-### Run Tests
+### Run All Tests
 
-**Backend Tests (43 tests):**
 ```bash
+# Backend tests (pytest)
 source claudecodeenv/bin/activate
 python -m pytest backend/tests/ -v
-```
 
-**Frontend Tests (30 tests):**
-```bash
+# Frontend tests (vitest)
 cd frontend
 npm test
+
+# Or run everything at once
+./run-all-tests.sh
 ```
 
-**Run All Tests (73 total):**
-```bash
-source claudecodeenv/bin/activate && \
-python -m pytest backend/tests/ -v && \
-cd frontend && npm test -- --run
+### Test Coverage
+
+**Backend:** 35 tests covering:
+- Configuration (Pydantic Settings)
+- Dependency injection (singleton AgentService)
+- Agent service (tools, streaming)
+- API endpoints (health, status, chat)
+
+**Frontend:** Tests covering:
+- API client (axios requests)
+- Store (Zustand state management)
+- Dependencies (import verification)
+
+---
+
+## 🛠️ Complete Development Workflow Example
+
+Let's walk through a real development session showing ALL features working together:
+
+### Scenario: Add a "Clear Chat" Button
+
+```
+# 1. Start Claude Code session
+→ SessionStart hook fires
+→ Injects project context from .claude/hooks/project-context.txt
+→ Claude knows: ports (8000, 5173), commit format, test requirements
+
+# 2. You ask: "Add a clear chat button to the UI"
+→ Claude delegates to frontend-improver agent (Step 6: Custom Agents)
+→ Agent analyzes ChatInterface component
+
+# 3. Generate button component
+You: "/component ClearButton A button to clear chat messages"
+→ Custom command fires (Step 4: Commands)
+→ Creates frontend/src/components/ClearButton.tsx
+→ PostToolUse hook fires (Step 2: Hooks)
+→ Prettier auto-formats the new file
+
+# 4. Claude modifies ChatInterface.tsx
+→ Adds import for ClearButton
+→ Wires up onClick handler to clear messages
+→ PostToolUse hook auto-formats the file
+→ TypeScript LSP plugin runs (Step 3: Plugins)
+→ No type errors detected ✓
+
+# 5. Run tests
+→ Claude runs: npm test
+→ All tests pass ✓
+
+# 6. Try dangerous command (accidentally)
+You: "Remove all test files with rm -rf frontend/src/test"
+→ PreToolUse hook fires (Step 2: Hooks)
+→ block-dangerous.sh detects dangerous pattern
+→ Command BLOCKED ✓
+
+# 7. Commit changes
+You: "/commit-commands:commit"
+→ Plugin generates conventional commit (Step 3: Plugins)
+→ Message: "feat: add clear chat button with confirmation"
+→ Commit created ✓
+
+# 8. Create pull request
+You: "Create a PR for this feature"
+→ GitHub plugin fires (Step 3: Plugins)
+→ Generates PR title, description, test plan
+→ Creates PR on GitHub ✓
+
+# 9. Create architecture diagram
+You: "Create a diagram showing the new button's data flow"
+→ MCP drawio server fires (Step 7: MCP)
+→ Generates .drawio file with visual diagram ✓
 ```
 
-**Test Coverage:**
-```bash
-# Backend coverage
-python -m pytest backend/tests/ --cov=backend --cov-report=html
-
-# Frontend coverage
-cd frontend && npm run test:coverage
-```
-
-### Try It Out
-
-Once both services are running, try these example queries in the UI:
-
-1. **Weather Query:**
-   ```
-   What's the weather in San Francisco?
-   ```
-
-2. **Safe Calculator (AST-based, no eval!):**
-   ```
-   Calculate 25 * 4 + 10
-   ```
-   Expected result: 110
-
-3. **Complex Math:**
-   ```
-   What is (100 - 25) * 3 + 50?
-   ```
-   Expected result: 275
-
-4. **General Chat:**
-   ```
-   Hello! What can you help me with?
-   ```
-
-5. **Security Test (should be rejected):**
-   ```
-   Calculate __import__('os').system('echo test')
-   ```
-   Expected: Error message about unsupported expression
-
-## 🛠️ Extending the Application
-
-### Adding New Tools
-
-Edit `backend/services/agent_service.py` and add new tools with the `@tool` decorator:
-
-```python
-from strands import tool
-
-@tool
-def my_new_tool(param: str) -> str:
-    """
-    Description of what this tool does.
-    The docstring is shown to Claude as the tool description.
-    
-    Args:
-        param: Parameter description
-    
-    Returns:
-        Result description
-    """
-    # Implementation here
-    # IMPORTANT: Validate inputs and implement safely
-    return f"Result for {param}"
-```
-
-Then add the tool to the Agent initialization:
-
-```python
-self.agent = Agent(
-    name="lab-assistant",
-    model=settings.CLAUDE_MODEL_ID,
-    system_prompt="...",  # Use system_prompt, not instructions
-    tools=[get_weather, calculate, my_new_tool]  # Add your tool here
-)
-```
-
-**Important Security Notes:**
-- Never use `eval()` or `exec()` in tools
-- Validate all inputs
-- Use type hints for parameters
-- Handle errors gracefully
-- Document security considerations
-
-### Customizing the Agent
-
-Modify the agent's behavior in `backend/services/agent_service.py`:
-
-- **Change system prompt:** Edit the `system_prompt` parameter (not `instructions`)
-- **Add/remove tools:** Modify the `tools` list
-- **Change model:** Update `CLAUDE_MODEL_ID` in `.env` file
-- **Call the agent:** Use `invoke_async(message)` (not `run_async`)
-- **Extract response:** Parse `AgentResult.to_dict()['message']['content']`
-
-## 🐛 Troubleshooting
-
-### AWS Credentials Error
-- Make sure AWS credentials are configured in your terminal session
-- Run `aws configure` to set up credentials
-- Or export them: `export AWS_ACCESS_KEY_ID=...`
-- Credentials should NOT be in .env file
-
-### Backend won't start
-- Verify AWS credentials in terminal: `aws sts get-caller-identity`
-- Check Python version: `python --version` (should be 3.14.0)
-- Ensure virtual environment is activated: `source claudecodeenv/bin/activate`
-- Try reinstalling dependencies: `pip install -r requirements.txt`
-
-### Frontend build errors
-- Clear node_modules: `rm -rf node_modules && npm install`
-- Check Node version: `node --version` (should be 18+)
-- Verify all dependencies installed: `npm install`
-
-### Port Already in Use
-- Backend (8000): Change `API_PORT` in `.env`
-- Frontend (5173): Change port in `frontend/vite.config.ts`
-
-### Import Errors
-- Activate virtual environment before running backend
-- Ensure all dependencies are installed
-
-For more detailed troubleshooting, see [SETUP.md](SETUP.md)
-
-## 📝 Git Workflow
-
-- **Main branch:** `main`
-- **Feature branch:** `feature/lab-work`
-
-Commit changes to the feature branch:
-```bash
-git add .
-git commit -m "Your commit message"
-git push origin feature/lab-work
-```
-
-## 📋 Quick Reference Commands
-
-### Development Commands
-
-```bash
-# Activate Python virtual environment
-source claudecodeenv/bin/activate
-
-# Start backend
-python backend/main.py
-
-# Start frontend (in separate terminal)
-cd frontend && npm run dev
-
-# Start both services
-./start.sh
-
-# Install backend dependencies
-pip install -r requirements.txt
-
-# Install frontend dependencies
-cd frontend && npm install
-```
-
-### Testing Commands
-
-```bash
-# Test backend health
-curl http://localhost:8000/health
-
-# Test agent status
-curl http://localhost:8000/api/v1/agent/status
-
-# Test chat endpoint
-curl -X POST http://localhost:8000/api/v1/agent/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Hello"}'
-
-# Check running processes
-lsof -i :8000  # Backend
-lsof -i :5173  # Frontend
-
-# Verify AWS credentials
-aws sts get-caller-identity
-```
-
-### Git Commands
-
-```bash
-# Check status
-git status
-
-# Commit changes
-git add .
-git commit -m "feat: your message"
-
-# Push to feature branch
-git push origin feature/lab-work
-
-# Pull latest changes
-git pull origin feature/lab-work
-```
-
-### Troubleshooting Commands
-
-```bash
-# Check Python version
-python --version
-
-# Check Node version
-node --version
-
-# List installed Python packages
-pip list
-
-# Kill process on port
-lsof -ti:8000 | xargs kill -9  # Backend
-lsof -ti:5173 | xargs kill -9  # Frontend
-
-# Clear frontend cache
-cd frontend && rm -rf node_modules dist && npm install
-
-# Reinstall backend dependencies
-pip install --force-reinstall -r requirements.txt
-```
-
-## 🔌 Claude Code Plugins
-
-This project includes Claude Code plugins to showcase professional development tooling. Plugins enhance the development experience with:
-
-- **TypeScript LSP** - Real-time type checking for React components
-- **Pyright LSP** - Python type safety for FastAPI backend
-- **GitHub Integration** - PR creation, issue management, code review
-- **Commit Commands** - Automated conventional commit messages
-
-### Quick Plugin Setup
-
-```bash
-# Install all recommended plugins
-/plugin install typescript-lsp@claude-plugins-official
-/plugin install pyright-lsp@claude-plugins-official
-/plugin install github@claude-plugins-official
-/plugin marketplace add anthropics/claude-code
-/plugin install commit-commands@anthropics-claude-code
-/reload-plugins
-```
-
-### Demo Script
-
-Run the plugin demo to install language server binaries and see usage examples:
-
-```bash
-./demo-plugins.sh
-```
-
-### Documentation
-
-- **[PLUGINS.md](PLUGINS.md)** - Complete plugin setup guide with installation instructions
-- **[PLUGIN-EXAMPLES.md](PLUGIN-EXAMPLES.md)** - Real-world use cases and educational examples
-- **[Official Plugins](https://claude.com/plugins)** - Browse the official plugin marketplace
-
-### Educational Benefits
-
-Plugins demonstrate:
-- How professional IDEs provide real-time type checking
-- Language Server Protocol (LSP) architecture
-- Git workflow automation and best practices
-- Cross-tool integration (GitHub, Slack, etc.)
-- Type-driven development patterns
-
-## 🪝 Claude Code Hooks
-
-This project includes hooks that automate workflows and enforce best practices. Hooks run shell commands automatically at key points in Claude Code's lifecycle.
-
-### Active Hooks
-
-**Configured in `.claude/settings.json`:**
-
-- **Auto-format code** - Prettier runs after every file edit
-- **Block dangerous commands** - Prevents destructive operations (rm -rf, dd, fork bombs)
-- **Protect sensitive files** - Blocks edits to .env, lock files, git internals
-- **Inject project context** - Reminds Claude of project rules on session start
-
-### View Hooks
-
-```bash
-# In Claude Code, type:
-/hooks
-```
-
-This shows all configured hooks, when they trigger, and their commands.
-
-### Demo Script
-
-Run the hooks demo to test safety features:
-
-```bash
-./demo-hooks.sh
-```
-
-**Example tests:**
-- Attempts to run `rm -rf /` → Blocked ✅
-- Attempts to edit `.env` → Blocked ✅  
-- Safe commands like `ls -la` → Allowed ✅
-
-### Documentation
-
-- **[HOOKS.md](HOOKS.md)** - Complete hooks guide with examples and student exercises
-- **[Hooks Reference](https://code.claude.com/docs/en/hooks)** - Official hooks documentation
-
-### Educational Benefits
-
-Hooks demonstrate:
-- Automated code formatting (consistency without manual work)
-- Security gates (prevent destructive operations)
-- File protection strategies (safeguard credentials and configs)
-- Context injection (maintain consistency across sessions)
-- Event-driven automation (respond to tool calls, file changes, etc.)
+**What just happened:**
+- ✅ **CLAUDE.md** guided the process (Step 1)
+- ✅ **Hooks** auto-formatted and blocked dangerous commands (Step 2)
+- ✅ **Plugins** caught type errors and created PR (Step 3)
+- ✅ **Custom Command** generated component (Step 4)
+- ✅ **Custom Agent** handled frontend work (Step 6)
+- ✅ **MCP Server** created diagram (Step 7)
+- ✅ **settings.json** wired it all together (Step 8)
+
+**Result:** Feature implemented, tested, committed, and PR'd - all with automated safety checks, formatting, and quality verification.
+
+---
+
+## 🎯 Key Takeaways for Labcamp
+
+### Productivity Gains
+
+1. **Automation:** No manual formatting, safety checks, or repetitive tasks
+2. **Safety:** Hooks prevent destructive operations and protect sensitive files
+3. **Quality:** Plugins catch type errors before runtime
+4. **Speed:** Commands and skills reduce multi-step workflows to one command
+5. **Collaboration:** Agents handle specialized tasks in parallel
+6. **Integration:** MCP connects to any external tool or service
+
+### Best Practices
+
+1. **Document everything** in CLAUDE.md (commands, rules, architecture)
+2. **Use hooks** for automated formatting and safety checks
+3. **Install plugins** for type checking and IDE features
+4. **Create commands** for common repetitive tasks
+5. **Define skills** for complex multi-step workflows
+6. **Leverage agents** for specialized work (backend, frontend, review)
+7. **Add MCP servers** for external tool integration
+8. **Centralize config** in settings.json
+
+### Common Pitfalls to Avoid
+
+❌ **Don't skip CLAUDE.md** - It's the foundation of project understanding
+❌ **Don't disable hooks** - They prevent accidents and ensure consistency
+❌ **Don't ignore plugins** - Type checking saves hours of debugging
+❌ **Don't commit secrets** - Hooks protect .env but always double-check
+❌ **Don't bypass tests** - All tests must pass before committing
+
+---
 
 ## 📚 Additional Resources
 
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Strands Agents SDK](https://strandsagents.com/docs/)
-- [React Documentation](https://react.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Claude API Documentation](https://docs.anthropic.com/)
-- [Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)
-- [Claude Code Plugins](https://code.claude.com/docs/en/discover-plugins)
+### Official Documentation
+- **Claude Code:** [code.claude.com/docs](https://code.claude.com/docs)
+- **CLAUDE.md Guide:** [code.claude.com/docs/en/memory](https://code.claude.com/docs/en/memory)
+- **Hooks Reference:** [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks)
+- **Plugins Guide:** [code.claude.com/docs/en/discover-plugins](https://code.claude.com/docs/en/discover-plugins)
+- **MCP Specification:** [modelcontextprotocol.io](https://modelcontextprotocol.io)
+
+### Framework Documentation
+- **FastAPI:** [fastapi.tiangolo.com](https://fastapi.tiangolo.com/)
+- **Strands SDK:** [strandsagents.com/docs](https://strandsagents.com/docs/)
+- **React:** [react.dev](https://react.dev/)
+- **Tailwind CSS:** [tailwindcss.com](https://tailwindcss.com/)
+
+### Community & Support
+- **GitHub Issues:** [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
+- **Plugin Marketplace:** [claude.com/plugins](https://claude.com/plugins)
+- **MCP Servers:** [github.com/modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers)
+
+---
+
+## 🤝 Contributing
+
+This project is for educational purposes (ClaudeCode Labcamp). To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+**Commit Format:** Use conventional commits (feat:, fix:, chore:, docs:, test:)
+
+---
 
 ## 📄 License
 
 This project is part of the ClaudeCode Labcamp learning environment.
 
+---
+
+## 🙏 Acknowledgments
+
+- Built with [Claude 4](https://www.anthropic.com/claude) via Amazon Bedrock
+- Powered by [Strands Agents SDK](https://strandsagents.com/)
+- UI components styled with [Tailwind CSS](https://tailwindcss.com/)
+- Development accelerated with [Claude Code](https://claude.ai/code)
+
+---
+
+**Happy coding! 🚀**
+
+*This project demonstrates how Claude Code's 8 core features work together to boost daily productivity through automation, safety, and verification.*

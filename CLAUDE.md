@@ -101,99 +101,42 @@ python -m pytest backend/tests/ --cov=backend --cov-report=html
 ptw backend/tests/
 ```
 
-**Current coverage:** 43 tests covering config, dependencies, agent service, and endpoints
+**Current coverage:** 35 tests total covering config, dependencies, agent service, endpoints, API client, and store
 
-### Frontend Testing
-
-**Test suite includes:**
-- Dependency tests (`dependencies.test.ts`) - Verify all packages are importable
-- API client tests (`agent.test.ts`) - Axios requests and error handling
-- Store tests (`agentStore.test.ts`) - Zustand state management
-- Component tests (`MessageInput.test.tsx`, `MessageList.test.tsx`) - React components
-
-**Run frontend tests:**
+**Run all tests:**
 ```bash
-cd frontend
-
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm test -- --watch
-
-# Run tests with UI
-npm run test:ui
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run specific test file
-npm test -- agent.test.ts
+./run-all-tests.sh
 ```
-
-**Current coverage:** 30 tests covering API, store, and components
 
 ### Testing Requirements
 
 **CRITICAL - Run tests before every change:**
-1. **Before making any code changes:** Run the full test suite for the area you're modifying (backend or frontend)
+1. **Before making any code changes:** Run the full test suite
 2. **After making changes:** Re-run tests to ensure nothing broke
-3. **Before committing:** All tests must pass - no exceptions
+3. **Before committing:** All tests must pass (35 tests total)
 4. **When adding new features:** Write tests for new functionality
 5. **When fixing bugs:** Add tests that reproduce the bug, then fix it
-
-**Test-Driven Development (TDD) workflow:**
-```bash
-# 1. Run tests to establish baseline
-source claudecodeenv/bin/activate && python -m pytest backend/tests/ -v
-
-# 2. Make your changes
-
-# 3. Run tests again to verify
-python -m pytest backend/tests/ -v
-
-# 4. If tests fail, fix the issue and repeat step 3
-```
-
-### Continuous Integration
-
-**On every commit, verify:**
-- All backend tests pass (`pytest backend/tests/`)
-- All frontend tests pass (`cd frontend && npm test -- --run`)
-- No linting errors (`npm run lint` in frontend)
-- Backend starts successfully (`python -m backend.main`)
-
-**Before pushing to GitHub:**
-```bash
-# Quick validation script
-source claudecodeenv/bin/activate
-python -m pytest backend/tests/ -v && \
-cd frontend && npm test -- --run && npm run lint
-```
 
 ## Architecture Overview
 
 ### Backend Structure
 
-The backend has **two implementations** - use the NEW one:
-
-**NEW Implementation (actively maintained):**
 ```
 backend/
-├── main.py              # FastAPI app entry point (USE THIS)
+├── main.py              # FastAPI app entry point
 ├── config.py            # Pydantic Settings for env vars
 ├── api/                 # API layer
 │   ├── routes.py       # Route aggregation
 │   ├── dependencies.py # Dependency injection (singleton AgentService)
 │   └── endpoints/
 │       └── agent.py    # Agent chat endpoints with input validation
-└── services/            # Business logic
-    └── agent_service.py # Strands SDK agent service with safe tools
-```
-
-**OLD Implementation (legacy, DO NOT USE):**
-```
-backend/app/            # Legacy code - ignore this directory
+├── services/            # Business logic
+│   └── agent_service.py # Strands SDK agent service with safe tools
+└── tests/               # Test suite (35 tests)
+    ├── test_config.py
+    ├── test_dependencies.py
+    ├── test_agent_service.py
+    └── test_endpoints.py
 ```
 
 **Key architectural decisions:**
@@ -327,10 +270,10 @@ This project includes hooks to automate workflows and enforce best practices. Se
 ## Important Notes
 
 - **Do not read `claudecodeenv/` folder** - Python virtual env, wastes tokens
-- **Do not read `backend/app/`** - Legacy implementation, use `backend/main.py` instead
 - **Always activate virtual environment** before running backend: `source claudecodeenv/bin/activate`
 - **AWS credentials required** - Agent will fail without valid Bedrock access
 - **Frontend proxies API** - Vite proxies `/api` to `http://localhost:8000` (see `vite.config.ts`)
+- **All tests must pass** - Run `./run-all-tests.sh` before committing
 
 ## Tech Stack Reference
 
@@ -354,39 +297,13 @@ This project includes hooks to automate workflows and enforce best practices. Se
 
 
 ## Rules
-- **ALWAYS run tests before and after making changes** - This is non-negotiable
+- **ALWAYS run tests before and after making changes** - Use `./run-all-tests.sh`
 - Always use conventional commits: feat:, fix:, chore:, docs:, test:
 - After every change, run tests, then commit AND push to GitHub automatically
 - Backend is in /backend — Python, FastAPI, Strands SDK
 - Frontend is in /frontend — TypeScript, React, Vite
 - Never use print() for logging — use Python logging module
 - Never commit secrets or .env files
-- All tests must pass before committing - no exceptions
+- All 35 tests must pass before committing
 - When adding features, write tests for them
 - When fixing bugs, add regression tests
-
-## Test Commands
-
-### Backend Tests
-```bash
-source claudecodeenv/bin/activate
-python -m pytest backend/tests/ -v                    # All tests
-python -m pytest backend/tests/test_config.py -v      # Specific file
-python -m pytest backend/tests/ --cov=backend         # With coverage
-```
-
-### Frontend Tests
-```bash
-cd frontend
-npm test                    # All tests
-npm test -- agent.test.ts   # Specific file
-npm run test:coverage       # With coverage
-npm run test:ui             # Interactive UI
-```
-
-### Quick Validation (run before every commit)
-```bash
-source claudecodeenv/bin/activate && \
-python -m pytest backend/tests/ -v && \
-cd frontend && npm test -- --run
-```
