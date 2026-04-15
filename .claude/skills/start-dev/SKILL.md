@@ -26,7 +26,7 @@ When this skill is invoked:
 3. **Report to user:**
    - Backend API: http://localhost:8000
    - Backend Docs: http://localhost:8000/docs
-   - Frontend: http://localhost:5173
+   - Frontend: 
    - Let them know both servers are starting in the background
 
 ## Notes

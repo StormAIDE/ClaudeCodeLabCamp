@@ -8,10 +8,12 @@ import MessageInput from './MessageInput'
 export default function ChatInterface() {
   const { messages, addMessage, setStatus, clearMessages } = useAgentStore()
   const [input, setInput] = useState('')
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messageListRef = useRef<HTMLDivElement | null>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight
+    }
   }
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function ChatInterface() {
           </div>
         </div>
 
-        <MessageList messages={messages} messagesEndRef={messagesEndRef} isLoading={chatMutation.isPending} />
+        <MessageList messages={messages} containerRef={messageListRef} isLoading={chatMutation.isPending} />
         <MessageInput
           value={input}
           onChange={setInput}

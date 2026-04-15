@@ -2,7 +2,7 @@ import { type Message } from '../store/agentStore'
 
 interface MessageListProps {
   messages: Message[]
-  messagesEndRef: React.RefObject<HTMLDivElement | null>
+  containerRef?: React.RefObject<HTMLDivElement | null>
   isLoading?: boolean
 }
 
@@ -41,7 +41,7 @@ const TypingIndicator = () => (
   </div>
 )
 
-export default function MessageList({ messages, messagesEndRef, isLoading = false }: MessageListProps) {
+export default function MessageList({ messages, containerRef, isLoading = false }: MessageListProps) {
 
   if (messages.length === 0) {
     return (
@@ -77,7 +77,7 @@ export default function MessageList({ messages, messagesEndRef, isLoading = fals
   }
 
   return (
-    <div className="h-[32rem] overflow-y-auto px-6 py-4 space-y-6 scroll-smooth">
+    <div ref={containerRef} className="h-[32rem] overflow-y-auto overscroll-behavior-contain px-6 py-4 space-y-6 scroll-smooth">
       {messages.map((message, index) => {
         const isUser = message.role === 'user'
         const isFirstInGroup = index === 0 || messages[index - 1]?.role !== message.role
@@ -142,8 +142,6 @@ export default function MessageList({ messages, messagesEndRef, isLoading = fals
 
       {/* Typing indicator */}
       {isLoading && <TypingIndicator />}
-
-      <div ref={messagesEndRef} />
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import axios from 'axios'
-import type { ChatResponse } from './agent'
 
 describe('agent API', () => {
   const mockPost = vi.fn()
