@@ -255,10 +255,9 @@ This project uses Claude Code plugins to enhance development workflow and demons
 
 ## Claude Code Hooks
 
-This project includes hooks to automate workflows and enforce best practices. See **[HOOKS.md](HOOKS.md)** for complete guide.
+This project includes hooks to automate workflows and enforce best practices.
 
 **Active hooks:**
-- **Auto-format code** - Prettier runs after every Edit/Write
 - **Block dangerous commands** - Prevents destructive operations (rm -rf, dd, etc.)
 - **Protect sensitive files** - Blocks edits to .env, lock files, git internals
 - **Inject project context** - Reminds Claude of project rules on session start
@@ -266,6 +265,11 @@ This project includes hooks to automate workflows and enforce best practices. Se
 **Hooks are configured in:** `.claude/settings.json`
 
 **View hooks:** Type `/hooks` in Claude Code
+
+**Note:** For code formatting, use Prettier manually when needed:
+```bash
+npx prettier --write <file>
+```
 
 ## Important Notes
 

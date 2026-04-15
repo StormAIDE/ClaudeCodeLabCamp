@@ -3,7 +3,7 @@
 1. **Always run tests before committing:**
    - Backend: source claudecodeenv/bin/activate && python -m pytest backend/tests/
    - Frontend: cd frontend && npm test -- --run
-   - All 73 tests must pass (43 backend + 30 frontend)
+   - All 35 tests must pass
 
 2. **Ports are fixed (never change these):**
    - Backend: 8000

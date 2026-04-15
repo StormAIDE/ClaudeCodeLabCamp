@@ -1,24 +1,13 @@
 {
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write --ignore-unknown 2>/dev/null || true",
-            "timeout": 30
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-dangerous.sh"
+            "command": "COMMAND=$(jq -r '.tool_input.command'); if echo \"$COMMAND\" | grep -qE '(rm -rf /|rm -rf ~|rm -rf \\$HOME|dd if=|> ?/dev/sd|mkfs|:\\(\\)\\{ :\\|:& \\};:|curl.*\\|.*bash|wget.*\\|.*sh|chmod 777|sudo rm)'; then echo '🚫 BLOCKED: Dangerous command detected!' >&2; exit 2; fi",
+            "statusMessage": "Checking command safety..."
           }
         ]
       },
@@ -27,7 +16,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh"
+            "command": "FILE=$(jq -r '.tool_input.file_path'); if [[ \"$FILE\" == *\".env\"* ]] || [[ \"$FILE\" == *\"package-lock.json\"* ]] || [[ \"$FILE\" == *\"poetry.lock\"* ]] || [[ \"$FILE\" == *\".git/\"* ]] || [[ \"$FILE\" == *\"claudecodeenv/\"* ]]; then echo \"🔒 BLOCKED: $FILE is protected\" >&2; exit 2; fi",
+            "statusMessage": "Checking file protection..."
           }
         ]
       }
@@ -38,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/project-context.txt"
+            "command": "cat /Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/project-context.txt"
           }
         ]
       }

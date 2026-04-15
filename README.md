@@ -166,19 +166,8 @@ Shell scripts that run automatically at specific points in Claude Code's lifecyc
 
 **Active Hooks in This Project:**
 
-#### Hook #1: Auto-Format Code with Prettier
-**Event:** `PostToolUse` (after Edit/Write tools)
-**Command:** `jq -r '.tool_input.file_path' | xargs npx prettier --write`
-**What it does:** Automatically formats any file Claude edits
-
-**Try it:**
-1. Ask Claude to edit a TypeScript file
-2. Watch the file get auto-formatted with Prettier
-3. Check git diff - consistent formatting applied
-
-#### Hook #2: Block Dangerous Commands
+#### Hook #1: Block Dangerous Commands
 **Event:** `PreToolUse` (before Bash tool)
-**Script:** `.claude/hooks/block-dangerous.sh`
 **What it does:** Prevents destructive operations like `rm -rf /`, `dd`, fork bombs
 
 **Try it:**
@@ -187,10 +176,9 @@ You: "Run the command: rm -rf /"
 Claude: [BLOCKED] 🚫 Command matches dangerous pattern 'rm -rf /'
 ```
 
-#### Hook #3: Protect Sensitive Files
+#### Hook #2: Protect Sensitive Files
 **Event:** `PreToolUse` (before Edit/Write tools)
-**Script:** `.claude/hooks/protect-files.sh`
-**What it does:** Blocks edits to `.env`, lock files, `.git/`, `node_modules/`
+**What it does:** Blocks edits to `.env`, lock files, `.git/`, `claudecodeenv/`
 
 **Try it:**
 ```
@@ -198,7 +186,7 @@ You: "Edit the .env file to add a new variable"
 Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by automation
 ```
 
-#### Hook #4: Inject Project Context
+#### Hook #3: Inject Project Context
 **Event:** `SessionStart`
 **File:** `.claude/hooks/project-context.txt`
 **What it does:** Reminds Claude of project rules every session (ports, commit format, test requirements)
@@ -209,10 +197,15 @@ Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by a
 3. Notice it already knows the ports (8000, 5173) and commit format without you telling it
 
 **Educational Value:**
-- **Automation:** No manual formatting or safety checks needed
 - **Safety:** Prevents accidents (rm -rf, editing credentials)
 - **Consistency:** Same rules apply every time, every session
 - **Productivity:** Focus on features, not repetitive tasks
+- **Context:** Claude knows project rules on session start
+
+**Note:** For code formatting, use Prettier manually when needed:
+```bash
+npx prettier --write <file>
+```
 
 **View all hooks:**
 ```bash
@@ -576,7 +569,6 @@ Central configuration file that ties all Claude Code features together
 ```json
 {
   "hooks": {
-    "PostToolUse": [...],     // Auto-format after edits
     "PreToolUse": [...],      // Block dangerous commands, protect files
     "SessionStart": [...]     // Inject project context
   }
@@ -650,9 +642,6 @@ ClaudeCodeLabCamp/
 ├── .claude/                      # Claude Code configuration
 │   ├── settings.json            # Hooks, permissions
 │   ├── hooks/                   # Hook scripts
-│   │   ├── block-dangerous.sh   # Safety: block rm -rf, dd, etc.
-│   │   ├── protect-files.sh     # Safety: protect .env, locks
-│   │   ├── run-tests.sh         # Automation: test after changes
 │   │   └── project-context.txt  # Context injection
 │   ├── agents/                  # Custom agents
 │   │   ├── backend-maintainer.md
@@ -728,39 +717,32 @@ Let's walk through a real development session showing ALL features working toget
 You: "/component ClearButton A button to clear chat messages"
 → Custom command fires (Step 4: Commands)
 → Creates frontend/src/components/ClearButton.tsx
-→ PostToolUse hook fires (Step 2: Hooks)
-→ Prettier auto-formats the new file
 
 # 4. Claude modifies ChatInterface.tsx
 → Adds import for ClearButton
 → Wires up onClick handler to clear messages
-→ PostToolUse hook auto-formats the file
 → TypeScript LSP plugin runs (Step 3: Plugins)
 → No type errors detected ✓
 
-# 5. Run tests
-→ Claude runs: npm test
-→ All tests pass ✓
-
-# 6. Try dangerous command (accidentally)
+# 5. Try dangerous command (accidentally)
 You: "Remove all test files with rm -rf frontend/src/test"
 → PreToolUse hook fires (Step 2: Hooks)
-→ block-dangerous.sh detects dangerous pattern
+→ Dangerous command detected
 → Command BLOCKED ✓
 
-# 7. Commit changes
+# 6. Commit changes
 You: "/commit-commands:commit"
 → Plugin generates conventional commit (Step 3: Plugins)
 → Message: "feat: add clear chat button with confirmation"
 → Commit created ✓
 
-# 8. Create pull request
+# 7. Create pull request
 You: "Create a PR for this feature"
 → GitHub plugin fires (Step 3: Plugins)
 → Generates PR title, description, test plan
 → Creates PR on GitHub ✓
 
-# 9. Create architecture diagram
+# 8. Create architecture diagram
 You: "Create a diagram showing the new button's data flow"
 → MCP drawio server fires (Step 7: MCP)
 → Generates .drawio file with visual diagram ✓
@@ -768,14 +750,14 @@ You: "Create a diagram showing the new button's data flow"
 
 **What just happened:**
 - ✅ **CLAUDE.md** guided the process (Step 1)
-- ✅ **Hooks** auto-formatted and blocked dangerous commands (Step 2)
+- ✅ **Hooks** blocked dangerous commands and protected files (Step 2)
 - ✅ **Plugins** caught type errors and created PR (Step 3)
 - ✅ **Custom Command** generated component (Step 4)
 - ✅ **Custom Agent** handled frontend work (Step 6)
 - ✅ **MCP Server** created diagram (Step 7)
 - ✅ **settings.json** wired it all together (Step 8)
 
-**Result:** Feature implemented, tested, committed, and PR'd - all with automated safety checks, formatting, and quality verification.
+**Result:** Feature implemented, tested, committed, and PR'd - all with automated safety checks and quality verification.
 
 ---
 
@@ -783,12 +765,12 @@ You: "Create a diagram showing the new button's data flow"
 
 ### Productivity Gains
 
-1. **Automation:** No manual formatting, safety checks, or repetitive tasks
-2. **Safety:** Hooks prevent destructive operations and protect sensitive files
-3. **Quality:** Plugins catch type errors before runtime
-4. **Speed:** Commands and skills reduce multi-step workflows to one command
-5. **Collaboration:** Agents handle specialized tasks in parallel
-6. **Integration:** MCP connects to any external tool or service
+1. **Safety:** Hooks prevent destructive operations and protect sensitive files
+2. **Quality:** Plugins catch type errors before runtime
+3. **Speed:** Commands and skills reduce multi-step workflows to one command
+4. **Collaboration:** Agents handle specialized tasks in parallel
+5. **Integration:** MCP connects to any external tool or service
+6. **Context:** Project rules and architecture documented in CLAUDE.md
 
 ### Best Practices
 
