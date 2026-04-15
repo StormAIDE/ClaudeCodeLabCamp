@@ -114,7 +114,7 @@ npm run dev
 - **Backend:** FastAPI, Strands SDK, Pydantic, Python 3.14
 - **Frontend:** React 19, TypeScript, Vite, Zustand, TanStack Query, Tailwind CSS
 - **AI:** Claude 4 via Amazon Bedrock
-- **Testing:** Pytest (backend), Vitest (frontend) - 35 tests total
+- **Testing:** Pytest (backend: 43 tests), Vitest (frontend: 19 tests) - 62 tests total
 
 ---
 
@@ -372,56 +372,6 @@ Expected: Claude analyzes changes, generates conventional commit message, commit
 /reload-plugins            # Apply plugin changes
 ```
 
-### Testing All Plugins (For Participants)
-
-After installing all plugins, verify they work with these commands:
-
-#### Test 1: TypeScript LSP ✅
-```
-Ask Claude: "Add a maxMessages prop to ChatInterface.tsx with type string, then undo the change"
-```
-**Expected:** TypeScript LSP immediately reports unused prop warning
-**What it proves:** Real-time type checking works
-
-#### Test 2: Pyright LSP ✅  
-```
-Ask Claude: "Add this line to backend/config.py: test_port: int = '8000', then undo it"
-```
-**Expected:** Pyright catches type mismatch (might show in IDE, not always in tool output)
-**What it proves:** Python type checking is active
-
-#### Test 3: GitHub Plugin ✅
-```
-Ask Claude: "List all PRs for the feature/lab-work branch using the GitHub plugin"
-```
-**Expected:** Claude uses `gh pr list` and shows PR details
-**What it proves:** GitHub CLI integration works
-
-#### Test 4: Commit Commands Plugin ✅
-```
-1. Ask Claude: "Add a comment '# Test plugin' to backend/config.py"
-2. Ask Claude: "Use the commit skill to commit this change"
-3. Ask Claude: "Undo the commit with git reset HEAD~1 and restore the file"
-```
-**Expected:** Claude generates conventional commit message, commits, then cleans up
-**What it proves:** Automated commit workflow works
-
-**Quick verification script:**
-```bash
-# Run all 4 tests in sequence
-echo "Testing TypeScript LSP..."
-# (Copy test 1 command above)
-
-echo "Testing Pyright LSP..."
-# (Copy test 2 command above)
-
-echo "Testing GitHub plugin..."
-# (Copy test 3 command above)
-
-echo "Testing Commit Commands..."
-# (Copy test 4 command above)
-```
-
 ---
 
 ### Step 4: Custom Commands - Slash Commands
@@ -619,38 +569,6 @@ Agent: [Takes screenshots, analyzes layout, suggests fixes]
 4. Agent completes task and reports back
 5. Claude integrates the results
 
-### Testing All Agents (For Participants)
-
-Verify each agent is operational with these commands:
-
-#### Test 1: Backend-Maintainer Agent ✅
-```
-Ask Claude: "Use the backend-maintainer agent to add a comment to backend/config.py, then remove it"
-Expected: Agent edits the Python file and restores it
-What it proves: Agent can read/write backend code
-```
-
-#### Test 2: Code-Reviewer Agent ✅
-```
-Ask Claude: "Use the code-reviewer agent to review backend/config.py briefly"
-Expected: Agent analyzes code and provides quality assessment
-What it proves: Agent can review code for quality and patterns
-```
-
-#### Test 3: Frontend-Improver Agent ✅
-```
-Ask Claude: "Use the frontend-improver agent to summarize ChatInterface.tsx"
-Expected: Agent reads and explains the React component
-What it proves: Agent can analyze frontend code
-```
-
-#### Test 4: Frontend-Visual-Inspector Agent ✅
-```
-Ask Claude: "Use the frontend-visual-inspector agent to confirm it has screenshot tools"
-Expected: Agent lists available Chrome DevTools MCP tools
-What it proves: Agent has visual inspection capabilities
-```
-
 ---
 
 ### Step 7: MCP Servers - External Tools
@@ -828,38 +746,6 @@ ClaudeCodeLabCamp/
 ├── run-all-tests.sh            # Test orchestration
 └── requirements.txt             # Python dependencies
 ```
-
----
-
-## 🧪 Testing
-
-### Run All Tests
-
-```bash
-# Backend tests (pytest)
-source claudecodeenv/bin/activate
-python -m pytest backend/tests/ -v
-
-# Frontend tests (vitest)
-cd frontend
-npm test
-
-# Or run everything at once
-./run-all-tests.sh
-```
-
-### Test Coverage
-
-**Backend:** 35 tests covering:
-- Configuration (Pydantic Settings)
-- Dependency injection (singleton AgentService)
-- Agent service (tools, streaming)
-- API endpoints (health, status, chat)
-
-**Frontend:** Tests covering:
-- API client (axios requests)
-- Store (Zustand state management)
-- Dependencies (import verification)
 
 ---
 
