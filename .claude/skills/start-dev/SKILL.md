@@ -1,3 +1,8 @@
+---
+name: start-dev
+description: Start both backend (FastAPI) and frontend (Vite) development servers
+---
+
 # Start Development Servers
 
 Starts both backend (FastAPI) and frontend (Vite) development servers.
