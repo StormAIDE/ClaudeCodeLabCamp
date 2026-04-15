@@ -480,6 +480,13 @@ export default function LoadingSpinner({
 - **Productivity:** Create components in seconds, not minutes
 - **Customization:** Define your own commands for your workflow
 
+**Verification command for participants:**
+```
+Ask Claude: "Use the /component command to create TestButton with description 'A simple test button', then delete it"
+Expected: Claude creates frontend/src/components/TestButton.tsx with proper TypeScript types and Tailwind styling, then removes it
+What it proves: Custom command generates components following project conventions
+```
+
 **Create your own command:**
 1. Create `.claude/commands/your-command.md`
 2. Add YAML frontmatter (name, description, usage)
@@ -524,6 +531,13 @@ Multi-step automated workflows that orchestrate multiple commands
 - **Consistency:** Same startup process every time
 - **Error handling:** Skill handles environment setup
 - **Background processes:** Both servers run simultaneously
+
+**Verification command for participants:**
+```
+Ask Claude: "Use the start-dev skill to start both servers, then stop them"
+Expected: Claude starts backend (port 8000) and frontend (port 5173) in background, confirms URLs, then stops both
+What it proves: Multi-step workflow automation with background processes
+```
 
 **Create your own skill:**
 1. Create `.claude/skills/your-skill/SKILL.md`
@@ -604,6 +618,38 @@ Agent: [Takes screenshots, analyzes layout, suggests fixes]
 3. Agent is spawned with specific instructions
 4. Agent completes task and reports back
 5. Claude integrates the results
+
+### Testing All Agents (For Participants)
+
+Verify each agent is operational with these commands:
+
+#### Test 1: Backend-Maintainer Agent ✅
+```
+Ask Claude: "Use the backend-maintainer agent to add a comment to backend/config.py, then remove it"
+Expected: Agent edits the Python file and restores it
+What it proves: Agent can read/write backend code
+```
+
+#### Test 2: Code-Reviewer Agent ✅
+```
+Ask Claude: "Use the code-reviewer agent to review backend/config.py briefly"
+Expected: Agent analyzes code and provides quality assessment
+What it proves: Agent can review code for quality and patterns
+```
+
+#### Test 3: Frontend-Improver Agent ✅
+```
+Ask Claude: "Use the frontend-improver agent to summarize ChatInterface.tsx"
+Expected: Agent reads and explains the React component
+What it proves: Agent can analyze frontend code
+```
+
+#### Test 4: Frontend-Visual-Inspector Agent ✅
+```
+Ask Claude: "Use the frontend-visual-inspector agent to confirm it has screenshot tools"
+Expected: Agent lists available Chrome DevTools MCP tools
+What it proves: Agent has visual inspection capabilities
+```
 
 ---
 
