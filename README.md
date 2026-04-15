@@ -27,14 +27,16 @@ Here's a comparison based on official Claude Code documentation:
 
 | Feature | What It Is | How To Use | Used In This Project? |
 |---------|-----------|------------|----------------------|
-| **Skills** | Prompt templates (SKILL.md files) that extend Claude's capabilities - you or Claude can invoke them | `/skill-name` or Claude invokes when relevant | ✅ Yes - `/start-dev` skill (see `.claude/skills/`) |
+| **Skills** | Prompt templates (SKILL.md or .md files) that extend Claude's capabilities - you or Claude can invoke them | `/skill-name` or Claude invokes when relevant | ✅ Yes - 2 skills: `/start-dev`, `/component` (see `.claude/skills/` and `.claude/commands/`) |
 | **Agents** | Specialized AI subagents that run in separate contexts with custom system prompts and tool access | Claude spawns automatically or you delegate explicitly | ✅ Yes - 4 custom agents (see `.claude/agents/`) |
 | **Hooks** | Shell scripts/HTTP endpoints/prompts that execute automatically at lifecycle events (PreToolUse, PostToolUse, SessionStart) | Configure in `.claude/settings.json` | ✅ Yes - 4 active hooks (see `.claude/hooks/`) |
 | **Plugins** | Packaged bundles from marketplaces that can include skills, agents, hooks, and MCP servers (curated, easy install) | `/plugin install <name>@marketplace` | ✅ Yes - Recommended but **not pre-installed** (see PLUGINS.md) |
 | **MCP Servers** | External tools via Model Context Protocol - can be standalone (configured in `.mcp.json`) OR bundled in plugins | Configure in `.mcp.json` or install via plugin | ✅ Yes - 2 servers configured (see `.mcp.json`) |
-| **Commands** | Built-in CLI commands that control Claude Code itself (not extensible by users) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Used throughout the project |
+| **Commands** | Built-in CLI commands that control Claude Code itself (not extensible) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Built-in commands used throughout |
 
 > **Note:** Skills, Agents, Hooks, and MCP Servers are **committed to the repo** in `.claude/` and `.mcp.json`. Plugins are **runtime-installed** per user (not in git) - see [PLUGINS.md](PLUGINS.md) for installation instructions.
+> 
+> **Skills vs Commands:** Custom commands (`.claude/commands/*.md`) have been merged into skills in Claude Code. Both `/component` (in commands) and `/start-dev` (in skills) work identically - they're both skills invokable with `/name`. The table refers to built-in commands like `/help` and `/settings` that are part of Claude Code itself.
 
 **Quick Mental Model:**
 
