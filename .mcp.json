@@ -7,6 +7,10 @@
     "chrome-devtools": {
       "command": "npx",
       "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "ppt": {
+      "command": "python",
+      "args": ["-m", "office_powerpoint_mcp"]
     }
   }
 }

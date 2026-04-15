@@ -31,7 +31,7 @@ Here's a comparison based on official Claude Code documentation:
 | **Agents** | Specialized AI subagents that run in separate contexts with custom system prompts and tool access | Claude spawns automatically or you delegate explicitly | ✅ Yes - 4 custom agents (see `.claude/agents/`) |
 | **Hooks** | Shell scripts/HTTP endpoints/prompts that execute automatically at lifecycle events (PreToolUse, PostToolUse, SessionStart) | Configure in `.claude/settings.json` | ✅ Yes - 4 active hooks (see `.claude/hooks/`) |
 | **Plugins** | Packaged bundles from marketplaces that can include skills, agents, hooks, and MCP servers (curated, easy install) | `/plugin install <name>@marketplace` | ✅ Yes - Recommended but **not pre-installed** (see PLUGINS.md) |
-| **MCP Servers** | External tools via Model Context Protocol - can be standalone (configured in `.mcp.json`) OR bundled in plugins | Configure in `.mcp.json` or install via plugin | ✅ Yes - 2 servers configured (see `.mcp.json`) |
+| **MCP Servers** | External tools via Model Context Protocol - can be standalone (configured in `.mcp.json`) OR bundled in plugins | Configure in `.mcp.json` or install via plugin | ✅ Yes - 3 servers configured: drawio, chrome-devtools, **ppt** (see `.mcp.json`) |
 | **Commands (Built-in)** | CLI commands that are part of Claude Code itself - **NOT** the same as custom commands (which are Skills) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Built-in commands used throughout |
 
 > **Note:** Skills, Agents, Hooks, and MCP Servers are **committed to the repo** in `.claude/` and `.mcp.json`. Plugins are **runtime-installed** per user (not in git) - see [PLUGINS.md](PLUGINS.md) for installation instructions.
@@ -669,10 +669,32 @@ Claude: [Uses chrome-devtools MCP]
 Result: Opens browser, navigates to localhost:5173, captures screenshot
 ```
 
+#### MCP #3: ppt (PowerPoint)
+**Purpose:** Create and edit PowerPoint presentations programmatically
+**Command:** `python -m office_powerpoint_mcp`
+**Prerequisite:** `pip install office-powerpoint-mcp` (included in requirements.txt)
+
+**What it does:**
+- Create presentations from scratch with 32 specialized tools
+- Edit existing .pptx files (round-trip editing)
+- Add slides, charts, images, tables, animations
+- Apply themes and professional formatting
+- Dynamic font sizing and layout management
+
+**Try it:**
+```
+You: "Create a 5-slide presentation about our ClaudeCode Lab project with architecture diagrams and save as demo.pptx"
+Claude: [Uses ppt MCP server]
+Result: Generates demo.pptx with title slide, architecture slides, charts, and professional formatting
+```
+
 **Educational Value:**
+- **Document generation:** Automate presentation creation for reports, demos, teaching
+- **Data visualization:** Convert project data into visual slides
+- **Professional output:** Generate polished presentations without manual formatting
 - **External integration:** Connect AI to any tool or service
-- **Visual outputs:** Generate diagrams, take screenshots
-- **Automation:** Browser testing, API calls, file operations
+- **Visual outputs:** Generate diagrams, take screenshots, create presentations
+- **Automation:** Browser testing, API calls, file operations, document creation
 - **Extensibility:** Add any MCP server to extend capabilities
 
 **How MCP works:**
