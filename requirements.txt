@@ -5,9 +5,6 @@ pydantic-settings==2.6.0
 strands-agents==0.1.0
 python-dotenv==1.0.1
 
-# MCP Server dependencies
-office-powerpoint-mcp>=0.1.0
-
 # Testing dependencies
 pytest==8.3.4
 pytest-asyncio==0.24.0
