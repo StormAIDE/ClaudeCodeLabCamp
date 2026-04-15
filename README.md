@@ -32,7 +32,7 @@ Here's a comparison based on official Claude Code documentation:
 | **Hooks** | Shell scripts/HTTP endpoints/prompts that execute automatically at lifecycle events (PreToolUse, PostToolUse, SessionStart) | Configure in `.claude/settings.json` | ✅ Yes - 4 active hooks (see `.claude/hooks/`) |
 | **Plugins** | Packaged bundles from marketplaces that can include skills, agents, hooks, and MCP servers (curated, easy install) | `/plugin install <name>@marketplace` | ✅ Yes - Recommended but **not pre-installed** (see PLUGINS.md) |
 | **MCP Servers** | External tools via Model Context Protocol - can be standalone (configured in `.mcp.json`) OR bundled in plugins | Configure in `.mcp.json` or install via plugin | ✅ Yes - 2 servers configured (see `.mcp.json`) |
-| **Commands** | Built-in CLI commands that control Claude Code itself (not extensible) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Built-in commands used throughout |
+| **Commands (Built-in)** | CLI commands that are part of Claude Code itself - **NOT** the same as custom commands (which are Skills) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Built-in commands used throughout |
 
 > **Note:** Skills, Agents, Hooks, and MCP Servers are **committed to the repo** in `.claude/` and `.mcp.json`. Plugins are **runtime-installed** per user (not in git) - see [PLUGINS.md](PLUGINS.md) for installation instructions.
 > 
@@ -40,12 +40,12 @@ Here's a comparison based on official Claude Code documentation:
 
 **Quick Mental Model:**
 
-- **Skills** = Instructions Claude can load on-demand (think: playbooks in a binder)
+- **Skills** = Instructions Claude can load on-demand (think: playbooks in a binder) - includes both `.claude/skills/` and `.claude/commands/`
 - **Agents** = Specialized AI workers in separate contexts (think: delegation to experts)
 - **Hooks** = Automation that runs at specific lifecycle events (think: guardrails & triggers)
 - **Plugins** = Packaged bundles from marketplaces (think: app store downloads)
 - **MCP Servers** = External tool connections via protocol (think: API integrations)
-- **Commands** = Built-in CLI features (think: control panel)
+- **Commands (Built-in)** = Non-extensible CLI features part of Claude Code itself (think: control panel buttons you can't customize)
 
 **Key Differences Explained:**
 
