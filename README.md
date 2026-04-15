@@ -276,10 +276,17 @@ Extensions that add IDE-like features to Claude Code (type checking, code naviga
 - Enables "Go to Definition", "Find References"
 
 **Try it:**
-1. Install the plugin
-2. Ask Claude to add a new prop to `ChatInterface.tsx` with wrong type
-3. Press `Ctrl+O` - see the type error caught instantly
-4. Claude fixes it in the same turn (no need to run the app!)
+1. Install the plugin: `/plugin install typescript-lsp@claude-plugins-official`
+2. Reload: `/reload-plugins`
+3. Ask Claude: "Add a new prop to ChatInterface.tsx with wrong type"
+4. Watch the TypeScript LSP catch the error instantly (no need to run the app!)
+5. Claude will see the diagnostic and can fix it immediately
+
+**Verification command for participants:**
+```
+Ask Claude: "Add a maxMessages prop to ChatInterface with type string, then try to use it in math"
+Expected: TypeScript LSP reports type error immediately
+```
 
 #### Plugin #2: Pyright LSP
 **What:** Type checking for Python/FastAPI backend
@@ -292,9 +299,16 @@ Extensions that add IDE-like features to Claude Code (type checking, code naviga
 - Ensures Pydantic models are correct
 
 **Try it:**
-1. Install the plugin
-2. Ask Claude to modify `agent_service.py` with wrong return type
-3. Pyright catches it before runtime
+1. Install the plugin: `/plugin install pyright-lsp@claude-plugins-official`
+2. Reload: `/reload-plugins`
+3. Ask Claude: "Add a type annotation error to backend/config.py"
+4. Pyright catches it before runtime
+
+**Verification command for participants:**
+```
+Ask Claude: "Add a line to backend/config.py: test_port: int = '8000'"
+Expected: Pyright LSP reports type mismatch (str assigned to int)
+```
 
 #### Plugin #3: GitHub Integration
 **What:** PR creation, issue management, code review automation
@@ -306,9 +320,14 @@ Extensions that add IDE-like features to Claude Code (type checking, code naviga
 - Review PRs with AI assistance
 
 **Try it:**
+1. Install the plugin: `/plugin install github@claude-plugins-official`
+2. Reload: `/reload-plugins`
+3. Ask Claude: "Show me the PRs for this branch"
+
+**Verification command for participants:**
 ```
-You: "Create a PR for this branch"
-Claude: [Creates PR with generated title, description, and test plan]
+Ask Claude: "Use the GitHub plugin to list all open PRs for the feature/lab-work branch"
+Expected: Claude uses `gh pr list` command and shows PR details
 ```
 
 #### Plugin #4: Commit Commands
@@ -325,9 +344,20 @@ Claude: [Creates PR with generated title, description, and test plan]
 - Commits automatically
 
 **Try it:**
-```bash
-/commit-commands:commit
-# Claude stages changes, generates message, creates commit
+1. Install the plugin:
+   ```bash
+   /plugin marketplace add anthropics/claude-code
+   /plugin install commit-commands@anthropics-claude-code
+   /reload-plugins
+   ```
+2. Make a small change (edit any file)
+3. Ask Claude: "Use the commit-commands skill to commit these changes"
+
+**Verification command for participants:**
+```
+1. Make a change: Ask Claude to "Add a comment to backend/config.py"
+2. Ask Claude: "Use the commit skill to create a commit"
+Expected: Claude analyzes changes, generates conventional commit message, commits
 ```
 
 **Educational Value:**
@@ -340,6 +370,56 @@ Claude: [Creates PR with generated title, description, and test plan]
 ```bash
 /plugin                    # Interactive plugin manager
 /reload-plugins            # Apply plugin changes
+```
+
+### Testing All Plugins (For Participants)
+
+After installing all plugins, verify they work with these commands:
+
+#### Test 1: TypeScript LSP ✅
+```
+Ask Claude: "Add a maxMessages prop to ChatInterface.tsx with type string, then undo the change"
+```
+**Expected:** TypeScript LSP immediately reports unused prop warning
+**What it proves:** Real-time type checking works
+
+#### Test 2: Pyright LSP ✅  
+```
+Ask Claude: "Add this line to backend/config.py: test_port: int = '8000', then undo it"
+```
+**Expected:** Pyright catches type mismatch (might show in IDE, not always in tool output)
+**What it proves:** Python type checking is active
+
+#### Test 3: GitHub Plugin ✅
+```
+Ask Claude: "List all PRs for the feature/lab-work branch using the GitHub plugin"
+```
+**Expected:** Claude uses `gh pr list` and shows PR details
+**What it proves:** GitHub CLI integration works
+
+#### Test 4: Commit Commands Plugin ✅
+```
+1. Ask Claude: "Add a comment '# Test plugin' to backend/config.py"
+2. Ask Claude: "Use the commit skill to commit this change"
+3. Ask Claude: "Undo the commit with git reset HEAD~1 and restore the file"
+```
+**Expected:** Claude generates conventional commit message, commits, then cleans up
+**What it proves:** Automated commit workflow works
+
+**Quick verification script:**
+```bash
+# Run all 4 tests in sequence
+echo "Testing TypeScript LSP..."
+# (Copy test 1 command above)
+
+echo "Testing Pyright LSP..."
+# (Copy test 2 command above)
+
+echo "Testing GitHub plugin..."
+# (Copy test 3 command above)
+
+echo "Testing Commit Commands..."
+# (Copy test 4 command above)
 ```
 
 ---
