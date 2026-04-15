@@ -233,6 +233,36 @@ Edit `CLAUDE_MODEL_ID` in `.env` - Strands SDK supports any Bedrock Claude model
 - Commit to `feature/lab-work` after meaningful changes
 - Repository: https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 
+## Understanding Claude Code Features
+
+Participants often ask: **"What's the difference between Skills, Agents, Hooks, Plugins, and Commands?"**
+
+Here's a quick comparison of what each does and how we use them in this project:
+
+| Feature | What It Is | How To Use | Used In This Project? |
+|---------|-----------|------------|----------------------|
+| **Skills** | Pre-built prompt templates that Claude executes (like shortcuts for common tasks) | `/commit`, `/review`, `/start-dev` | ✅ Yes - `/start-dev` skill to run both servers |
+| **Agents** | Sub-tasks that Claude delegates to specialized AI workers (research, code review, etc.) | Claude automatically spawns them when needed | ✅ Yes - Claude spawns agents for complex tasks |
+| **Hooks** | Shell scripts that run automatically on events (before/after commands, on session start) | Configure in `.claude/settings.json` | ✅ Yes - Blocks dangerous commands, protects files, injects context |
+| **Plugins** | MCP servers that add new tools/capabilities to Claude (LSP, GitHub, databases, etc.) | `/plugin install <name>` | ✅ Yes - TypeScript LSP, Pyright LSP, GitHub, Commit Commands |
+| **Commands** | Built-in CLI commands that control Claude Code itself | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Used throughout the project |
+
+**Key Differences:**
+
+- **Skills** = Reusable prompts you trigger manually (shortcuts)
+- **Agents** = Claude's workers that run in background (delegation)
+- **Hooks** = Automation that runs on events (guardrails)
+- **Plugins** = External tools that extend Claude's capabilities (integrations)
+- **Commands** = Built-in CLI features (control panel)
+
+**Real Example from This Project:**
+
+1. Type `/start-dev` → **Skill** runs a prompt to start both servers
+2. Ask "review my code" → Claude spawns a **code-reviewer Agent** to analyze it
+3. Try `rm -rf backend/` → **Hook** blocks this dangerous command
+4. Type in Python → **Pyright Plugin** provides type checking
+5. Type `/hooks` → **Command** shows all active hooks
+
 ## Claude Code Plugins
 
 This project uses Claude Code plugins to enhance development workflow and demonstrate professional tooling. See **[PLUGINS.md](PLUGINS.md)** for complete setup guide.
