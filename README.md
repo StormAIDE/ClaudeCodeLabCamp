@@ -1014,9 +1014,48 @@ Technical fix:
 4. **Automated testing** - Hooks ensured quality throughout the workflow
 5. **Professional workflow** - From diagnosis to fix to commit, all automated
 
+#### 8. Bonus: Scrolling Bug Fix (Multi-Agent Workflow)
+
+After the visual improvements, a critical UX bug was discovered:
+
+**Problem:** First message hides the header - user can't see the top of the app.
+
+**Diagnosis Flow:**
+```
+User: "First message goes to top, I can't see the header"
+Claude: [Launches frontend-visual-inspector agent]
+```
+
+**What happened:**
+- Agent took screenshots and analyzed scroll behavior
+- Identified root cause: `scrollIntoView()` scrolling entire PAGE instead of container
+- Found the bug in ChatInterface.tsx line 14: `messagesEndRef.current?.scrollIntoView()`
+- When container isn't scrollable, it searches parent and finds document/body
+- This pushed header out of viewport
+
+**Fix Flow:**
+```
+Claude: [Launches frontend-improver agent with specific fix instructions]
+```
+
+**Solution applied:**
+- Changed from `scrollIntoView()` to direct scroll control (`scrollTop = scrollHeight`)
+- Added `messageListRef` pointing to the container
+- Added `overscroll-behavior-contain` CSS to prevent scroll bubbling
+- Updated MessageList to accept `containerRef` prop
+
+**Result:**
+- ✅ Header always stays visible
+- ✅ Scroll properly contained within message container
+- ✅ Page-level scroll never triggered
+- ✅ All 62 tests pass
+- ✅ Committed: `fix: prevent header from hiding when first message is sent`
+
+---
+
 **Time saved:** What would have taken 30+ minutes of manual debugging, browser refreshing, and trial-and-error was completed in minutes with Claude Code's integrated tooling.
 
-**Result:** A production-ready, visually stunning dark theme with glassmorphism effects and vibrant color accents, all tested and committed with zero regressions.
+**Final Result:** A production-ready, visually stunning dark theme with glassmorphism effects, vibrant color accents, and smooth scroll behavior - all tested and committed with zero regressions.
 
 ---
 
