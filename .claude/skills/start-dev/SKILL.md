@@ -1,6 +1,7 @@
 ---
 name: start-dev
 description: Start both backend (FastAPI) and frontend (Vite) development servers
+invocation: user
 ---
 
 # Start Development Servers
