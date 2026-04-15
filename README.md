@@ -19,6 +19,45 @@ This project showcases how Claude Code integrates 8 powerful features into a sin
 
 ---
 
+## 🤔 What's the Difference? (Skills vs Agents vs Hooks vs Plugins vs Commands)
+
+Participants often ask: **"These features sound similar - what's the actual difference?"**
+
+Here's a quick comparison of what each does and how we use them in this project:
+
+| Feature | What It Is | How To Use | Used In This Project? |
+|---------|-----------|------------|----------------------|
+| **Skills** | Pre-built prompt templates that Claude executes (like shortcuts for common tasks) | `/commit`, `/review`, `/start-dev` | ✅ Yes - `/start-dev` skill to run both servers |
+| **Agents** | Sub-tasks that Claude delegates to specialized AI workers (research, code review, etc.) | Claude automatically spawns them when needed | ✅ Yes - Claude spawns agents for complex tasks |
+| **Hooks** | Shell scripts that run automatically on events (before/after commands, on session start) | Configure in `.claude/settings.json` | ✅ Yes - Blocks dangerous commands, protects files, injects context |
+| **Plugins** | MCP servers that add new tools/capabilities to Claude (LSP, GitHub, databases, etc.) | `/plugin install <name>` | ✅ Yes - TypeScript LSP, Pyright LSP, GitHub, Commit Commands |
+| **Commands** | Built-in CLI commands that control Claude Code itself | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Used throughout the project |
+
+**Quick Mental Model:**
+
+- **Skills** = Reusable prompts you trigger manually (think: shortcuts)
+- **Agents** = Claude's workers that run in background (think: delegation)
+- **Hooks** = Automation that runs on events (think: guardrails)
+- **Plugins** = External tools that extend Claude's capabilities (think: integrations)
+- **Commands** = Built-in CLI features (think: control panel)
+
+**Real Example from This Project:**
+
+1. You type `/start-dev` → **Skill** runs a prompt to start both servers
+2. You ask "review my code" → Claude spawns a **code-reviewer Agent** to analyze it
+3. You try `rm -rf backend/` → **Hook** blocks this dangerous command
+4. You type in Python → **Pyright Plugin** provides type checking
+5. You type `/hooks` → **Command** shows all active hooks
+
+**When to use which:**
+- Need a shortcut? → Create a **Skill**
+- Need specialized AI help? → Define a custom **Agent**
+- Need automation/safety? → Add a **Hook**
+- Need external tools? → Install a **Plugin**
+- Need to control Claude Code? → Use a **Command**
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
