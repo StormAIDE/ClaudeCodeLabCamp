@@ -168,7 +168,19 @@ Shell scripts that run automatically at specific points in Claude Code's lifecyc
 
 #### Hook #1: Block Dangerous Commands
 **Event:** `PreToolUse` (before Bash tool)
-**What it does:** Prevents destructive operations like `rm -rf /`, `dd`, fork bombs
+**Script:** `.claude/hooks/block-dangerous.sh`
+**What it does:** Prevents destructive operations like `rm -rf /`, `dd`, fork bombs, pipe to shell
+**Status:** ✅ **Working** (requires `jq` - install with `brew install jq`)
+
+**Blocked patterns:**
+- `rm -rf /`, `rm -rf ~`, `rm -rf $HOME`
+- `dd if=` (disk destroyer)
+- `> /dev/sda` (overwrite disk)
+- `mkfs` (format filesystem)
+- Fork bomb: `:(){ :|:& };:`
+- Pipe to shell: `curl * | bash`, `wget * | sh`
+- `chmod 777` (overly permissive)
+- `sudo rm` (dangerous sudo)
 
 **Try it:**
 ```
@@ -178,7 +190,15 @@ Claude: [BLOCKED] 🚫 Command matches dangerous pattern 'rm -rf /'
 
 #### Hook #2: Protect Sensitive Files
 **Event:** `PreToolUse` (before Edit/Write tools)
+**Script:** `.claude/hooks/protect-files.sh`
 **What it does:** Blocks edits to `.env`, lock files, `.git/`, `claudecodeenv/`
+**Status:** ✅ **Working** (requires `jq` - install with `brew install jq`)
+
+**Protected patterns:**
+- `.env`, `.env.local`, `.env.production` (credentials)
+- `package-lock.json`, `yarn.lock`, `poetry.lock`, `Pipfile.lock` (lock files)
+- `.git/` (git internals)
+- `node_modules/`, `claudecodeenv/`, `venv/`, `.venv/`, `__pycache__/` (dependencies)
 
 **Try it:**
 ```
@@ -186,10 +206,28 @@ You: "Edit the .env file to add a new variable"
 Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by automation
 ```
 
-#### Hook #3: Inject Project Context
+#### Hook #3: Run Tests After Code Changes
+**Event:** `PostToolUse` (after Edit/Write tools)
+**Script:** `.claude/hooks/run-tests.sh`
+**What it does:** Automatically runs test suite after editing `.py`, `.ts`, or `.tsx` files
+**Status:** ✅ **Working** (requires `jq` - install with `brew install jq`)
+
+**How it works:**
+- **Python files (`.py`)**: Runs `python -m pytest backend/tests/` in virtual environment
+- **TypeScript files (`.ts`, `.tsx`)**: Runs `npm test -- --run` in frontend directory
+- **Non-blocking**: Warns if tests fail but doesn't prevent the edit
+- **Smart filtering**: Only runs for code files, skips config/docs
+
+**Try it:**
+1. Ask Claude to modify `backend/config.py`
+2. Watch the test suite run automatically
+3. See test results in real-time
+
+#### Hook #4: Inject Project Context
 **Event:** `SessionStart`
 **File:** `.claude/hooks/project-context.txt`
 **What it does:** Reminds Claude of project rules every session (ports, commit format, test requirements)
+**Status:** ✅ **Working**
 
 **Try it:**
 1. Start a new Claude Code session
@@ -200,11 +238,13 @@ Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by a
 - **Safety:** Prevents accidents (rm -rf, editing credentials)
 - **Consistency:** Same rules apply every time, every session
 - **Productivity:** Focus on features, not repetitive tasks
+- **Quality:** Tests run automatically after every code change
 - **Context:** Claude knows project rules on session start
 
-**Note:** For code formatting, use Prettier manually when needed:
+**Prerequisites:**
+All hooks require `jq` (JSON processor) to be installed:
 ```bash
-npx prettier --write <file>
+brew install jq
 ```
 
 **View all hooks:**
