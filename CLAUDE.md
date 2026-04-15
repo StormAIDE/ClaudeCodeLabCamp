@@ -290,6 +290,26 @@ Edit `CLAUDE_MODEL_ID` in `.env` - Strands SDK supports any Bedrock Claude model
 - Commit to `feature/lab-work` after meaningful changes
 - Repository: https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 
+## Claude Code Plugins
+
+This project uses Claude Code plugins to enhance development workflow and demonstrate professional tooling. See **[PLUGINS.md](PLUGINS.md)** for complete setup guide.
+
+**Recommended plugins for students:**
+- **TypeScript LSP** - Real-time type checking for React frontend
+- **Pyright LSP** - Python type safety for FastAPI backend  
+- **GitHub** - Professional version control workflows
+- **Commit Commands** - Automated git best practices
+
+**Quick install:**
+```bash
+/plugin install typescript-lsp@claude-plugins-official
+/plugin install pyright-lsp@claude-plugins-official
+/plugin install github@claude-plugins-official
+/plugin marketplace add anthropics/claude-code
+/plugin install commit-commands@anthropics-claude-code
+/reload-plugins
+```
+
 ## Important Notes
 
 - **Do not read `claudecodeenv/` folder** - Python virtual env, wastes tokens

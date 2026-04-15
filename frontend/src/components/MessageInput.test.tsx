@@ -15,7 +15,7 @@ describe('MessageInput', () => {
     )
 
     expect(screen.getByPlaceholderText(/type your message/i)).toBeInTheDocument()
-    expect(screen.getByRole('button')).toBeInTheDocument()
+    expect(screen.getByText('Send')).toBeInTheDocument()
   })
 
   it('should call onChange when typing', async () => {
@@ -50,8 +50,8 @@ describe('MessageInput', () => {
       />
     )
 
-    const button = screen.getByRole('button')
-    fireEvent.click(button)
+    const sendButton = screen.getByText('Send')
+    fireEvent.click(sendButton)
 
     expect(handleSend).toHaveBeenCalledTimes(1)
   })
@@ -69,7 +69,7 @@ describe('MessageInput', () => {
     )
 
     const input = screen.getByPlaceholderText(/type your message/i)
-    fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 })
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' })
 
     expect(handleSend).toHaveBeenCalledTimes(1)
   })
@@ -87,7 +87,7 @@ describe('MessageInput', () => {
     )
 
     const input = screen.getByPlaceholderText(/type your message/i)
-    fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13, shiftKey: true })
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: true })
 
     expect(handleSend).not.toHaveBeenCalled()
   })
@@ -103,10 +103,10 @@ describe('MessageInput', () => {
     )
 
     const input = screen.getByPlaceholderText(/type your message/i)
-    const button = screen.getByRole('button')
+    const sendButton = screen.getByRole('button', { name: /sending/i })
 
     expect(input).toBeDisabled()
-    expect(button).toBeDisabled()
+    expect(sendButton).toBeDisabled()
   })
 
   it('should display the value prop', () => {

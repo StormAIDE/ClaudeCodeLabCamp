@@ -2,31 +2,59 @@ import ChatInterface from './components/ChatInterface'
 import { useAgentStore } from './store/agentStore'
 
 function App() {
-  const { status } = useAgentStore()
+  const { status, messages } = useAgentStore()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            ClaudeCode Lab Agent
-          </h1>
-          <p className="text-gray-400">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_theme(colors.slate.700/0.03)_1px,_transparent_1px)] bg-[length:60px_60px] opacity-50" />
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
+
+      <div className="relative z-10 container mx-auto px-4 py-6 lg:py-8">
+        <header className="mb-6 lg:mb-8 text-center">
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+              ClaudeCode Lab Agent
+            </h1>
+          </div>
+
+          <p className="text-slate-400 text-lg mb-4 max-w-2xl mx-auto">
             AI Assistant powered by Claude 4 via Strands SDK
           </p>
-          <div className="mt-4">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-              status === 'ready' ? 'bg-green-900 text-green-200' : 'bg-yellow-900 text-yellow-200'
+
+          <div className="flex items-center justify-center gap-4">
+            <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              status === 'ready'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : status === 'loading'
+                ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
             }`}>
-              <span className={`w-2 h-2 rounded-full mr-2 ${
-                status === 'ready' ? 'bg-green-400' : 'bg-yellow-400'
-              }`}></span>
-              {status === 'ready' ? 'Ready' : 'Initializing...'}
-            </span>
+              <div className={`w-2 h-2 rounded-full mr-2 animate-pulse ${
+                status === 'ready'
+                  ? 'bg-emerald-400'
+                  : status === 'loading'
+                  ? 'bg-blue-400'
+                  : 'bg-amber-400'
+              }`}></div>
+              {status === 'ready' ? 'Ready to chat' : status === 'loading' ? 'Processing...' : 'Initializing...'}
+            </div>
+
+            {messages.length > 0 && (
+              <div className="text-sm text-slate-500">
+                {messages.length} message{messages.length !== 1 ? 's' : ''}
+              </div>
+            )}
           </div>
         </header>
 
-        <main>
+        <main className="relative">
           <ChatInterface />
         </main>
       </div>

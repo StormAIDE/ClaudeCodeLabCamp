@@ -22,6 +22,7 @@ This application showcases how to build a modern, scalable AI agent platform wit
 - 🔒 **Security First** - Input validation, safe tool execution, no eval()
 - 📦 **Clean Architecture** - Dependency injection, clear separation of concerns
 - ✅ **Comprehensive Tests** - 73 tests (43 backend + 30 frontend) all passing
+- 🔌 **Claude Code Plugins** - Professional IDE features (TypeScript/Python LSP, GitHub, Git workflows)
 
 ## 📊 Current Status
 
@@ -201,10 +202,13 @@ ClaudeCodeTest/
 ├── .env                           # Environment variables (create from .env.example)
 ├── .env.example                   # Environment variables template
 ├── start.sh                       # Quick start script (both services)
+├── demo-plugins.sh                # Plugin installation demo script
 ├── pytest.ini                     # Pytest configuration
 ├── SETUP.md                       # Detailed setup instructions
 ├── README.md                      # This file (project overview)
-└── CLAUDE.md                      # Claude Code workflow documentation
+├── CLAUDE.md                      # Claude Code workflow documentation
+├── PLUGINS.md                     # Claude Code plugins setup guide
+└── PLUGIN-EXAMPLES.md             # Plugin use cases and examples
 ```
 
 ## 🔌 API Endpoints
@@ -548,6 +552,50 @@ cd frontend && rm -rf node_modules dist && npm install
 pip install --force-reinstall -r requirements.txt
 ```
 
+## 🔌 Claude Code Plugins
+
+This project includes Claude Code plugins to showcase professional development tooling. Plugins enhance the development experience with:
+
+- **TypeScript LSP** - Real-time type checking for React components
+- **Pyright LSP** - Python type safety for FastAPI backend
+- **GitHub Integration** - PR creation, issue management, code review
+- **Commit Commands** - Automated conventional commit messages
+
+### Quick Plugin Setup
+
+```bash
+# Install all recommended plugins
+/plugin install typescript-lsp@claude-plugins-official
+/plugin install pyright-lsp@claude-plugins-official
+/plugin install github@claude-plugins-official
+/plugin marketplace add anthropics/claude-code
+/plugin install commit-commands@anthropics-claude-code
+/reload-plugins
+```
+
+### Demo Script
+
+Run the plugin demo to install language server binaries and see usage examples:
+
+```bash
+./demo-plugins.sh
+```
+
+### Documentation
+
+- **[PLUGINS.md](PLUGINS.md)** - Complete plugin setup guide with installation instructions
+- **[PLUGIN-EXAMPLES.md](PLUGIN-EXAMPLES.md)** - Real-world use cases and educational examples
+- **[Official Plugins](https://claude.com/plugins)** - Browse the official plugin marketplace
+
+### Educational Benefits
+
+Plugins demonstrate:
+- How professional IDEs provide real-time type checking
+- Language Server Protocol (LSP) architecture
+- Git workflow automation and best practices
+- Cross-tool integration (GitHub, Slack, etc.)
+- Type-driven development patterns
+
 ## 📚 Additional Resources
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
@@ -556,6 +604,7 @@ pip install --force-reinstall -r requirements.txt
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Claude API Documentation](https://docs.anthropic.com/)
 - [Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)
+- [Claude Code Plugins](https://code.claude.com/docs/en/discover-plugins)
 
 ## 📄 License
 
