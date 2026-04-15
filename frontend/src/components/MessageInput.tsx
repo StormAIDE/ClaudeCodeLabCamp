@@ -44,7 +44,7 @@ export default function MessageInput({ value, onChange, onSend, disabled }: Mess
               placeholder="Type your message... (Shift+Enter for new line)"
               disabled={disabled}
               aria-label="Message input"
-              className="w-full bg-white/[0.05] border border-white/[0.08] text-white placeholder-slate-400 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 disabled:opacity-50 resize-none transition-all duration-200 backdrop-blur-sm min-h-[3rem] max-h-[7.5rem]"
+              className="w-full bg-white/[0.08] border border-white/[0.12] text-white placeholder-slate-400 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/60 focus:bg-white/[0.1] focus:shadow-lg focus:shadow-blue-500/20 disabled:opacity-50 resize-none transition-all duration-200 backdrop-blur-sm min-h-[3rem] max-h-[7.5rem]"
               rows={1}
             />
 

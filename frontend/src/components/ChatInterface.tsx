@@ -52,7 +52,7 @@ export default function ChatInterface() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.6)] transition-shadow duration-300 overflow-hidden ring-1 ring-white/[0.05]">
+      <div className="bg-white/[0.05] backdrop-blur-xl border border-white/[0.12] rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.6)] transition-shadow duration-300 overflow-hidden ring-1 ring-white/[0.08]">
         {/* Chat header with glass morphism effect */}
         <div className="bg-gradient-to-r from-slate-800/50 to-slate-700/50 backdrop-blur-sm border-b border-white/[0.08] px-6 py-4">
           <div className="flex items-center justify-between">

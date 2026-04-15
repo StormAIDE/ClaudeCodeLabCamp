@@ -6,10 +6,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-      {/* Background decorative elements */}
+      {/* Background decorative elements - boosted opacity for more vibrancy */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_theme(colors.slate.700/0.03)_1px,_transparent_1px)] bg-[length:60px_60px] opacity-50" />
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
 
       <div className="relative z-10 container mx-auto px-4 py-6 lg:py-8">
         <header className="mb-6 lg:mb-8 text-center">

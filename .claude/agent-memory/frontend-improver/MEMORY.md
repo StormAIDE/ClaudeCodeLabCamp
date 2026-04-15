@@ -4,3 +4,4 @@
 - [Testing Requirements](feedback_testing_requirements.md) — ALWAYS run tests before/after changes; 43 backend + 30 frontend tests must pass
 - [Fixed port configuration](feedback_fixed_ports.md) — Always use port 8000 (backend) and 5173 (frontend), never change these
 - [Modern Chat UI Improvements](ui_improvements_modern_chat.md) — Comprehensive visual design overhaul with glass morphism, animations, and modern chat patterns
+- [Visual Vibrancy Improvements](ui_visual_vibrancy_improvements.md) — Color opacity enhancements to eliminate greyness: doubled gradient blob opacity, brightened surfaces, colored capability pills
