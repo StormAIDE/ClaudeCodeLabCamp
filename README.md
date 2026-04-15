@@ -19,42 +19,60 @@ This project showcases how Claude Code integrates 8 powerful features into a sin
 
 ---
 
-## 🤔 What's the Difference? (Skills vs Agents vs Hooks vs Plugins vs Commands)
+## 🤔 What's the Difference? (Skills vs Agents vs Hooks vs Plugins vs MCP vs Commands)
 
 Participants often ask: **"These features sound similar - what's the actual difference?"**
 
-Here's a quick comparison of what each does and how we use them in this project:
+Here's a comparison based on official Claude Code documentation:
 
 | Feature | What It Is | How To Use | Used In This Project? |
 |---------|-----------|------------|----------------------|
-| **Skills** | Pre-built prompt templates that Claude executes (like shortcuts for common tasks) | `/commit`, `/review`, `/start-dev` | ✅ Yes - `/start-dev` skill to run both servers |
-| **Agents** | Sub-tasks that Claude delegates to specialized AI workers (research, code review, etc.) | Claude automatically spawns them when needed | ✅ Yes - Claude spawns agents for complex tasks |
-| **Hooks** | Shell scripts that run automatically on events (before/after commands, on session start) | Configure in `.claude/settings.json` | ✅ Yes - Blocks dangerous commands, protects files, injects context |
-| **Plugins** | MCP servers that add new tools/capabilities to Claude (LSP, GitHub, databases, etc.) | `/plugin install <name>` | ✅ Yes - TypeScript LSP, Pyright LSP, GitHub, Commit Commands |
-| **Commands** | Built-in CLI commands that control Claude Code itself | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Used throughout the project |
+| **Skills** | Prompt templates (SKILL.md files) that extend Claude's capabilities - you or Claude can invoke them | `/skill-name` or Claude invokes when relevant | ✅ Yes - `/start-dev` skill to run both servers |
+| **Agents** | Specialized AI subagents that run in separate contexts with custom system prompts and tool access | Claude spawns automatically or you delegate explicitly | ✅ Yes - backend-maintainer, frontend-improver, code-reviewer, visual-inspector |
+| **Hooks** | Shell scripts/HTTP endpoints/prompts that execute automatically at lifecycle events (PreToolUse, PostToolUse, SessionStart) | Configure in `.claude/settings.json` | ✅ Yes - Blocks dangerous commands, protects files, runs tests, injects context |
+| **Plugins** | Packaged bundles from marketplaces that can include skills, agents, hooks, and MCP servers (curated, easy install) | `/plugin install <name>@marketplace` | ✅ Yes - TypeScript LSP, Pyright LSP, GitHub, Commit Commands |
+| **MCP Servers** | External tools via Model Context Protocol - can be standalone (configured in `.mcp.json`) OR bundled in plugins | Configure in `.mcp.json` or install via plugin | ✅ Yes - drawio (diagrams), chrome-devtools (screenshots) |
+| **Commands** | Built-in CLI commands that control Claude Code itself (not extensible by users) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Used throughout the project |
 
 **Quick Mental Model:**
 
-- **Skills** = Reusable prompts you trigger manually (think: shortcuts)
-- **Agents** = Claude's workers that run in background (think: delegation)
-- **Hooks** = Automation that runs on events (think: guardrails)
-- **Plugins** = External tools that extend Claude's capabilities (think: integrations)
+- **Skills** = Instructions Claude can load on-demand (think: playbooks in a binder)
+- **Agents** = Specialized AI workers in separate contexts (think: delegation to experts)
+- **Hooks** = Automation that runs at specific lifecycle events (think: guardrails & triggers)
+- **Plugins** = Packaged bundles from marketplaces (think: app store downloads)
+- **MCP Servers** = External tool connections via protocol (think: API integrations)
 - **Commands** = Built-in CLI features (think: control panel)
+
+**Key Differences Explained:**
+
+**Plugins vs MCP Servers:**
+- **Plugins** bundle multiple things together (skills + agents + hooks + MCP servers) and are distributed via marketplaces
+- **MCP Servers** are just the external tool connection layer - can exist standalone OR inside a plugin
+- Example: The `github` plugin contains an MCP server for GitHub API, plus skills for PR workflows
+- Example: We configure `drawio` and `chrome-devtools` MCP servers directly in `.mcp.json` (no plugin wrapper)
+
+**Skills vs Agents:**
+- **Skills** are prompt templates that run in your current context - content stays in conversation
+- **Agents** are separate AI workers with their own context window - results summarized back to you
+- Skills: good for guidelines, checklists, workflows you want to stay visible
+- Agents: good for research/exploration that would flood your context with search results
 
 **Real Example from This Project:**
 
-1. You type `/start-dev` → **Skill** runs a prompt to start both servers
-2. You ask "review my code" → Claude spawns a **code-reviewer Agent** to analyze it
-3. You try `rm -rf backend/` → **Hook** blocks this dangerous command
-4. You type in Python → **Pyright Plugin** provides type checking
-5. You type `/hooks` → **Command** shows all active hooks
+1. You type `/start-dev` → **Skill** (SKILL.md) runs instructions to start both servers
+2. You ask "review my code" → Claude spawns **code-reviewer Agent** in separate context to analyze it
+3. You try `rm -rf backend/` → **Hook** (PreToolUse) blocks this dangerous command before execution
+4. You type in Python → **Pyright Plugin** provides type checking (plugin bundles the LSP MCP server)
+5. You ask "create a diagram" → **drawio MCP Server** (standalone config in `.mcp.json`) generates diagram
+6. You type `/hooks` → **Command** (built-in) shows all active hooks
 
 **When to use which:**
-- Need a shortcut? → Create a **Skill**
-- Need specialized AI help? → Define a custom **Agent**
-- Need automation/safety? → Add a **Hook**
-- Need external tools? → Install a **Plugin**
-- Need to control Claude Code? → Use a **Command**
+- Need reusable instructions/checklists? → Create a **Skill** (`.claude/skills/name/SKILL.md`)
+- Need specialized AI help in isolation? → Define a custom **Agent** (`.claude/agents/name.md`)
+- Need automation on events (safety, validation)? → Add a **Hook** (`.claude/settings.json`)
+- Need IDE features from marketplace? → Install a **Plugin** (`/plugin install name@marketplace`)
+- Need custom external tool connection? → Configure **MCP Server** (`.mcp.json`)
+- Need to control Claude Code itself? → Use built-in **Commands** (`/help`, `/settings`, etc.)
 
 ---
 
