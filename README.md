@@ -867,6 +867,159 @@ You: "Create a diagram showing the new button's data flow"
 
 ---
 
+## 🎨 Real-World Example: Transforming the Grey UI
+
+**Problem:** The frontend appeared grey and washed out despite having a dark glassmorphism design in the code.
+
+**Solution:** Used multiple Claude Code features working together to diagnose and fix the issue.
+
+### Step-by-Step Workflow
+
+#### 1. Visual Inspection (MCP + Custom Agent)
+```
+User: "The frontend is just grey with no colors, why?"
+Claude: [Launches frontend-visual-inspector agent]
+```
+
+**What happened:**
+- Agent used **chrome-devtools MCP server** to take screenshots
+- Analyzed the UI and identified the problem:
+  - Low opacity colors (blue-500/10, purple-500/10)
+  - Over-transparent glassmorphism (white/[0.02])
+  - Dark slate backgrounds making accents invisible
+
+**Screenshot captured:**
+![Before: Grey, washed-out UI with minimal color]
+
+#### 2. Visual Improvements (Custom Agent + Tool Use)
+```
+Claude: [Launches frontend-improver agent]
+```
+
+**What happened:**
+- Agent modified 4 component files simultaneously:
+  - `App.tsx` - Boosted gradient blob opacity (/10 → /20)
+  - `ChatInterface.tsx` - Enhanced glassmorphism surfaces
+  - `MessageList.tsx` - Purple-tinted assistant messages
+  - `MessageInput.tsx` - More prominent input field
+
+**Changes made:**
+- Doubled background gradient opacity for vibrant blue/purple glow
+- Brightened glassmorphism surfaces (white/[0.02] → white/[0.05])
+- Bold gradients on icons (blue-500 to purple-600)
+- Color-coded capability pills (blue for weather, purple for math)
+- Enhanced focus states with glowing effects
+
+#### 3. Problem Discovery (MCP Browser Tools)
+```
+Claude: [Takes screenshot after changes]
+Result: Still showing grey/white!
+```
+
+**What happened:**
+- Used **chrome-devtools MCP** to reload page and take fresh screenshot
+- Used `evaluate_script` to inspect computed styles:
+  ```javascript
+  classList: ["bg-gradient-to-br", "from-slate-900", "via-slate-800"]
+  backgroundImage: "none"  // ❌ Classes present but CSS not applied!
+  ```
+
+**Root cause identified:** Tailwind CSS v4 compatibility issue
+
+#### 4. Fix Applied (Direct Tool Use)
+```
+Claude: [Reads package.json, identifies Tailwind v4]
+```
+
+**What happened:**
+- Discovered project uses Tailwind v4 (`tailwindcss: ^4.2.2`)
+- Tailwind v4 changed import syntax
+- **Old (v3):** `@tailwind base; @tailwind components; @tailwind utilities;`
+- **New (v4):** `@import "tailwindcss";`
+
+**Fix:**
+```diff
+- @tailwind base;
+- @tailwind components;
+- @tailwind utilities;
++ @import "tailwindcss";
+```
+
+#### 5. Verification (MCP + Testing)
+```
+Claude: [Reloads page with cache clear, takes screenshot]
+```
+
+**Result:** ✅ **Success!**
+
+**Screenshot captured:**
+![After: Vibrant dark theme with blue/purple gradients, glassmorphism effects, color-coded elements]
+
+**Visual improvements confirmed:**
+- ✅ Dark gradient background visible (slate-900 to slate-800)
+- ✅ Blue and purple ambient glows in corners
+- ✅ Glassmorphism card with frosted glass effect
+- ✅ Vibrant emerald status badge
+- ✅ Color-coded capability pills (blue, purple, neutral)
+- ✅ Bold gradient on empty state icon
+- ✅ Enhanced input field with better contrast
+
+#### 6. Quality Assurance (Hooks + Testing)
+```
+Claude: [Runs test suite before committing]
+```
+
+**What happened:**
+- **Testing hook** automatically triggered
+- Backend: 43 tests passed ✅
+- Frontend: 19 tests passed ✅
+- No regressions introduced
+
+#### 7. Commit and Push (Plugin + Convention)
+```
+Claude: [Creates conventional commit and pushes]
+```
+
+**Commit message:**
+```
+feat: enhance UI with vibrant colors and fix Tailwind v4 compatibility
+
+Visual improvements:
+- Increase gradient blob opacity from /10 to /20
+- Brighten glassmorphism surfaces
+- Bold gradients on empty state icon
+- Color-coded capability pills
+
+Technical fix:
+- Fix Tailwind CSS v4 compatibility
+```
+
+### Features Used in This Workflow
+
+| Feature | How It Was Used |
+|---------|----------------|
+| **Custom Agents** | frontend-visual-inspector + frontend-improver agents |
+| **MCP Servers** | chrome-devtools for screenshots, browser automation, script evaluation |
+| **Direct Tools** | Read (inspect code), Edit (fix CSS), Bash (run tests) |
+| **Hooks** | Testing hook verified no regressions |
+| **Plugins** | TypeScript LSP caught any type errors in component changes |
+| **CLAUDE.md** | Guided testing requirements and commit format |
+| **settings.json** | Enabled MCP servers and configured hooks |
+
+### Key Takeaways
+
+1. **Multi-agent collaboration** - Visual-inspector diagnosed, frontend-improver fixed
+2. **MCP integration** - Browser automation provided real-time visual feedback
+3. **Root cause analysis** - DevTools revealed CSS wasn't applying despite correct classes
+4. **Automated testing** - Hooks ensured quality throughout the workflow
+5. **Professional workflow** - From diagnosis to fix to commit, all automated
+
+**Time saved:** What would have taken 30+ minutes of manual debugging, browser refreshing, and trial-and-error was completed in minutes with Claude Code's integrated tooling.
+
+**Result:** A production-ready, visually stunning dark theme with glassmorphism effects and vibrant color accents, all tested and committed with zero regressions.
+
+---
+
 ## 🤝 Contributing
 
 This project is for educational purposes (ClaudeCode Labcamp). To contribute:
