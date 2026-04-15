@@ -13,11 +13,13 @@ DANGEROUS_PATTERNS=(
   "dd if="
   "> /dev/sda"
   "mkfs"
-  ":(){ :|:& };:"  # Fork bomb
-  "curl.*|.*bash"  # Pipe to bash
-  "wget.*|.*sh"    # Pipe to shell
-  "chmod 777"      # Overly permissive
-  "sudo rm"        # Dangerous sudo
+  ":\(\)\{ :\|:& \};"  # Fork bomb
+  "curl.*\|.*bash"     # Pipe to bash
+  "curl.*\|.*sh"       # Pipe to sh
+  "wget.*\|.*bash"     # Pipe to bash
+  "wget.*\|.*sh"       # Pipe to sh
+  "chmod 777"          # Overly permissive
+  "sudo rm"            # Dangerous sudo
 )
 
 for pattern in "${DANGEROUS_PATTERNS[@]}"; do
