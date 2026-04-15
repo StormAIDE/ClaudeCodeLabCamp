@@ -262,6 +262,10 @@ Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by a
 2. Watch the test suite run automatically
 3. See test results in real-time
 
+**Not the same as `run-all-tests.sh`:**
+- **Hook (`.claude/hooks/run-tests.sh`)**: Runs automatically after each edit, tests only the relevant suite (fast feedback)
+- **Script (`./run-all-tests.sh`)**: Run manually before commits, tests everything comprehensively (73 tests + builds + linting)
+
 #### Hook #4: Inject Project Context
 **Event:** `SessionStart`
 **File:** `.claude/hooks/project-context.txt`
