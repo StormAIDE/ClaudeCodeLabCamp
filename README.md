@@ -23,6 +23,7 @@ This application showcases how to build a modern, scalable AI agent platform wit
 - 📦 **Clean Architecture** - Dependency injection, clear separation of concerns
 - ✅ **Comprehensive Tests** - 73 tests (43 backend + 30 frontend) all passing
 - 🔌 **Claude Code Plugins** - Professional IDE features (TypeScript/Python LSP, GitHub, Git workflows)
+- 🪝 **Claude Code Hooks** - Automated workflows (auto-format, safety checks, context injection)
 
 ## 📊 Current Status
 
@@ -203,12 +204,21 @@ ClaudeCodeTest/
 ├── .env.example                   # Environment variables template
 ├── start.sh                       # Quick start script (both services)
 ├── demo-plugins.sh                # Plugin installation demo script
+├── demo-hooks.sh                  # Hooks demonstration script
 ├── pytest.ini                     # Pytest configuration
 ├── SETUP.md                       # Detailed setup instructions
 ├── README.md                      # This file (project overview)
 ├── CLAUDE.md                      # Claude Code workflow documentation
 ├── PLUGINS.md                     # Claude Code plugins setup guide
-└── PLUGIN-EXAMPLES.md             # Plugin use cases and examples
+├── PLUGIN-EXAMPLES.md             # Plugin use cases and examples
+├── HOOKS.md                       # Claude Code hooks guide
+└── .claude/                       # Claude Code configuration
+    ├── settings.json              # Project hooks configuration
+    └── hooks/                     # Hook scripts
+        ├── block-dangerous.sh     # Block destructive commands
+        ├── protect-files.sh       # Protect sensitive files
+        ├── run-tests.sh           # Auto-run tests after changes
+        └── project-context.txt    # Project context injection
 ```
 
 ## 🔌 API Endpoints
@@ -595,6 +605,55 @@ Plugins demonstrate:
 - Git workflow automation and best practices
 - Cross-tool integration (GitHub, Slack, etc.)
 - Type-driven development patterns
+
+## 🪝 Claude Code Hooks
+
+This project includes hooks that automate workflows and enforce best practices. Hooks run shell commands automatically at key points in Claude Code's lifecycle.
+
+### Active Hooks
+
+**Configured in `.claude/settings.json`:**
+
+- **Auto-format code** - Prettier runs after every file edit
+- **Block dangerous commands** - Prevents destructive operations (rm -rf, dd, fork bombs)
+- **Protect sensitive files** - Blocks edits to .env, lock files, git internals
+- **Inject project context** - Reminds Claude of project rules on session start
+
+### View Hooks
+
+```bash
+# In Claude Code, type:
+/hooks
+```
+
+This shows all configured hooks, when they trigger, and their commands.
+
+### Demo Script
+
+Run the hooks demo to test safety features:
+
+```bash
+./demo-hooks.sh
+```
+
+**Example tests:**
+- Attempts to run `rm -rf /` → Blocked ✅
+- Attempts to edit `.env` → Blocked ✅  
+- Safe commands like `ls -la` → Allowed ✅
+
+### Documentation
+
+- **[HOOKS.md](HOOKS.md)** - Complete hooks guide with examples and student exercises
+- **[Hooks Reference](https://code.claude.com/docs/en/hooks)** - Official hooks documentation
+
+### Educational Benefits
+
+Hooks demonstrate:
+- Automated code formatting (consistency without manual work)
+- Security gates (prevent destructive operations)
+- File protection strategies (safeguard credentials and configs)
+- Context injection (maintain consistency across sessions)
+- Event-driven automation (respond to tool calls, file changes, etc.)
 
 ## 📚 Additional Resources
 
