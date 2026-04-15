@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "COMMAND=$(jq -r '.tool_input.command'); if echo \"$COMMAND\" | grep -qE '(rm -rf /|rm -rf ~|rm -rf \\$HOME|dd if=|> ?/dev/sd|mkfs|:\\(\\)\\{ :\\|:& \\};:|curl.*\\|.*bash|wget.*\\|.*sh|chmod 777|sudo rm)'; then echo '🚫 BLOCKED: Dangerous command detected!' >&2; exit 2; fi",
+            "command": "/Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/block-dangerous.sh",
             "statusMessage": "Checking command safety..."
           }
         ]
@@ -16,8 +16,20 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(jq -r '.tool_input.file_path'); if [[ \"$FILE\" == *\".env\"* ]] || [[ \"$FILE\" == *\"package-lock.json\"* ]] || [[ \"$FILE\" == *\"poetry.lock\"* ]] || [[ \"$FILE\" == *\".git/\"* ]] || [[ \"$FILE\" == *\"claudecodeenv/\"* ]]; then echo \"🔒 BLOCKED: $FILE is protected\" >&2; exit 2; fi",
+            "command": "/Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/protect-files.sh",
             "statusMessage": "Checking file protection..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/run-tests.sh",
+            "statusMessage": "Running tests..."
           }
         ]
       }
