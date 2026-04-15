@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     # Application
-    APP_NAME: str = "ClaudeCode Lab Agent"
+    APP_NAME: str = "ClaudeCode LAbCampp Agent"
     APP_ENV: str = "development"
     DEBUG: bool = True
 
