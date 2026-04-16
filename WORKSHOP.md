@@ -117,7 +117,7 @@ curl -fsSL https://claude.ai/install.sh | bash
 claudecode --version
 ```
 
-You should see the Claude Code version number!
+✅ You should see the Claude Code version number!
 
 #### Option 2: Install for Other Operating Systems
 
@@ -169,7 +169,7 @@ git add README.md
 git commit -m "Initial commit"
 ```
 
-**Why do this first?** You need an existing folder with git initialized so Claude Code can work with it.
+**💡 Why do this first?** You need an existing folder with git initialized so Claude Code can work with it.
 
 ### Step 0.2: Create Python Virtual Environment
 
@@ -184,7 +184,7 @@ source venv/bin/activate
 # venv\Scripts\activate
 ```
 
-**Why?** Python dependencies will be isolated to this project.
+**💡 Why?** Python dependencies will be isolated to this project.
 
 ### Step 0.3: Create GitHub Repository and Push
 
@@ -233,9 +233,11 @@ aws configure list --profile my-ai-assistant
 # Should show your configured credentials
 ```
 
-**Why?** Claude Code needs AWS Bedrock access to use Claude AI models.
+**💡 Why?** Claude Code needs AWS Bedrock access to use Claude AI models.
 
-**📋 Setup Complete - Verify Your Environment:**
+---
+
+**📋 Setup Complete - Verify Your Environment**
 
 At this point, you should have VS Code open in your project folder with a terminal ready.
 
@@ -256,7 +258,7 @@ git remote -v         # Should show your GitHub repo
 ls -la                # Should see: venv/, .git/, README.md
 ```
 
-**Note:** If VS Code prompts "Do you trust the authors of the files in this folder?" - click "Yes, I trust the authors"
+**💡 Note:** If VS Code prompts "Do you trust the authors of the files in this folder?" - click "Yes, I trust the authors"
 
 ---
 
@@ -291,6 +293,8 @@ Hi! Can you confirm you're connected and ready to help?
 
 **Claude should respond** - connection successful! 🎉
 
+---
+
 ### Step 1.2: Share Strands Agents Documentation
 
 **Give Claude the official Strands SDK documentation link:**
@@ -302,7 +306,14 @@ Here's the official documentation: https://strandsagents.com/docs/user-guide/qui
 Please reference this documentation when building the agent service.
 ```
 
-**Why?** This ensures Claude uses the correct Strands SDK patterns and APIs.
+Then run:
+```
+/init
+```
+
+**💡 Why?** This ensures Claude uses the correct Strands SDK patterns and APIs.
+
+---
 
 ### Step 1.3: Connect GitHub CLI (gh) for Automated Git Operations
 
@@ -318,6 +329,7 @@ How do I connect GitHub CLI so you can automatically commit and push changes for
 
 **Follow the prompts:**
 ```bash
+# Exit from Claude Code first
 # Run this in the terminal
 gh auth login
 
@@ -327,10 +339,10 @@ gh auth login
 # - Yes (authenticate Git)
 # - Login with a web browser
 
-# You'll get a code & url
-# opne url in browser - enter the code
+# You'll get a code & URL
+# Open URL in browser - enter the code
 # Authorize GitHub CLI
-# back in terminal press enter
+# Back in terminal, press Enter
 ```
 
 **✅ Test It:**
@@ -339,11 +351,13 @@ gh auth status
 # Should show: "Logged in to github.com"
 ```
 
-**Why?** This allows Claude Code to automatically push commits to GitHub for you.
+**💡 Why?** This allows Claude Code to automatically push commits to GitHub for you.
+
+---
 
 ### Step 1.4: Reopen Claude Code with GitHub Access
 
-**Important:** Close and reopen Claude Code so it can use the GitHub credentials:
+**Important:** Reopen Claude Code so it can use the GitHub credentials:
 
 ```bash
 # Exit Claude Code (Ctrl+C or type /exit)
@@ -367,6 +381,8 @@ Remember this for future sessions:
 ```
 
 **Claude will remember** these preferences!
+
+---
 
 ### Step 1.6: Initialize CLAUDE.md for Project Memory
 
@@ -392,99 +408,35 @@ Create a CLAUDE.md file that documents:
 claudecode
 
 # Ask:
-"What ports should this project use?"
+"What this project is about?"
 ```
 
 **Claude should reference CLAUDE.md** and know the project setup!
 
 ---
 
-## 🎨 Lab 2: Share UI Design Ideas with Image Pasting
+## 🏗️ Lab 2: Let Claude Code Build Your Project
 
-### Step 2.1: Paste Your Design Inspiration
-
-**Welcome!** Now that Claude Code is set up, let's start with something visual and fun - designing your chat interface!
-
-One of Claude Code's powerful features is that it can understand images - perfect for showing design inspiration!
-
-**Do you have a chat interface design you like?** You can paste an image directly into the Claude Code chat!
-
-**How to paste an image:**
-1. Find an image of a chat interface you like (from Dribbble, Behance, or even a screenshot of your favorite app)
-2. Copy the image to your clipboard
-3. Press `Ctrl+V` in the Claude Code chat
-4. Claude will see the image and understand the design!
-
-**Ask Claude Code:**
-```
-Here's the design I want for my AI assistant chat interface. 
-Can you help me build a frontend that looks like this?
-```
-
-**What Claude can extract from your design image:**
-- Color scheme and theme (purple, blue, dark mode, etc.)
-- Layout structure (header, message list, input area)
-- Message bubble styles (rounded, flat, shadows)
-- Interactive elements (buttons, quick replies, typing indicators)
-- Typography and spacing preferences
-- Status indicators (online, typing, etc.)
-
-**✅ Test It:**
-After pasting your design image, Claude will analyze it and can:
-1. Describe the design elements it sees
-2. Suggest a tech stack to achieve the look
-3. Generate React components matching the design
-4. Recommend CSS/Tailwind classes for styling
-
-**🎯 What This Improves:**
-- ✨ **Before**: Try to describe design in words ("make it purple-ish with round bubbles...")
-- ✨ **With Image**: Show exactly what you want - Claude sees it visually
-- ✨ **Benefit**: Start with clear design goals, save hours of design iteration
-- ✨ **Time Saved**: Skip the guesswork - Claude understands your vision immediately
-
-**Example interaction:**
-```
-You: [Paste image of LeadBot chat interface]
-"I love this chat design with the purple theme and bubble-style messages. 
-Can you help me create something similar?"
-
-Claude: "I can see this is a modern chat interface with:
-- Purple-themed header with bot avatar and 'Online' status
-- Clean message bubbles with rounded corners
-- Interactive button options for user responses
-- Smooth animations and good spacing
-
-I'll help you build this! Let's start by setting up the project..."
-```
-
-**💡 Pro Tip:** You can paste multiple design references to show different aspects:
-- One image for overall layout
-- Another for specific components (buttons, inputs)
-- A third showing color palette or animations
-
-**No design image?** No problem! You can skip this step and Claude will help you create a clean, modern design from scratch. But if you have visual inspiration, sharing it upfront helps Claude align the entire build to your vision!
-
----
-
-## 🏗️ Lab 3: Let Claude Code Build Your Project
-
-### Step 3.1: Ask Claude to Create Project Structure
+### Step 2.1: Ask Claude to Create Project Structure
 
 **Now that setup is complete, let Claude Code do the heavy lifting!**
 
 **Ask Claude Code:**
 ```
-Create the following project structure:
+Create a full-stack AI assistant project with:
+
+**Features:**
+- Chatbot with Strands Agents SDK
+- Tools: weather lookup, time/date, calculator
+- [Add your own tools here - movies, sports, books, etc.]
+
+**Structure:**
 - backend/ folder for Python FastAPI API
 - frontend/ folder for React + TypeScript app
-- .gitignore file (include: venv/, node_modules/, .env, __pycache/, .DS_Store)
+- .gitignore file
 - Update README.md with project overview and tech stack
-```
 
-**✅ Test It:**
-```bash
-ls -la
-cat README.md
+Use the Strands SDK documentation: https://strandsagents.com/docs/user-guide/quickstart/python/
 ```
 
 **🎯 What This Improves:**
@@ -494,16 +446,9 @@ cat README.md
 
 **Claude Code Feature Learned:** Multi-step project scaffolding
 
-### Step 3.2: Set Up Backend with Strands SDK
+---
 
-**Ask Claude Code:**
-```
-Set up a Python FastAPI backend in the backend/ directory:
-1. Create requirements.txt with: fastapi, uvicorn, strands-agents, pydantic-settings
-2. Create backend/main.py with a basic FastAPI app
-3. Add a /health endpoint that returns {"status": "healthy"}
-Note: We already have a venv created in Lab 0
-```
+### Step 2.2: Test the Backend
 
 **✅ Test It Yourself:**
 ```bash
@@ -523,9 +468,76 @@ Visit http://localhost:8000/health - you should see the health status!
 
 ---
 
-## 🧪 Lab 2: Testing & CLAUDE.md Configuration
+## 🎨 Lab 3: Share UI Design Ideas with Image Pasting
 
-### Step 2.1: Add Your First Test
+### Step 3.1: Paste Your Design Inspiration
+
+**Now that you have a base project, let's make the UI look amazing!**
+
+One of Claude Code's powerful features is that it can understand images - perfect for showing design inspiration!
+
+**Do you have a chat interface design you like?** You can paste an image directly into the Claude Code chat!
+
+**How to paste an image:**
+1. Find an image of a chat interface you like (from Dribbble, Behance, or even a screenshot of your favorite app)
+2. Copy the image to your clipboard
+3. Press `Ctrl+V` (or `Cmd+V` on Mac) in the Claude Code chat
+4. Claude will see the image and understand the design!
+
+**Ask Claude Code:**
+```
+Here's the design I want for my AI assistant chat interface. 
+Can you update the frontend to look like this?
+```
+
+**What Claude can extract from your design image:**
+- Color scheme and theme (purple, blue, dark mode, etc.)
+- Layout structure (header, message list, input area)
+- Message bubble styles (rounded, flat, shadows)
+- Interactive elements (buttons, quick replies, typing indicators)
+- Typography and spacing preferences
+- Status indicators (online, typing, etc.)
+
+**✅ Test It:**
+After pasting your design image, Claude will analyze it and can:
+1. Describe the design elements it sees
+2. Update the React components to match the design
+3. Apply appropriate CSS/Tailwind classes for styling
+4. Adjust colors, spacing, and layout
+
+**🎯 What This Improves:**
+- ✨ **Before**: Try to describe design in words ("make it purple-ish with round bubbles...")
+- ✨ **With Image**: Show exactly what you want - Claude sees it visually
+- ✨ **Benefit**: Start with clear design goals, save hours of design iteration
+- ✨ **Time Saved**: Skip the guesswork - Claude understands your vision immediately
+
+**Example interaction:**
+```
+You: [Paste image of a modern chat interface]
+"I love this chat design with the purple theme and bubble-style messages. 
+Can you update our chat interface to look like this?"
+
+Claude: "I can see this is a modern chat interface with:
+- Purple-themed header with bot avatar and 'Online' status
+- Clean message bubbles with rounded corners
+- Interactive button options for user responses
+- Smooth animations and good spacing
+
+I'll update the ChatInterface component to match this design..."
+```
+
+**💡 Pro Tip:** You can paste multiple design references to show different aspects:
+- One image for overall layout
+- Another for specific components (buttons, inputs)
+- A third showing color palette or animations
+
+**No design image?** No problem! You can skip this step and Claude will help you create a clean, modern design from scratch. But if you have visual inspiration, sharing it after the base project helps Claude style the UI perfectly!
+
+---
+
+## 🧪 Lab 4: Testing & CLAUDE.md Configuration
+
+### Step 4.1: Add Your First Test
 
 **Ask Claude Code:**
 ```
@@ -550,14 +562,9 @@ pytest backend/tests/ -v
 **CLAUDE.md tells Claude Code about your project's rules and architecture.**
 
 **Ask Claude Code:**
+Type in claudecode chat terminal
 ```
-Create a CLAUDE.md file documenting:
-- How to run the backend
-- How to run tests
-- Project architecture overview
-- Tech stack (FastAPI, Strands SDK, React, Vite)
-- Important rules (e.g., "Always run tests before committing")
-Use the /init skill if available
+/init
 ```
 
 **✅ Test It - See Claude Remember:**
@@ -575,7 +582,9 @@ Restart Claude Code session, then ask:
 
 **Claude Code Feature Learned:** Project documentation with CLAUDE.md
 
-### Step 2.3: Set Up Automated Testing Hook
+---
+
+### Step 4.3: Set Up Automated Testing Hook
 
 **Ask Claude Code:**
 ```
@@ -599,9 +608,9 @@ Ask Claude: "Commit this change"
 
 ---
 
-## 🤖 Lab 3: Build Your AI Agent
+## 🤖 Lab 5: Build Your AI Agent
 
-### Step 3.1: Configure Environment (.env file)
+### Step 5.1: Configure Environment (.env file)
 
 **Ask Claude Code:**
 ```
@@ -623,7 +632,9 @@ git status  # .env should not appear (ignored)
 - ✨ **Benefit**: Secrets stay out of git
 - ✨ **Benefit**: Easy configuration management
 
-### Step 3.2: Create Agent Service
+---
+
+### Step 5.2: Create Agent Service
 
 **Ask Claude Code:**
 ```
@@ -637,7 +648,9 @@ Create backend/services/agent_service.py with:
 
 **Hint:** Look at the reference project's `agent_service.py` for inspiration!
 
-### Step 3.3: Create Chat Endpoint
+---
+
+### Step 5.3: Create Chat Endpoint
 
 **Ask Claude Code:**
 ```
@@ -665,7 +678,9 @@ curl -X POST http://localhost:8000/api/v1/chat \
 - ✨ **Achievement**: You just built an AI agent with tool calling!
 - ✨ **Benefit**: Backend can now use Claude's intelligence
 
-### Step 3.4: Add a Calculator Tool
+---
+
+### Step 5.4: Add a Calculator Tool
 
 **Ask Claude Code:**
 ```
@@ -692,9 +707,9 @@ curl -X POST http://localhost:8000/api/v1/chat \
 
 ---
 
-## 🎨 Lab 4: Build the Frontend
+## 🎨 Lab 6: Build the Frontend
 
-### Step 4.1: Initialize React App
+### Step 6.1: Initialize React App
 
 **Ask Claude Code:**
 ```
@@ -714,7 +729,9 @@ npm run dev
 
 Visit http://localhost:5173 - you should see your app!
 
-### Step 4.2: Create Chat Interface
+---
+
+### Step 6.2: Create Chat Interface
 
 **Ask Claude Code:**
 ```
@@ -728,7 +745,9 @@ Style it with Tailwind CSS
 
 **Claude Code Feature Learned:** Frontend component generation, API integration
 
-### Step 4.3: Add Message History
+---
+
+### Step 6.3: Add Message History
 
 **Ask Claude Code:**
 ```
@@ -756,9 +775,9 @@ Add state management to store messages:
 
 ---
 
-## 🔧 Lab 5: Advanced Features
+## 🔧 Lab 7: Advanced Features
 
-### Step 5.1: Add Streaming Responses
+### Step 7.1: Add Streaming Responses
 
 **Ask Claude Code:**
 ```
@@ -780,7 +799,9 @@ Send a message and watch it appear word-by-word in real-time!
 
 **Claude Code Feature Learned:** Complex refactoring, async patterns
 
-### Step 5.2: Add Tool for Your Interest
+---
+
+### Step 7.2: Add Tool for Your Interest
 
 **Challenge:** Add a custom tool based on your interests:
 - Movie buff? Add `search_movies()` tool
@@ -792,7 +813,9 @@ Send a message and watch it appear word-by-word in real-time!
 Add a new tool called [your_tool_name] to the agent that [describe functionality]
 ```
 
-### Step 5.3: Improve UI/UX
+---
+
+### Step 7.3: Improve UI/UX
 
 **Ask Claude Code:**
 ```
@@ -805,9 +828,9 @@ Enhance the chat interface with:
 
 ---
 
-## 🎓 Lab 6: Plugins for Code Quality
+## 🎓 Lab 8: Plugins for Code Quality
 
-### Step 6.1: Understanding Claude Code Plugins
+### Step 8.1: Understanding Claude Code Plugins
 
 **What are plugins?**
 Plugins extend Claude Code with additional capabilities like language servers, external integrations, and specialized tools.
@@ -871,7 +894,9 @@ Run type checking on my Python backend code.
 
 **Claude Code Feature Learned:** LSP plugins for code quality
 
-### Step 6.3: Install GitHub Plugin
+---
+
+### Step 8.3: Install GitHub Plugin
 
 **Connect Claude Code to GitHub for PR reviews and issue management:**
 
@@ -907,9 +932,9 @@ Create an issue titled "Add user authentication" with description: "Implement JW
 
 ---
 
-## 🛠️ Lab 7: Commands & Skills for Rapid Development
+## 🛠️ Lab 9: Commands & Skills for Rapid Development
 
-### Step 7.1: Use the Component Command
+### Step 9.1: Use the Component Command
 
 **This project includes a custom `/component` command for rapid React development.**
 
@@ -946,7 +971,9 @@ Ask Claude: "Use the LoadingSpinner component in ChatInterface while waiting for
 
 **Claude Code Feature Learned:** Custom commands for code generation
 
-### Step 7.2: Create Your Own Custom Command
+---
+
+### Step 9.2: Create Your Own Custom Command
 
 **Commands are reusable prompt templates in `.claude/commands/`.**
 
@@ -987,7 +1014,9 @@ Run both backend and frontend test suites with coverage reporting...
 
 **Claude Code Feature Learned:** Custom command creation
 
-### Step 7.3: Use the Start-Dev Skill
+---
+
+### Step 9.3: Use the Start-Dev Skill
 
 **Skills are multi-step automated workflows.**
 
@@ -1011,7 +1040,9 @@ Run both backend and frontend test suites with coverage reporting...
 
 **Claude Code Feature Learned:** Custom skills for project workflows
 
-### Step 7.4: Use Built-in Skills
+---
+
+### Step 9.4: Use Built-in Skills
 
 **Try the commit skill:**
 
@@ -1049,7 +1080,9 @@ Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty 
 
 **Claude Code Feature Learned:** Built-in skills for git workflows
 
-### Step 7.5: Create Your Own Custom Skill
+---
+
+### Step 9.5: Create Your Own Custom Skill
 
 **Skills live in `.claude/skills/` and can have complex logic.**
 
@@ -1086,9 +1119,9 @@ Stop the backend server, then run:
 
 ---
 
-## 🪝 Lab 8: Hooks for Automated Quality Control
+## 🪝 Lab 10: Hooks for Automated Quality Control
 
-### Step 8.1: Understanding Hooks
+### Step 10.1: Understanding Hooks
 
 **Hooks automatically run actions at specific points in Claude Code's workflow:**
 - `PreToolUse` - Before Claude uses a tool (safety checks, validation)
@@ -1100,7 +1133,9 @@ Stop the backend server, then run:
 Ask Claude: "Show me what hooks are configured in .claude/settings.json"
 ```
 
-### Step 8.2: Create a Pre-Commit Test Hook
+---
+
+### Step 10.2: Create a Pre-Commit Test Hook
 
 **Ask Claude Code:**
 ```
@@ -1149,7 +1184,9 @@ assert response.status_code == 200  # Correct
 
 **Claude Code Feature Learned:** Pre-commit hooks for quality gates
 
-### Step 8.3: Create a File Protection Hook
+---
+
+### Step 10.3: Create a File Protection Hook
 
 **Ask Claude Code:**
 ```
@@ -1194,7 +1231,9 @@ Ask Claude: "Update React version in package-lock.json"
 
 **Claude Code Feature Learned:** File protection hooks
 
-### Step 8.4: Create a SessionStart Context Hook
+---
+
+### Step 10.4: Create a SessionStart Context Hook
 
 **Ask Claude Code:**
 ```
@@ -1233,7 +1272,9 @@ Restart your Claude Code session
 
 **Claude Code Feature Learned:** Session initialization hooks
 
-### Step 8.5: Create a PostToolUse Formatting Hook
+---
+
+### Step 10.5: Create a PostToolUse Formatting Hook
 
 **Ask Claude Code:**
 ```
@@ -1259,9 +1300,9 @@ Ask Claude: "Add a new function to agent_service.py with messy formatting"
 
 ---
 
-## 🤖 Lab 9: Specialized Agents for Expert Help
+## 🤖 Lab 11: Specialized Agents for Expert Help
 
-### Step 9.1: Understanding Agents
+### Step 11.1: Understanding Agents
 
 **Agents are specialized Claude instances with specific roles, expertise, and tools.**
 
@@ -1276,7 +1317,9 @@ Ask Claude: "Add a new function to agent_service.py with messy formatting"
 Ask Claude: "What custom agents are available in .claude/agents/?"
 ```
 
-### Step 9.2: Use the Code Review Agent
+---
+
+### Step 11.2: Use the Code Review Agent
 
 **The code-reviewer agent specializes in finding bugs and improving code quality.**
 
@@ -1317,7 +1360,9 @@ Use the code-reviewer agent to review my agent_service.py file. Focus on securit
 
 **Claude Code Feature Learned:** Using specialized agents
 
-### Step 9.3: Use the Frontend Improver Agent
+---
+
+### Step 11.3: Use the Frontend Improver Agent
 
 **The frontend-improver agent specializes in React and UI/UX.**
 
@@ -1345,7 +1390,9 @@ Use the frontend-improver agent to enhance the ChatInterface component with:
 
 **Claude Code Feature Learned:** Frontend-focused agent delegation
 
-### Step 9.4: Use the Visual Inspector Agent
+---
+
+### Step 11.4: Use the Visual Inspector Agent
 
 **The frontend-visual-inspector works with Chrome DevTools MCP to test visually.**
 
@@ -1390,7 +1437,9 @@ Use the frontend-visual-inspector agent to:
 
 **Claude Code Feature Learned:** Visual testing with agents + MCP
 
-### Step 9.5: Use the Backend Maintainer Agent
+---
+
+### Step 11.5: Use the Backend Maintainer Agent
 
 **The backend-maintainer agent specializes in FastAPI and Python backend work.**
 
@@ -1411,7 +1460,9 @@ Use the backend-maintainer agent to:
 
 **Claude Code Feature Learned:** Backend-focused agent delegation
 
-### Step 9.6: Create Your Own Custom Agent
+---
+
+### Step 11.6: Create Your Own Custom Agent
 
 **Create a specialized agent for testing.**
 
@@ -1488,7 +1539,9 @@ def test_calculate_should_handle_division_by_zero():
 
 **Claude Code Feature Learned:** Custom agent creation
 
-### Step 9.7: Agent Memory
+---
+
+### Step 11.7: Agent Memory
 
 **Agents can remember preferences and learnings across invocations.**
 
@@ -1531,9 +1584,9 @@ Ask Claude: "Show me what the code-reviewer agent remembers about this project"
 
 ---
 
-## 🔌 Lab 10: MCP for Browser Testing & Diagrams
+## 🔌 Lab 12: MCP for Browser Testing & Diagrams
 
-### Step 10.1: Understanding MCP
+### Step 12.1: Understanding MCP
 
 **MCP (Model Context Protocol) connects Claude Code to external tools.**
 
@@ -1562,7 +1615,9 @@ Ask Claude: "Show me the MCP servers configured in .mcp.json"
 }
 ```
 
-### Step 10.2: Use Chrome DevTools MCP
+---
+
+### Step 12.2: Use Chrome DevTools MCP
 
 **Chrome DevTools MCP is already installed! Let's use it.**
 
@@ -1592,7 +1647,9 @@ Use Chrome DevTools MCP to:
 
 **Claude Code Feature Learned:** Browser automation via MCP
 
-### Step 10.3: Test Responsive Design with MCP
+---
+
+### Step 12.3: Test Responsive Design with MCP
 
 **✅ Test It - Multi-Device Testing:**
 
@@ -1630,7 +1687,9 @@ Take screenshots of each and identify any layout issues.
 
 **Claude Code Feature Learned:** Visual regression testing
 
-### Step 10.4: Debug Network Issues with MCP
+---
+
+### Step 12.4: Debug Network Issues with MCP
 
 **✅ Test It - Monitor API Calls:**
 
@@ -1668,7 +1727,9 @@ Response Body: {"response": "Why did the..."}
 
 **Claude Code Feature Learned:** Network debugging via MCP
 
-### Step 10.5: Generate Diagrams with Draw.io MCP
+---
+
+### Step 12.5: Generate Diagrams with Draw.io MCP
 
 **Draw.io MCP is already installed for creating diagrams!**
 
@@ -1716,7 +1777,9 @@ Use Draw.io MCP to create a sequence diagram showing the chat message flow with 
 
 **Claude Code Feature Learned:** Architecture diagram generation
 
-### Step 10.6: Advanced - Agent + MCP Integration
+---
+
+### Step 12.6: Advanced - Agent + MCP Integration
 
 **Combine agents with MCP for powerful workflows.**
 
@@ -1767,7 +1830,9 @@ Use the frontend-visual-inspector agent to:
 
 **Claude Code Feature Learned:** Agent + MCP integration
 
-### Step 10.7: Create a Custom MCP Server (Advanced Challenge)
+---
+
+### Step 12.7: Create a Custom MCP Server (Advanced Challenge)
 
 **Build your own MCP server for project-specific needs.**
 
@@ -1810,9 +1875,9 @@ Ask Claude: "Use project-tools MCP to analyze backend logs and show error rate"
 
 ---
 
-## 📝 Lab 11: Memory for Persistent Context
+## 📝 Lab 13: Memory for Persistent Context
 
-### Step 11.1: Use Claude Code Memory
+### Step 13.1: Use Claude Code Memory
 
 **Claude Code can remember preferences across sessions.**
 
@@ -1845,7 +1910,9 @@ How do I activate the virtual environment?
 
 **Claude Code Feature Learned:** Persistent memory across sessions
 
-### Step 11.2: Project-Specific Memory
+---
+
+### Step 13.2: Project-Specific Memory
 
 **Tell Claude about your learning goals.**
 
@@ -1897,7 +1964,9 @@ Do you understand the caching strategy? Should I proceed?
 
 **Claude Code Feature Learned:** Project-specific memory
 
-### Step 11.3: Check and Update Memory
+---
+
+### Step 13.3: Check and Update Memory
 
 **✅ Test It - Memory Inspection:**
 
@@ -1924,9 +1993,9 @@ What's your approach to adding new features now?
 
 ---
 
-## 🧪 Lab 12: Comprehensive Testing & Quality Assurance
+## 🧪 Lab 14: Comprehensive Testing & Quality Assurance
 
-### Step 12.1: Add Full Test Suite
+### Step 14.1: Add Full Test Suite
 
 **Ask Claude Code:**
 ```
@@ -1970,7 +2039,9 @@ npm test -- --coverage
 - ✨ **Benefit**: Catch regressions, safe refactoring
 - ✨ **Coverage Goal**: 80%+ means most code is tested
 
-### Step 12.2: Create Unified Start Script
+---
+
+### Step 14.2: Create Unified Start Script
 
 **Ask Claude Code:**
 ```
@@ -2002,9 +2073,9 @@ Create start.sh script that:
 
 ---
 
-## 🏆 Lab 13: Deployment & Documentation
+## 🏆 Lab 15: Deployment & Documentation
 
-### Step 13.1: Add Deployment Config
+### Step 15.1: Add Deployment Config
 
 **Ask Claude Code:**
 ```
@@ -2027,7 +2098,9 @@ docker-compose up --build
 - ✨ **Benefit**: Production-ready deployment
 - ✨ **Benefit**: Consistent environment (dev/prod parity)
 
-### Step 13.2: Complete Documentation
+---
+
+### Step 15.2: Complete Documentation
 
 **Ask Claude Code:**
 ```
@@ -2053,7 +2126,9 @@ Ask a teammate or friend to set up the project using only your README
 - ✨ **Benefit**: Anyone can understand and run your project
 - ✨ **Use Case**: Open source, team onboarding, portfolio
 
-### Step 13.3: Create Demo Presentation
+---
+
+### Step 15.3: Create Demo Presentation
 
 **Ask Claude Code:**
 ```
