@@ -235,20 +235,28 @@ aws configure list --profile my-ai-assistant
 
 **Why?** Claude Code needs AWS Bedrock access to use Claude AI models.
 
-### Step 0.5: Open Project in VS Code
+**📋 Setup Complete - Verify Your Environment:**
 
-```bash
-# Open current directory in VS Code
-code .
-```
+At this point, you should have VS Code open in your project folder with a terminal ready.
 
-**You should now have:**
+**Checklist:**
 - ✅ Project folder created
 - ✅ Python virtual environment (venv/)
 - ✅ Git initialized with initial commit
 - ✅ GitHub remote repository connected
 - ✅ AWS credentials configured
-- ✅ Project open in VS Code
+- ✅ VS Code open in project directory
+- ✅ Terminal open in VS Code (View → Terminal)
+
+**Quick verification commands:**
+```bash
+pwd                    # Should show path to my-ai-assistant
+git status            # Should show clean working tree
+git remote -v         # Should show your GitHub repo
+ls -la                # Should see: venv/, .git/, README.md
+```
+
+**Note:** If VS Code prompts "Do you trust the authors of the files in this folder?" - click "Yes, I trust the authors"
 
 ---
 
