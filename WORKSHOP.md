@@ -75,7 +75,6 @@ This workshop covers **all major Claude Code features** through hands-on practic
 ## 📋 Prerequisites
 
 Before starting, ensure you have:
-- [ ] Claude Code installed (CLI, desktop, or web) - [Installation Guide](https://docs.anthropic.com/claude/docs/claude-code)
 - [ ] Python 3.9+ installed
 - [ ] Node.js 18+ and npm installed
 - [ ] Git installed
@@ -91,14 +90,65 @@ node --version      # Should be 18+
 npm --version
 git --version
 aws --version       # AWS CLI should be installed
-claudecode --version # Should show Claude Code is installed
 ```
 
-**Don't worry about AWS credentials yet** - Lab 0 will guide you through AWS and GitHub setup step by step!
+**Note:** We'll install Claude Code in the first step below!
+
+---
+
+## 🚀 Getting Started: Install Claude Code
+
+### Before Lab 0: Install Claude Code CLI
+
+**You need to install Claude Code first!**
+
+#### Option 1: Install in VS Code (Mac - Recommended)
+
+**Open VS Code terminal and run:**
+
+```bash
+# Install Claude Code CLI
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**After installation:**
+```bash
+# Verify installation
+claudecode --version
+```
+
+You should see the Claude Code version number!
+
+#### Option 2: Install for Other Operating Systems
+
+**Follow the official installation guide:**
+
+👉 **[https://code.claude.com/docs/en/quickstart](https://code.claude.com/docs/en/quickstart)**
+
+This guide covers:
+- **Windows**: Installation via PowerShell
+- **Linux**: Installation via bash script
+- **macOS**: Alternative installation methods
+- **Desktop App**: Download standalone app
+- **VS Code Extension**: Install directly in VS Code
+
+**✅ Test Installation:**
+```bash
+claudecode --version
+# Should display: Claude Code v[version number]
+```
+
+**🎯 What This Enables:**
+- ✨ Chat with Claude directly from your terminal
+- ✨ Claude can read, write, and execute code
+- ✨ Seamless integration with your development workflow
+- ✨ Access to Claude 4 via Amazon Bedrock
 
 ---
 
 ## 🛠️ Lab 0: Initial Setup (Before Starting Claude Code)
+
+**Now that Claude Code is installed, let's prepare the project environment:**
 
 ### Step 0.1: Create Project Folder and Setup Version Control
 
