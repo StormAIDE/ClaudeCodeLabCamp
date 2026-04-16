@@ -327,9 +327,10 @@ gh auth login
 # - Yes (authenticate Git)
 # - Login with a web browser
 
-# You'll get a code - press Enter
-# Browser opens - enter the code
+# You'll get a code & url
+# opne url in browser - enter the code
 # Authorize GitHub CLI
+# back in terminal press enter
 ```
 
 **✅ Test It:**
