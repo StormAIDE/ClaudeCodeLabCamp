@@ -75,39 +75,285 @@ This workshop covers **all major Claude Code features** through hands-on practic
 ## 📋 Prerequisites
 
 Before starting, ensure you have:
-- [ ] Claude Code installed (CLI, desktop, or web)
+- [ ] Claude Code installed (CLI, desktop, or web) - [Installation Guide](https://docs.anthropic.com/claude/docs/claude-code)
 - [ ] Python 3.9+ installed
 - [ ] Node.js 18+ and npm installed
-- [ ] AWS credentials configured (for Bedrock access)
 - [ ] Git installed
-- [ ] A code editor (VS Code recommended)
+- [ ] AWS account with Bedrock access (for Claude AI models)
+- [ ] AWS credentials (Access Key ID & Secret Access Key)
+- [ ] GitHub account (for version control and CI/CD)
+- [ ] VS Code or preferred code editor
 
 **Check your setup:**
 ```bash
 python --version    # Should be 3.9+
 node --version      # Should be 18+
 npm --version
-aws configure list  # Should show configured credentials
+git --version
+aws --version       # AWS CLI should be installed
+claudecode --version # Should show Claude Code is installed
 ```
+
+**Don't worry about AWS credentials yet** - Lab 0 will guide you through AWS and GitHub setup step by step!
 
 ---
 
-## 🎨 Lab 0: Getting Started with UI Design Ideas
+## 🛠️ Lab 0: Initial Setup (Before Starting Claude Code)
 
-### Step 0.1: Connect to Claude Code and Start Chatting
+### Step 0.1: Create Project Folder and Setup Version Control
 
-**Welcome!** Before we dive into coding, let's start with something visual and fun - designing your chat interface!
+**Do this BEFORE starting Claude Code:**
 
-Once you've connected to Claude Code (CLI, desktop, or web), you can start chatting immediately. One of Claude Code's powerful features is that it can understand images - perfect for showing design inspiration!
+```bash
+# 1. Create your project folder
+mkdir my-ai-assistant
+cd my-ai-assistant
 
-### Step 0.2: Share Your UI Design Inspiration
+# 2. Create README.md (so you have something to commit)
+echo "# My AI Assistant" > README.md
+echo "AI-powered personal assistant built with Claude Code" >> README.md
+
+# 3. Initialize git repository
+git init
+git add README.md
+git commit -m "Initial commit"
+```
+
+**Why do this first?** You need an existing folder with git initialized so Claude Code can work with it.
+
+### Step 0.2: Create Python Virtual Environment
+
+```bash
+# Create Python virtual environment
+python -m venv venv
+
+# Activate it (you'll need this activated later)
+# On Mac/Linux:
+source venv/bin/activate
+# On Windows:
+# venv\Scripts\activate
+```
+
+**Why?** Python dependencies will be isolated to this project.
+
+### Step 0.3: Create GitHub Repository and Push
+
+**Create the remote repository:**
+
+1. Go to GitHub.com and create a new repository (e.g., "my-ai-assistant")
+2. Don't initialize with README (you already have one)
+3. Copy the HTTPS URL (e.g., `https://github.com/yourusername/my-ai-assistant.git`)
+
+**Connect and push:**
+
+```bash
+# Add remote repository
+git remote add origin https://github.com/yourusername/my-ai-assistant.git
+
+# Push to GitHub
+git branch -M main
+git push -u origin main
+```
+
+**✅ Test It:** Visit your GitHub repo URL - you should see your README!
+
+### Step 0.4: Configure AWS Profile (for Bedrock Access)
+
+**Create AWS credentials file or configure profile:**
+
+```bash
+# Option 1: Use aws configure
+aws configure --profile my-ai-assistant
+# Enter your:
+# - AWS Access Key ID
+# - AWS Secret Access Key
+# - Default region (e.g., us-east-1)
+# - Output format (json)
+
+# Option 2: Or manually create ~/.aws/credentials
+# [my-ai-assistant]
+# aws_access_key_id = YOUR_KEY
+# aws_secret_access_key = YOUR_SECRET
+# region = us-east-1
+```
+
+**✅ Test It:**
+```bash
+aws configure list --profile my-ai-assistant
+# Should show your configured credentials
+```
+
+**Why?** Claude Code needs AWS Bedrock access to use Claude AI models.
+
+### Step 0.5: Open Project in VS Code
+
+```bash
+# Open current directory in VS Code
+code .
+```
+
+**You should now have:**
+- ✅ Project folder created
+- ✅ Python virtual environment (venv/)
+- ✅ Git initialized with initial commit
+- ✅ GitHub remote repository connected
+- ✅ AWS credentials configured
+- ✅ Project open in VS Code
+
+---
+
+## 🚀 Lab 1: Connect Claude Code and Start Building
+
+### Step 1.1: Start Claude Code
+
+**In your VS Code terminal (or regular terminal in project directory):**
+
+```bash
+# Make sure you're in the project directory
+cd my-ai-assistant
+
+# Start Claude Code
+claudecode
+```
+
+**First-time setup - You'll be prompted:**
+
+1. **"How would you like to connect to Claude?"**
+   - Select: **"Amazon Bedrock"**
+
+2. **"Select AWS profile:"**
+   - Select: **"my-ai-assistant"** (or whatever you named it)
+
+3. **Connection established!** You'll see the Claude Code prompt.
+
+**✅ Test It - Say Hi:**
+```
+Hi! Can you confirm you're connected and ready to help?
+```
+
+**Claude should respond** - connection successful! 🎉
+
+### Step 1.2: Share Strands Agents Documentation
+
+**Give Claude the official Strands SDK documentation link:**
+
+```
+I want to build this project using Strands Agents SDK for the backend agent functionality.
+Here's the official documentation: https://strandsagents.com/docs/user-guide/quickstart/python/
+
+Please reference this documentation when building the agent service.
+```
+
+**Why?** This ensures Claude uses the correct Strands SDK patterns and APIs.
+
+### Step 1.3: Connect GitHub CLI (gh) for Automated Git Operations
+
+**Ask Claude Code to help you set up GitHub CLI:**
+
+```
+How do I connect GitHub CLI so you can automatically commit and push changes for me?
+```
+
+**Claude will help you:**
+1. Install `gh` if not present (via homebrew/apt/etc)
+2. Provide the authentication command: `gh auth login`
+
+**Follow the prompts:**
+```bash
+# Run this in the terminal
+gh auth login
+
+# Select:
+# - GitHub.com
+# - HTTPS
+# - Yes (authenticate Git)
+# - Login with a web browser
+
+# You'll get a code - press Enter
+# Browser opens - enter the code
+# Authorize GitHub CLI
+```
+
+**✅ Test It:**
+```bash
+gh auth status
+# Should show: "Logged in to github.com"
+```
+
+**Why?** This allows Claude Code to automatically push commits to GitHub for you.
+
+### Step 1.4: Reopen Claude Code with GitHub Access
+
+**Important:** Close and reopen Claude Code so it can use the GitHub credentials:
+
+```bash
+# Exit Claude Code (Ctrl+C or type /exit)
+
+# Reopen it
+claudecode
+```
+
+Now Claude Code has GitHub CLI access in the same terminal session!
+
+### Step 1.5: Give Claude Your GitHub Repository URL
+
+**Tell Claude about your repository and workflow preferences:**
+
+```
+Remember this for future sessions:
+- My GitHub repository is: https://github.com/yourusername/my-ai-assistant.git
+- After every feature or fix, please commit with a descriptive message and push to GitHub
+- Use conventional commit format: feat:, fix:, chore:, docs:, test:
+- Always run tests before committing
+```
+
+**Claude will remember** these preferences!
+
+### Step 1.6: Initialize CLAUDE.md for Project Memory
+
+**Ask Claude to create project documentation:**
+
+```
+/init
+```
+
+**OR manually ask:**
+```
+Create a CLAUDE.md file that documents:
+- Project structure and tech stack
+- How to run backend and frontend
+- Testing commands
+- Important rules (ports, commit format, etc.)
+- AWS and GitHub setup
+```
+
+**✅ Test It - Restart Claude Code:**
+```bash
+# Exit and reopen
+claudecode
+
+# Ask:
+"What ports should this project use?"
+```
+
+**Claude should reference CLAUDE.md** and know the project setup!
+
+---
+
+## 🎨 Lab 2: Share UI Design Ideas with Image Pasting
+
+### Step 2.1: Paste Your Design Inspiration
+
+**Welcome!** Now that Claude Code is set up, let's start with something visual and fun - designing your chat interface!
+
+One of Claude Code's powerful features is that it can understand images - perfect for showing design inspiration!
 
 **Do you have a chat interface design you like?** You can paste an image directly into the Claude Code chat!
 
 **How to paste an image:**
 1. Find an image of a chat interface you like (from Dribbble, Behance, or even a screenshot of your favorite app)
 2. Copy the image to your clipboard
-3. Press `Ctrl+V` (or `Cmd+V` on Mac) in the Claude Code chat
+3. Press `Ctrl+V` in the Claude Code chat
 4. Claude will see the image and understand the design!
 
 **Ask Claude Code:**
@@ -161,23 +407,25 @@ I'll help you build this! Let's start by setting up the project..."
 
 ---
 
-## 🚀 Lab 1: Project Setup & Claude Code Basics
+## 🏗️ Lab 3: Let Claude Code Build Your Project
 
-### Step 1.1: Create Your Project
+### Step 3.1: Ask Claude to Create Project Structure
+
+**Now that setup is complete, let Claude Code do the heavy lifting!**
 
 **Ask Claude Code:**
 ```
-Create a new directory called "my-ai-assistant" with the following structure:
-- backend/ folder for Python API
-- frontend/ folder for React app
-- .gitignore file (Python, Node, and env files)
-- README.md with a brief project description
+Create the following project structure:
+- backend/ folder for Python FastAPI API
+- frontend/ folder for React + TypeScript app
+- .gitignore file (include: venv/, node_modules/, .env, __pycache/, .DS_Store)
+- Update README.md with project overview and tech stack
 ```
 
 **✅ Test It:**
 ```bash
-ls -la my-ai-assistant/
-cat my-ai-assistant/README.md
+ls -la
+cat README.md
 ```
 
 **🎯 What This Improves:**
@@ -185,22 +433,9 @@ cat my-ai-assistant/README.md
 - ✨ **With Claude Code**: Entire project structure in one command
 - ✨ **Time Saved**: 5-10 minutes → 30 seconds
 
-### Step 1.2: Initialize Git Repository
+**Claude Code Feature Learned:** Multi-step project scaffolding
 
-**Ask Claude Code:**
-```
-Initialize this as a git repository and create an initial commit
-```
-
-**✅ Test It:**
-```bash
-git log
-git status
-```
-
-**Claude Code Feature Learned:** Basic file creation and git integration
-
-### Step 1.3: Set Up Backend
+### Step 3.2: Set Up Backend with Strands SDK
 
 **Ask Claude Code:**
 ```
@@ -208,7 +443,7 @@ Set up a Python FastAPI backend in the backend/ directory:
 1. Create requirements.txt with: fastapi, uvicorn, strands-agents, pydantic-settings
 2. Create backend/main.py with a basic FastAPI app
 3. Add a /health endpoint that returns {"status": "healthy"}
-4. Create a virtual environment called "venv"
+Note: We already have a venv created in Lab 0
 ```
 
 **✅ Test It Yourself:**
