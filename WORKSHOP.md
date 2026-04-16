@@ -92,6 +92,75 @@ aws configure list  # Should show configured credentials
 
 ---
 
+## 🎨 Lab 0: Getting Started with UI Design Ideas
+
+### Step 0.1: Connect to Claude Code and Start Chatting
+
+**Welcome!** Before we dive into coding, let's start with something visual and fun - designing your chat interface!
+
+Once you've connected to Claude Code (CLI, desktop, or web), you can start chatting immediately. One of Claude Code's powerful features is that it can understand images - perfect for showing design inspiration!
+
+### Step 0.2: Share Your UI Design Inspiration
+
+**Do you have a chat interface design you like?** You can paste an image directly into the Claude Code chat!
+
+**How to paste an image:**
+1. Find an image of a chat interface you like (from Dribbble, Behance, or even a screenshot of your favorite app)
+2. Copy the image to your clipboard
+3. Press `Ctrl+V` (or `Cmd+V` on Mac) in the Claude Code chat
+4. Claude will see the image and understand the design!
+
+**Ask Claude Code:**
+```
+Here's the design I want for my AI assistant chat interface. 
+Can you help me build a frontend that looks like this?
+```
+
+**What Claude can extract from your design image:**
+- Color scheme and theme (purple, blue, dark mode, etc.)
+- Layout structure (header, message list, input area)
+- Message bubble styles (rounded, flat, shadows)
+- Interactive elements (buttons, quick replies, typing indicators)
+- Typography and spacing preferences
+- Status indicators (online, typing, etc.)
+
+**✅ Test It:**
+After pasting your design image, Claude will analyze it and can:
+1. Describe the design elements it sees
+2. Suggest a tech stack to achieve the look
+3. Generate React components matching the design
+4. Recommend CSS/Tailwind classes for styling
+
+**🎯 What This Improves:**
+- ✨ **Before**: Try to describe design in words ("make it purple-ish with round bubbles...")
+- ✨ **With Image**: Show exactly what you want - Claude sees it visually
+- ✨ **Benefit**: Start with clear design goals, save hours of design iteration
+- ✨ **Time Saved**: Skip the guesswork - Claude understands your vision immediately
+
+**Example interaction:**
+```
+You: [Paste image of LeadBot chat interface]
+"I love this chat design with the purple theme and bubble-style messages. 
+Can you help me create something similar?"
+
+Claude: "I can see this is a modern chat interface with:
+- Purple-themed header with bot avatar and 'Online' status
+- Clean message bubbles with rounded corners
+- Interactive button options for user responses
+- Smooth animations and good spacing
+
+I'll help you build this! Let's start by setting up the project..."
+```
+
+**💡 Pro Tip:** You can paste multiple design references to show different aspects:
+- One image for overall layout
+- Another for specific components (buttons, inputs)
+- A third showing color palette or animations
+
+**No design image?** No problem! You can skip this step and Claude will help you create a clean, modern design from scratch. But if you have visual inspiration, sharing it upfront helps Claude align the entire build to your vision!
+
+---
+
 ## 🚀 Lab 1: Project Setup & Claude Code Basics
 
 ### Step 1.1: Create Your Project
