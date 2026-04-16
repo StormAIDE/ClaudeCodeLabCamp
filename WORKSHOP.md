@@ -295,27 +295,7 @@ Hi! Can you confirm you're connected and ready to help?
 
 ---
 
-### Step 1.2: Share Strands Agents Documentation
-
-**Give Claude the official Strands SDK documentation link:**
-
-```
-I want to build this project using Strands Agents SDK for the backend agent functionality.
-Here's the official documentation: https://strandsagents.com/docs/user-guide/quickstart/python/
-
-Please reference this documentation when building the agent service.
-```
-
-Then run:
-```
-/init
-```
-
-**💡 Why?** This ensures Claude uses the correct Strands SDK patterns and APIs.
-
----
-
-### Step 1.3: Connect GitHub CLI (gh) for Automated Git Operations
+### Step 1.2: Connect GitHub CLI for Automated Git Operations
 
 **Ask Claude Code to help you set up GitHub CLI:**
 
@@ -355,7 +335,7 @@ gh auth status
 
 ---
 
-### Step 1.4: Reopen Claude Code with GitHub Access
+### Step 1.3: Reopen Claude Code with GitHub Access
 
 **Important:** Reopen Claude Code so it can use the GitHub credentials:
 
@@ -368,7 +348,7 @@ claudecode
 
 Now Claude Code has GitHub CLI access in the same terminal session!
 
-### Step 1.5: Give Claude Your GitHub Repository URL
+### Step 1.4: Give Claude Your GitHub Repository URL
 
 **Tell Claude about your repository and workflow preferences:**
 
@@ -384,7 +364,7 @@ Remember this for future sessions:
 
 ---
 
-### Step 1.6: Initialize CLAUDE.md for Project Memory
+### Step 1.5: Initialize CLAUDE.md for Project Memory
 
 **Ask Claude to create project documentation:**
 
@@ -423,20 +403,38 @@ claudecode
 
 **Ask Claude Code:**
 ```
-Create a full-stack AI assistant project with:
+Create a complete, working full-stack AI assistant project using Strands Agents SDK.
 
-**Features:**
-- Chatbot with Strands Agents SDK
-- Tools: weather lookup, time/date, calculator
-- [Add your own tools here - movies, sports, books, etc.]
+Reference: https://strandsagents.com/docs/user-guide/quickstart/python/
 
-**Structure:**
-- backend/ folder for Python FastAPI API
-- frontend/ folder for React + TypeScript app
-- .gitignore file
-- Update README.md with project overview and tech stack
+Build a fully functional AI assistant with:
 
-Use the Strands SDK documentation: https://strandsagents.com/docs/user-guide/quickstart/python/
+**Backend (Python + FastAPI + Strands SDK):**
+- Agent service with Claude AI via Bedrock
+- Tools: weather lookup, calculator, joke generator
+- Chat API endpoint (POST /api/v1/chat)
+- Health check endpoint
+- Error handling and validation
+
+**Frontend (React + TypeScript + Vite):**
+- Chat interface with message history
+- Input field and send button
+- Display user/assistant messages
+- Loading states
+- Modern, clean UI
+
+**Configuration & Setup:**
+- .env.example and .env (CLAUDE_MODEL_ID, APP_NAME, API_PORT)
+- .gitignore (exclude .env, venv/, node_modules/)
+- requirements.txt and package.json
+- Complete README with setup instructions
+
+**Architecture:**
+- Clean separation of concerns
+- Modular code structure
+- API-first design
+
+Make it a complete, working project ready to run immediately.
 ```
 
 **🎯 What This Improves:**
@@ -448,23 +446,37 @@ Use the Strands SDK documentation: https://strandsagents.com/docs/user-guide/qui
 
 ---
 
-### Step 2.2: Test the Backend
+### Step 2.2: Test the Full Application
 
-**✅ Test It Yourself:**
+**✅ Test It - Start Both Backend and Frontend:**
+
+**Terminal 1 - Backend:**
 ```bash
 source venv/bin/activate
 pip install -r requirements.txt
 python -m uvicorn backend.main:app --reload --port 8000
 ```
 
-Visit http://localhost:8000/health - you should see the health status!
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**Verify Everything Works:**
+- Backend health: http://localhost:8000/health
+- API docs: http://localhost:8000/docs
+- Frontend app: http://localhost:5173
+- **Test the chat**: Send a message like "Tell me a joke" or "Calculate 42 * 37"
 
 **🎯 What This Improves:**
-- ✨ **Before**: Write boilerplate code manually
-- ✨ **With Claude**: Full backend setup in one prompt
-- ✨ **Time Saved**: 20-30 minutes → 2 minutes
+- ✨ **Before Claude Code**: Days of manual coding
+- ✨ **With Claude Code**: Complete working app in minutes
+- ✨ **Time Saved**: 2-3 days → 10 minutes
+- ✨ **Achievement**: Full-stack AI agent with tools, working end-to-end!
 
-**Claude Code Feature Learned:** Multi-step task execution
+**Claude Code Feature Learned:** Complete project generation with one prompt
 
 ---
 
@@ -481,7 +493,7 @@ One of Claude Code's powerful features is that it can understand images - perfec
 **How to paste an image:**
 1. Find an image of a chat interface you like (from Dribbble, Behance, or even a screenshot of your favorite app)
 2. Copy the image to your clipboard
-3. Press `Ctrl+V` (or `Cmd+V` on Mac) in the Claude Code chat
+3. Press `Ctrl+V` in the Claude Code chat
 4. Claude will see the image and understand the design!
 
 **Ask Claude Code:**
@@ -537,27 +549,30 @@ I'll update the ChatInterface component to match this design..."
 
 ## 🧪 Lab 4: Testing & CLAUDE.md Configuration
 
-### Step 4.1: Add Your First Test
+### Step 4.1: Create Comprehensive Test Suite
 
 **Ask Claude Code:**
 ```
-Create a backend/tests/ directory and add test_main.py with a test for the health endpoint using pytest
+Create a comprehensive test suite for both backend and frontend that covers:
+- API endpoints and health checks
+- Configuration loading
+- All dependencies are correctly installed and importable
+- Main components and functionality
 ```
 
 **✅ Test It:**
-```bash
-pip install pytest httpx
-pytest backend/tests/ -v
+```
+Ask Claude: "Run all the tests you just created for both backend and frontend"
 ```
 
-**Checkpoint:** Test should pass ✅
+**Checkpoint:** All tests should pass ✅
 
 **🎯 What This Improves:**
-- ✨ **With Tests**: Confidence your code works
-- ✨ **Without Tests**: Manual testing every time
-- ✨ **Benefit**: Catch bugs before deployment
+- ✨ **With Tests**: Confidence your code works (both backend AND frontend)
+- ✨ **Dependency verification**: Catch missing packages early
+- ✨ **Benefit**: Catch bugs before deployment, never commit broken code
 
-### Step 2.2: Create CLAUDE.md (Project Documentation)
+### Step 4.2: Create CLAUDE.md (Project Documentation)
 
 **CLAUDE.md tells Claude Code about your project's rules and architecture.**
 
@@ -588,7 +603,13 @@ Restart Claude Code session, then ask:
 
 **Ask Claude Code:**
 ```
-Create a PreToolUse hook in .claude/settings.json that runs tests before every commit
+Set up automated testing hooks that run tests before every commit:
+
+1. Create .claude/hooks/ folder with a script that runs all tests (backend and frontend)
+2. Configure .claude/settings.json to call this script as a PreToolUse hook before commits
+3. The hook should block the commit if any tests fail
+Here is official docs:
+https://code.claude.com/docs/en/hooks-guide
 ```
 
 **✅ Test It:**
@@ -604,180 +625,17 @@ Ask Claude: "Commit this change"
 - ✨ **With Hooks**: Tests run automatically before every commit
 - ✨ **Benefit**: Never commit broken code
 
+**Understanding hooks:**
+- **settings.json** - Defines WHEN hooks run (PreToolUse, PostToolUse, SessionStart)
+- **.claude/hooks/** folder - Contains the ACTUAL scripts that execute (.sh files, .txt files)
+
 **Claude Code Feature Learned:** Hooks for workflow automation (we'll explore more in Lab 8)
 
 ---
 
-## 🤖 Lab 5: Build Your AI Agent
+## 🔧 Lab 5: Advanced Features (optional)
 
-### Step 5.1: Configure Environment (.env file)
-
-**Ask Claude Code:**
-```
-Create .env.example and .env files with:
-- CLAUDE_MODEL_ID (use eu.anthropic.claude-sonnet-4-5-20250929-v1:0)
-- APP_NAME=MyAIAssistant
-- API_PORT=8000
-Add .env to .gitignore
-```
-
-**✅ Test It:**
-```bash
-cat .env
-cat .env.example
-git status  # .env should not appear (ignored)
-```
-
-**🎯 What This Improves:**
-- ✨ **Benefit**: Secrets stay out of git
-- ✨ **Benefit**: Easy configuration management
-
----
-
-### Step 5.2: Create Agent Service
-
-**Ask Claude Code:**
-```
-Create backend/services/agent_service.py with:
-1. Import Strands SDK (Agent, tool)
-2. Create an AgentService class
-3. Add a simple tool called get_joke() that returns a random joke
-4. Initialize the Agent with Claude model from .env
-5. Add a chat() method that takes a message and returns agent response
-```
-
-**Hint:** Look at the reference project's `agent_service.py` for inspiration!
-
----
-
-### Step 5.3: Create Chat Endpoint
-
-**Ask Claude Code:**
-```
-Create backend/api/endpoints/chat.py with:
-1. POST /chat endpoint that accepts {"message": "string"}
-2. Uses AgentService to process the message
-3. Returns {"response": "string"}
-Add it to main.py with /api/v1 prefix
-```
-
-**✅ Test It:**
-```bash
-# In one terminal
-python -m uvicorn backend.main:app --reload --port 8000
-
-# In another terminal
-curl -X POST http://localhost:8000/api/v1/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Tell me a joke"}'
-```
-
-**Checkpoint:** You should get a joke back from Claude! 🎉
-
-**🎯 What This Improves:**
-- ✨ **Achievement**: You just built an AI agent with tool calling!
-- ✨ **Benefit**: Backend can now use Claude's intelligence
-
----
-
-### Step 5.4: Add a Calculator Tool
-
-**Ask Claude Code:**
-```
-Add a new tool to agent_service.py called calculate() that:
-- Takes a math expression as string
-- Uses ast.literal_eval() for safe evaluation (no eval!)
-- Returns the result
-Test it by asking the agent to calculate 42 * 37
-```
-
-**✅ Test It:**
-```bash
-curl -X POST http://localhost:8000/api/v1/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Calculate 42 times 37"}'
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Agent can only chat
-- ✨ **With Tools**: Agent can perform calculations
-- ✨ **Benefit**: Agent becomes more capable
-
-**Claude Code Feature Learned:** Iterative development, code modification
-
----
-
-## 🎨 Lab 6: Build the Frontend
-
-### Step 6.1: Initialize React App
-
-**Ask Claude Code:**
-```
-Set up a React + TypeScript + Vite app in frontend/:
-1. Use npm create vite@latest
-2. Install dependencies: axios, @tanstack/react-query
-3. Configure Vite to proxy /api to http://localhost:8000
-4. Create a basic App.tsx with "AI Assistant" title
-```
-
-**✅ Test It:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Visit http://localhost:5173 - you should see your app!
-
----
-
-### Step 6.2: Create Chat Interface
-
-**Ask Claude Code:**
-```
-Create a ChatInterface component with:
-1. Message list showing conversation history
-2. Input field for user messages
-3. Send button
-4. Use TanStack Query to call the backend /chat endpoint
-Style it with Tailwind CSS
-```
-
-**Claude Code Feature Learned:** Frontend component generation, API integration
-
----
-
-### Step 6.3: Add Message History
-
-**Ask Claude Code:**
-```
-Add state management to store messages:
-1. Each message has: id, role (user/assistant), content, timestamp
-2. Display messages in chronological order
-3. Auto-scroll to newest message
-4. Show loading state while waiting for response
-```
-
-**✅ Test It - Full System:**
-```
-1. Start backend: python -m uvicorn backend.main:app --reload --port 8000
-2. Start frontend: cd frontend && npm run dev
-3. Open browser: http://localhost:5173
-4. Send message: "Tell me a joke"
-5. Send message: "Calculate 15 + 27"
-```
-
-**Checkpoint:** You should be able to chat with your AI assistant! 🤖
-
-**🎯 What This Improves:**
-- ✨ **Achievement**: Full-stack AI chat application working!
-- ✨ **Benefit**: Users can interact with your AI agent
-
----
-
-## 🔧 Lab 7: Advanced Features
-
-### Step 7.1: Add Streaming Responses
+### Step 5.1: Add Streaming Responses
 
 **Ask Claude Code:**
 ```
@@ -801,7 +659,7 @@ Send a message and watch it appear word-by-word in real-time!
 
 ---
 
-### Step 7.2: Add Tool for Your Interest
+### Step 5.2: Add Tool for Your Interest
 
 **Challenge:** Add a custom tool based on your interests:
 - Movie buff? Add `search_movies()` tool
@@ -815,7 +673,7 @@ Add a new tool called [your_tool_name] to the agent that [describe functionality
 
 ---
 
-### Step 7.3: Improve UI/UX
+### Step 5.3: Improve UI/UX
 
 **Ask Claude Code:**
 ```
@@ -828,9 +686,9 @@ Enhance the chat interface with:
 
 ---
 
-## 🎓 Lab 8: Plugins for Code Quality
+## 🎓 Lab 6: Plugins for Code Quality
 
-### Step 8.1: Understanding Claude Code Plugins
+### Step 6.1: Understanding Claude Code Plugins
 
 **What are plugins?**
 Plugins extend Claude Code with additional capabilities like language servers, external integrations, and specialized tools.
@@ -847,56 +705,51 @@ Plugins extend Claude Code with additional capabilities like language servers, e
 
 ### Step 6.2: Install Language Server Plugins (LSPs)
 
-**LSPs provide real-time type checking and code intelligence:**
+**LSPs automatically check your code for errors as you work with Claude Code.**
 
+**Install them:**
 ```
 /plugin install typescript-lsp@claude-plugins-official
 /plugin install pyright-lsp@claude-plugins-official
 /reload-plugins
 ```
 
-**✅ Test It - Introduce a Type Error:**
+**✅ Test It - See LSP Catch Errors Automatically:**
 
-1. **Add a type error to frontend:**
-```typescript
-// In ChatInterface.tsx, change:
-const [message, setMessage] = useState<string>('')
-// To:
-const [message, setMessage] = useState<number>('')  // Wrong! Should be string
+**Ask Claude Code to make a change:**
+```
+Add a new feature to the chat interface: display the character count of the user's message below the input field
 ```
 
-2. **Ask Claude Code:**
+**What happens:**
+- Claude will write the code
+- **TypeScript LSP automatically checks** for type errors in the background
+- If there are any type issues, Claude sees them instantly and fixes them
+- You get correct code the first time!
+
+**Try with backend:**
 ```
-Run type checking on my TypeScript files. Find and fix any type errors.
+Add a new tool to the agent that gets the current time
 ```
 
-**Watch:** Claude will use LSP to detect the type mismatch and fix it!
-
-3. **Now test Python:**
-```python
-# In agent_service.py, add:
-def test_function(x: int) -> str:
-    return x  # Wrong! Should return string, not int
-```
-
-4. **Ask Claude Code:**
-```
-Run type checking on my Python backend code.
-```
-
-**Watch:** Pyright LSP catches the return type mismatch!
+**What happens:**
+- Claude writes the Python code
+- **Pyright LSP automatically checks** for type errors
+- Claude ensures types are correct before showing you the code
 
 **🎯 What This Improves:**
-- ✨ **Before LSP**: Type errors only found at runtime or build time
-- ✨ **With LSP**: Type errors caught instantly while coding
-- ✨ **Benefit**: Fewer bugs, better code quality, faster development
-- ✨ **Time Saved**: Hours of debugging → Instant detection
+- ✨ **Before LSP**: Claude writes code → you run it → runtime errors → fix → repeat
+- ✨ **With LSP**: Claude writes code → LSP validates instantly → you get working code
+- ✨ **Benefit**: Fewer bugs, better code quality, no back-and-forth
+- ✨ **Time Saved**: Hours of debugging → Prevention before it happens
 
-**Claude Code Feature Learned:** LSP plugins for code quality
+**Key point:** You don't need to do anything - LSPs work automatically in the background!
+
+**Claude Code Feature Learned:** LSP plugins for automatic code quality
 
 ---
 
-### Step 8.3: Install GitHub Plugin
+### Step 6.3: Install GitHub Plugin
 
 **Connect Claude Code to GitHub for PR reviews and issue management:**
 
@@ -907,18 +760,12 @@ Run type checking on my Python backend code.
 
 **✅ Test It - GitHub Integration:**
 
-1. **First, push your project to GitHub:**
-```bash
-git remote add origin https://github.com/yourusername/my-ai-assistant.git
-git push -u origin main
-```
-
-2. **Ask Claude Code:**
+1. **Ask Claude Code:**
 ```
 Show me all open pull requests in this repository
 ```
 
-3. **Ask Claude Code:**
+2. **Ask Claude Code:**
 ```
 Create an issue titled "Add user authentication" with description: "Implement JWT-based authentication for the chat API"
 ```
@@ -932,9 +779,9 @@ Create an issue titled "Add user authentication" with description: "Implement JW
 
 ---
 
-## 🛠️ Lab 9: Commands & Skills for Rapid Development
+## 🛠️ Lab 7: Commands & Skills for Rapid Development
 
-### Step 9.1: Use the Component Command
+### Step 7.1: Use the Component Command
 
 **This project includes a custom `/component` command for rapid React development.**
 
@@ -973,7 +820,7 @@ Ask Claude: "Use the LoadingSpinner component in ChatInterface while waiting for
 
 ---
 
-### Step 9.2: Create Your Own Custom Command
+### Step 7.2: Create Your Own Custom Command
 
 **Commands are reusable prompt templates in `.claude/commands/`.**
 
@@ -1016,7 +863,7 @@ Run both backend and frontend test suites with coverage reporting...
 
 ---
 
-### Step 9.3: Use the Start-Dev Skill
+### Step 7.3: Use the Start-Dev Skill
 
 **Skills are multi-step automated workflows.**
 
@@ -1042,7 +889,7 @@ Run both backend and frontend test suites with coverage reporting...
 
 ---
 
-### Step 9.4: Use Built-in Skills
+### Step 7.4: Use Built-in Skills
 
 **Try the commit skill:**
 
@@ -1082,7 +929,7 @@ Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty 
 
 ---
 
-### Step 9.5: Create Your Own Custom Skill
+### Step 7.5: Create Your Own Custom Skill
 
 **Skills live in `.claude/skills/` and can have complex logic.**
 
@@ -1119,9 +966,9 @@ Stop the backend server, then run:
 
 ---
 
-## 🪝 Lab 10: Hooks for Automated Quality Control
+## 🪝 Lab 8: Hooks for Automated Quality Control
 
-### Step 10.1: Understanding Hooks
+### Step 8.1: Understanding Hooks
 
 **Hooks automatically run actions at specific points in Claude Code's workflow:**
 - `PreToolUse` - Before Claude uses a tool (safety checks, validation)
@@ -1135,7 +982,7 @@ Ask Claude: "Show me what hooks are configured in .claude/settings.json"
 
 ---
 
-### Step 10.2: Create a Pre-Commit Test Hook
+### Step 8.2: Create a Pre-Commit Test Hook
 
 **Ask Claude Code:**
 ```
@@ -1186,7 +1033,7 @@ assert response.status_code == 200  # Correct
 
 ---
 
-### Step 10.3: Create a File Protection Hook
+### Step 8.3: Create a File Protection Hook
 
 **Ask Claude Code:**
 ```
@@ -1233,7 +1080,7 @@ Ask Claude: "Update React version in package-lock.json"
 
 ---
 
-### Step 10.4: Create a SessionStart Context Hook
+### Step 8.4: Create a SessionStart Context Hook
 
 **Ask Claude Code:**
 ```
@@ -1274,7 +1121,7 @@ Restart your Claude Code session
 
 ---
 
-### Step 10.5: Create a PostToolUse Formatting Hook
+### Step 8.5: Create a PostToolUse Formatting Hook
 
 **Ask Claude Code:**
 ```
@@ -1300,9 +1147,9 @@ Ask Claude: "Add a new function to agent_service.py with messy formatting"
 
 ---
 
-## 🤖 Lab 11: Specialized Agents for Expert Help
+## 🤖 Lab 9: Specialized Agents for Expert Help
 
-### Step 11.1: Understanding Agents
+### Step 9.1: Understanding Agents
 
 **Agents are specialized Claude instances with specific roles, expertise, and tools.**
 
@@ -1319,7 +1166,7 @@ Ask Claude: "What custom agents are available in .claude/agents/?"
 
 ---
 
-### Step 11.2: Use the Code Review Agent
+### Step 9.2: Use the Code Review Agent
 
 **The code-reviewer agent specializes in finding bugs and improving code quality.**
 
@@ -1362,7 +1209,7 @@ Use the code-reviewer agent to review my agent_service.py file. Focus on securit
 
 ---
 
-### Step 11.3: Use the Frontend Improver Agent
+### Step 9.3: Use the Frontend Improver Agent
 
 **The frontend-improver agent specializes in React and UI/UX.**
 
@@ -1392,7 +1239,7 @@ Use the frontend-improver agent to enhance the ChatInterface component with:
 
 ---
 
-### Step 11.4: Use the Visual Inspector Agent
+### Step 9.4: Use the Visual Inspector Agent
 
 **The frontend-visual-inspector works with Chrome DevTools MCP to test visually.**
 
@@ -1439,7 +1286,7 @@ Use the frontend-visual-inspector agent to:
 
 ---
 
-### Step 11.5: Use the Backend Maintainer Agent
+### Step 9.5: Use the Backend Maintainer Agent
 
 **The backend-maintainer agent specializes in FastAPI and Python backend work.**
 
@@ -1462,7 +1309,7 @@ Use the backend-maintainer agent to:
 
 ---
 
-### Step 11.6: Create Your Own Custom Agent
+### Step 9.6: Create Your Own Custom Agent
 
 **Create a specialized agent for testing.**
 
@@ -1541,7 +1388,7 @@ def test_calculate_should_handle_division_by_zero():
 
 ---
 
-### Step 11.7: Agent Memory
+### Step 9.7: Agent Memory
 
 **Agents can remember preferences and learnings across invocations.**
 
@@ -1584,9 +1431,9 @@ Ask Claude: "Show me what the code-reviewer agent remembers about this project"
 
 ---
 
-## 🔌 Lab 12: MCP for Browser Testing & Diagrams
+## 🔌 Lab 10: MCP for Browser Testing & Diagrams
 
-### Step 12.1: Understanding MCP
+### Step 10.1: Understanding MCP
 
 **MCP (Model Context Protocol) connects Claude Code to external tools.**
 
@@ -1617,7 +1464,7 @@ Ask Claude: "Show me the MCP servers configured in .mcp.json"
 
 ---
 
-### Step 12.2: Use Chrome DevTools MCP
+### Step 10.2: Use Chrome DevTools MCP
 
 **Chrome DevTools MCP is already installed! Let's use it.**
 
@@ -1649,7 +1496,7 @@ Use Chrome DevTools MCP to:
 
 ---
 
-### Step 12.3: Test Responsive Design with MCP
+### Step 10.3: Test Responsive Design with MCP
 
 **✅ Test It - Multi-Device Testing:**
 
@@ -1689,7 +1536,7 @@ Take screenshots of each and identify any layout issues.
 
 ---
 
-### Step 12.4: Debug Network Issues with MCP
+### Step 10.4: Debug Network Issues with MCP
 
 **✅ Test It - Monitor API Calls:**
 
@@ -1729,7 +1576,7 @@ Response Body: {"response": "Why did the..."}
 
 ---
 
-### Step 12.5: Generate Diagrams with Draw.io MCP
+### Step 10.5: Generate Diagrams with Draw.io MCP
 
 **Draw.io MCP is already installed for creating diagrams!**
 
@@ -1779,7 +1626,7 @@ Use Draw.io MCP to create a sequence diagram showing the chat message flow with 
 
 ---
 
-### Step 12.6: Advanced - Agent + MCP Integration
+### Step 10.6: Advanced - Agent + MCP Integration
 
 **Combine agents with MCP for powerful workflows.**
 
@@ -1832,7 +1679,7 @@ Use the frontend-visual-inspector agent to:
 
 ---
 
-### Step 12.7: Create a Custom MCP Server (Advanced Challenge)
+### Step 10.7: Create a Custom MCP Server (Advanced Challenge)
 
 **Build your own MCP server for project-specific needs.**
 
@@ -1875,9 +1722,9 @@ Ask Claude: "Use project-tools MCP to analyze backend logs and show error rate"
 
 ---
 
-## 📝 Lab 13: Memory for Persistent Context
+## 📝 Lab 11: Memory for Persistent Context
 
-### Step 13.1: Use Claude Code Memory
+### Step 11.1: Use Claude Code Memory
 
 **Claude Code can remember preferences across sessions.**
 
@@ -1912,7 +1759,7 @@ How do I activate the virtual environment?
 
 ---
 
-### Step 13.2: Project-Specific Memory
+### Step 11.2: Project-Specific Memory
 
 **Tell Claude about your learning goals.**
 
@@ -1966,7 +1813,7 @@ Do you understand the caching strategy? Should I proceed?
 
 ---
 
-### Step 13.3: Check and Update Memory
+### Step 11.3: Check and Update Memory
 
 **✅ Test It - Memory Inspection:**
 
@@ -1993,9 +1840,9 @@ What's your approach to adding new features now?
 
 ---
 
-## 🧪 Lab 14: Comprehensive Testing & Quality Assurance
+## 🧪 Lab 12: Comprehensive Testing & Quality Assurance
 
-### Step 14.1: Add Full Test Suite
+### Step 12.1: Add Full Test Suite
 
 **Ask Claude Code:**
 ```
@@ -2041,7 +1888,7 @@ npm test -- --coverage
 
 ---
 
-### Step 14.2: Create Unified Start Script
+### Step 12.2: Create Unified Start Script
 
 **Ask Claude Code:**
 ```
@@ -2073,9 +1920,9 @@ Create start.sh script that:
 
 ---
 
-## 🏆 Lab 15: Deployment & Documentation
+## 🏆 Lab 13: Deployment & Documentation
 
-### Step 15.1: Add Deployment Config
+### Step 13.1: Add Deployment Config
 
 **Ask Claude Code:**
 ```
@@ -2100,7 +1947,7 @@ docker-compose up --build
 
 ---
 
-### Step 15.2: Complete Documentation
+### Step 13.2: Complete Documentation
 
 **Ask Claude Code:**
 ```
@@ -2128,7 +1975,7 @@ Ask a teammate or friend to set up the project using only your README
 
 ---
 
-### Step 15.3: Create Demo Presentation
+### Step 13.3: Create Demo Presentation
 
 **Ask Claude Code:**
 ```
