@@ -1,20 +1,48 @@
-# ClaudeCode Labcamp: Full-Stack AI Agent Project
+# Tech News Aggregator - ClaudeCode Labcamp Adaptation
 
-> **Learn Claude Code: Boost Daily Productivity**
+> **Branch:** `test/workshop-news-aggregator`
 > 
-> A hands-on project demonstrating ALL Claude Code features working together to enhance your daily software engineering tasks with repeatable workflows and verification patterns.
+> This branch adapts the [main workshop](./WORKSHOP.md) to build a **Tech News Aggregator** instead of a personal assistant. It validates that participants can follow the workshop to create different applications while learning the same Claude Code features.
+
+## 🎯 What This Branch Demonstrates
+
+This is a **validation branch** that proves the workshop is flexible:
+- ✅ Same Claude Code features (plugins, hooks, agents, MCP)
+- ✅ Same architecture (FastAPI + React + Strands SDK)
+- ✅ Different application domain (news aggregation vs. personal assistant)
+- ✅ Workshop instructions are adaptable
+
+---
+
+# Tech News Aggregator: Full-Stack AI Agent Project
+
+> **Learn Claude Code by building a practical news app**
+> 
+> A hands-on project demonstrating ALL Claude Code features working together to build a real-world tech news aggregation system.
+
+## 📋 What This App Does
+
+**Tech News Aggregator** - Stay updated with the latest technology developments:
+
+- 🔍 **Search News**: Find articles on AI, Cloud, DevOps, Web Dev, Security, etc.
+- 📊 **Categorize**: Auto-categorize articles by technology domain
+- 📝 **Summarize**: Generate concise article summaries
+- 🔥 **Trending Topics**: See what's hot in tech this week
+- 💾 **Article History**: SQLite database stores past articles
+- 💬 **Chat Interface**: Ask questions like "What's new in AI this week?"
+- 📰 **Visual Feed**: Two-column layout with chat + article cards
 
 ## 📋 What You'll Learn
 
-This project showcases how Claude Code integrates 8 powerful features into a single development workflow:
+This project showcases how Claude Code integrates 8 powerful features into building a real-world news app:
 
 1. **CLAUDE.md** - Project documentation that guides AI behavior
-2. **Hooks** - Automated workflows (formatting, safety checks, testing)
+2. **Hooks** - Automated workflows (database protection, backups)
 3. **Plugins** - IDE features (type checking, GitHub integration)
-4. **Custom Commands** - Reusable slash commands
-5. **Skills** - Multi-step automated workflows
-6. **Custom Agents** - Specialized AI agents for specific tasks
-7. **MCP Servers** - External tool integration
+4. **Custom Commands** - `/news-search`, `/fetch-trending` commands
+5. **Skills** - Multi-step news aggregation workflows
+6. **Custom Agents** - Specialized agents (news-analyst, data-quality-checker)
+7. **MCP Servers** - Visual news feed inspection with Chrome DevTools
 8. **settings.json** - Centralized configuration
 
 ---
@@ -94,9 +122,10 @@ Here's a comparison based on official Claude Code documentation:
 ### Installation
 
 ```bash
-# 1. Clone the repository
+# 1. Clone the repository and switch to news aggregator branch
 git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 cd ClaudeCodeLabCamp
+git checkout test/workshop-news-aggregator
 
 # 2. Configure AWS credentials (terminal session)
 aws configure
