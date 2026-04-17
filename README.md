@@ -4,6 +4,98 @@
 > 
 > This branch adapts the [main workshop](./WORKSHOP.md) to build a **Tech News Aggregator** instead of a personal assistant. It validates that participants can follow the workshop to create different applications while learning the same Claude Code features.
 
+## 🚀 Quick Start (Run This App Locally)
+
+### Prerequisites
+- **Python 3.14.0+** installed
+- **Node.js 18+** and npm installed
+- **AWS Account** with Bedrock access (Claude 4 enabled)
+- **AWS CLI** configured with credentials
+
+### Step 1: Clone and Setup
+```bash
+# Clone the repository
+git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
+cd ClaudeCodeLabCamp
+
+# Switch to news aggregator branch
+git checkout test/workshop-news-aggregator
+
+# Configure AWS credentials (required for Bedrock)
+aws configure
+# OR export directly:
+export AWS_ACCESS_KEY_ID=your_key
+export AWS_SECRET_ACCESS_KEY=your_secret
+export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
+```
+
+### Step 2: Backend Setup
+```bash
+# Create Python virtual environment
+python3 -m venv claudecodeenv
+
+# Activate virtual environment
+source claudecodeenv/bin/activate
+
+# Install backend dependencies
+pip install -r requirements.txt
+
+# Create .env file (AWS credentials are from terminal, not .env)
+cp .env.example .env
+```
+
+### Step 3: Frontend Setup
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Return to project root
+cd ..
+```
+
+### Step 4: Run the Application
+
+**Option A: Manual Start (Recommended - 2 terminals)**
+
+Terminal 1 - Backend:
+```bash
+source claudecodeenv/bin/activate
+python -m backend.main
+```
+
+Terminal 2 - Frontend:
+```bash
+cd frontend
+npm run dev
+```
+
+**Option B: Quick Start Script (if available)**
+```bash
+./start.sh  # Starts both services
+```
+
+### Step 5: Access the Application
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:8000
+- **API Docs:** http://localhost:8000/docs
+
+### Step 6: Use the App
+1. Open http://localhost:5173 in your browser
+2. Ask a question like "What are the latest AI developments?"
+3. Agent searches real RSS feeds (TechCrunch, The Verge, Hacker News, AWS)
+4. Sources appear on the right side showing articles used
+5. Click URLs to visit actual news sites
+
+### Troubleshooting
+- **Port already in use:** Kill existing processes with `lsof -ti:8000 | xargs kill -9` (backend) or `lsof -ti:5173 | xargs kill -9` (frontend)
+- **AWS credentials error:** Verify with `aws sts get-caller-identity`
+- **Module not found:** Ensure virtual environment is activated: `source claudecodeenv/bin/activate`
+
+---
+
 ## 🎯 About This Branch
 
 This branch contains a complete Tech News Aggregator implementation:
@@ -11,7 +103,8 @@ This branch contains a complete Tech News Aggregator implementation:
 - ✅ All Claude Code features (plugins, hooks, agents, MCP)
 - ✅ FastAPI + React + Strands SDK architecture
 - ✅ SQLite database for article storage
-- ✅ Chat interface + visual news feed
+- ✅ Real-time RSS news fetching with smart caching
+- ✅ Query-based source attribution
 
 ---
 
@@ -109,18 +202,22 @@ Here's a comparison based on official Claude Code documentation:
 
 ---
 
-## 🚀 Quick Start
+## 📚 Detailed Setup Guide
+
+> **Quick Start:** See the section at the top of this README for fast setup instructions.
+
+This section provides additional context for the installation process.
 
 ### Prerequisites
 
-- **Python 3.14.0** (virtual environment included in `claudecodeenv/`)
+- **Python 3.14.0+** (you'll create a virtual environment)
 - **Node.js 18+** and npm
 - **AWS Account** with Bedrock access (Claude 4 enabled)
 - **AWS CLI** configured with credentials
 - **Git**
-- **Claude Code** installed ([claude.ai/code](https://claude.ai/code))
+- **Claude Code** (optional - for labcamp features) ([claude.ai/code](https://claude.ai/code))
 
-### Installation
+### Installation Steps Explained
 
 ```bash
 # 1. Clone the repository and switch to news aggregator branch
@@ -128,22 +225,25 @@ git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 cd ClaudeCodeLabCamp
 git checkout test/workshop-news-aggregator
 
-# 2. Configure AWS credentials (terminal session)
+# 2. Create Python virtual environment (if not exists)
+python3 -m venv claudecodeenv
+
+# 3. Configure AWS credentials (terminal session)
 aws configure
 # OR export credentials directly:
 export AWS_ACCESS_KEY_ID=your_key
 export AWS_SECRET_ACCESS_KEY=your_secret
 export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
 
-# 3. Create .env file
+# 4. Create .env file
 cp .env.example .env
 # Note: AWS credentials are NOT in .env - they're in your terminal session
 
-# 4. Install backend dependencies
+# 5. Install backend dependencies
 source claudecodeenv/bin/activate
 pip install -r requirements.txt
 
-# 5. Install frontend dependencies
+# 6. Install frontend dependencies
 cd frontend
 npm install
 cd ..
@@ -151,13 +251,7 @@ cd ..
 
 ### Running the Application
 
-**Option 1: Quick Start Script**
-```bash
-./start.sh    # Start both services
-./stop.sh     # Stop all services (kills processes on ports 8000 and 5173)
-```
-
-**Option 2: Manual Start (2 terminals)**
+**Manual Start (Recommended - 2 terminals)**
 ```bash
 # Terminal 1 - Backend
 source claudecodeenv/bin/activate
@@ -172,6 +266,16 @@ npm run dev
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
+
+### Stopping the Application
+
+```bash
+# Kill backend (port 8000)
+lsof -ti:8000 | xargs kill -9
+
+# Kill frontend (port 5173)
+lsof -ti:5173 | xargs kill -9
+```
 
 ---
 
