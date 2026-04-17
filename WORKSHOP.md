@@ -749,7 +749,7 @@ Add a new tool to the agent that gets the current time
 
 ---
 
-### Step 6.3: Install GitHub Plugin
+### Step 6.3: Install GitHub Plugin (optional)
 
 **Connect Claude Code to GitHub for PR reviews and issue management:**
 
@@ -781,11 +781,32 @@ Create an issue titled "Add user authentication" with description: "Implement JW
 
 ## 🛠️ Lab 7: Commands & Skills for Rapid Development
 
-### Step 7.1: Use the Component Command
+### Step 7.1: Create the Component Command
 
-**This project includes a custom `/component` command for rapid React development.**
+**Let's create a custom `/component` command for rapid React development!**
 
-**✅ Test It - Generate Components:**
+**Ask Claude Code:**
+```
+Create a custom slash command called /component following the official Claude Code documentation at https://code.claude.com/docs/en/agent-sdk/slash-commands
+
+The command should:
+1. Accept arguments: /component <ComponentName> <description>
+2. Generate a fully-typed React + TypeScript component with:
+   - Proper TypeScript interfaces
+   - Tailwind CSS styling
+   - Clean, readable code
+   - Best practices (exported component, proper types)
+3. Save it to frontend/src/components/<ComponentName>.tsx
+4. Follow the project's existing component structure
+
+Example usage: /component LoadingSpinner Shows a loading indicator while content is loading
+
+Use the official docs format for the command file in .claude/commands/
+```
+
+**Claude will create** `.claude/commands/component.md` with proper frontmatter and prompt template.
+
+**✅ Test It - Generate Your First Component:**
 
 **Try it:**
 ```
@@ -816,7 +837,7 @@ Ask Claude: "Use the LoadingSpinner component in ChatInterface while waiting for
 - ✨ **Benefit**: Consistent code style, faster development
 - ✨ **Time Saved**: 10 minutes → 30 seconds per component
 
-**Claude Code Feature Learned:** Custom commands for code generation
+**Claude Code Feature Learned:** Custom command creation using official SDK docs
 
 ---
 
@@ -863,9 +884,28 @@ Run both backend and frontend test suites with coverage reporting...
 
 ---
 
-### Step 7.3: Use the Start-Dev Skill
+### Step 7.3: Create the Start-Dev Skill
 
-**Skills are multi-step automated workflows.**
+**Skills are multi-step automated workflows. Let's create one to start both servers!**
+
+**Ask Claude Code:**
+```
+Create a custom skill called /start-dev that automates starting the development environment.
+
+Reference the official documentation: https://code.claude.com/docs/en/agent-sdk/skills
+
+The skill should:
+1. Check if Python virtual environment exists (venv/)
+2. Activate the virtual environment
+3. Start FastAPI backend in background on port 8000
+4. Navigate to frontend directory
+5. Start Vite dev server on port 5173
+6. Report server status with colored output
+7. Show URLs to visit (backend and frontend)
+8. Handle errors gracefully (missing dependencies, ports in use)
+
+Create the skill in .claude/skills/start-dev/ with proper SKILL.md structure.
+```
 
 **✅ Test It:**
 ```
@@ -931,17 +971,24 @@ Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty 
 
 ### Step 7.5: Create Your Own Custom Skill
 
-**Skills live in `.claude/skills/` and can have complex logic.**
+**Skills live in `.claude/skills/` and can have complex logic. Let's create one for system health checks!**
 
 **Ask Claude Code:**
 ```
-Create a custom skill called /check-health in .claude/skills/check-health/ that:
-1. Checks if backend server is running (curl localhost:8000/health)
-2. Checks if frontend server is running (curl localhost:5173)
-3. If backend is down, shows how to start it
-4. If frontend is down, shows how to start it
-5. Reports overall system status with colored output (✅ or ❌)
-Create SKILL.md file with the full logic
+Create a custom skill called /check-health following the official Claude Code skills documentation.
+
+Reference: https://code.claude.com/docs/en/agent-sdk/slash-commands (skills section)
+
+The skill should:
+1. Check if backend server is running (curl localhost:8000/health)
+2. Check if frontend server is running (curl localhost:5173)
+3. If backend is down, show how to start it (activation + python -m backend.main)
+4. If frontend is down, show how to start it (cd frontend && npm run dev)
+5. Report overall system status with colored output (✅ for running, ❌ for down)
+6. Show response times for each service
+7. Display the last 3 lines of logs if a service is down
+
+Create the skill in .claude/skills/check-health/SKILL.md with proper frontmatter.
 ```
 
 **Skill structure:**
@@ -958,11 +1005,20 @@ Stop the backend server, then run:
 
 **Watch:** Skill detects backend is down and shows how to start it!
 
+**Try again with both running:**
+```
+Start both servers, then run:
+/check-health
+```
+
+**Watch:** See both services reporting healthy with response times!
+
 **🎯 What This Improves:**
 - ✨ **Benefit**: Quick system health checks
 - ✨ **Benefit**: Helpful debugging when services are down
+- ✨ **Time Saved**: Manual curl testing → One command health report
 
-**Claude Code Feature Learned:** Custom skill development
+**Claude Code Feature Learned:** Custom skill development with complex logic
 
 ---
 
