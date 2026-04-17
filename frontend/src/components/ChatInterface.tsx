@@ -5,7 +5,11 @@ import { sendMessage } from '../api/agent'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 
-export default function ChatInterface() {
+interface ChatInterfaceProps {
+  selectedTopic: string;
+}
+
+export default function ChatInterface({ selectedTopic }: ChatInterfaceProps) {
   const { messages, addMessage, setStatus, clearMessages } = useAgentStore()
   const [input, setInput] = useState('')
   const messageListRef = useRef<HTMLDivElement | null>(null)
@@ -49,7 +53,13 @@ export default function ChatInterface() {
 
   const handleSend = () => {
     if (!input.trim()) return
-    chatMutation.mutate(input)
+
+    // Add topic context if a specific topic is selected
+    const messageWithContext = selectedTopic !== 'All'
+      ? `[Context: User is viewing ${selectedTopic} news] ${input}`
+      : input
+
+    chatMutation.mutate(messageWithContext)
   }
 
   return (
@@ -66,7 +76,14 @@ export default function ChatInterface() {
               </div>
               <div>
                 <h3 className="text-white font-semibold text-sm">Chat Assistant</h3>
-                <p className="text-slate-300 text-xs">Claude 4 • Strands SDK</p>
+                <p className="text-slate-300 text-xs">
+                  Claude 4 • Strands SDK
+                  {selectedTopic !== 'All' && (
+                    <span className="ml-2 px-2 py-0.5 bg-blue-500/30 rounded text-blue-200 text-[10px] font-medium">
+                      {selectedTopic}
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
 

@@ -13,9 +13,13 @@ interface Article {
   fetched_at: string;
 }
 
-export const NewsFeed: React.FC = () => {
+interface NewsFeedProps {
+  selectedTopic: string;
+  onTopicChange: (topic: string) => void;
+}
+
+export const NewsFeed: React.FC<NewsFeedProps> = ({ selectedTopic, onTopicChange }) => {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedTopic, setSelectedTopic] = useState<string>('All');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +47,7 @@ export const NewsFeed: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto p-4">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Tech News Feed</h2>
-        <TopicFilter selectedTopic={selectedTopic} onTopicChange={setSelectedTopic} />
+        <TopicFilter selectedTopic={selectedTopic} onTopicChange={onTopicChange} />
       </div>
 
       {loading && (
