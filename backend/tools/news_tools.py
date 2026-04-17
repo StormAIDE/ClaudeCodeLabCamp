@@ -2,7 +2,6 @@
 News aggregation tools for the tech news agent.
 """
 from strands import tool
-import requests
 from datetime import datetime, timedelta
 from typing import List, Dict
 import logging
