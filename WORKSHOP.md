@@ -969,7 +969,7 @@ Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty 
 
 ---
 
-### Step 7.5: Create Your Own Custom Skill
+### Step 7.5: Create Your Own Custom Skill (optional)
 
 **Skills live in `.claude/skills/` and can have complex logic. Let's create one for system health checks!**
 
@@ -977,7 +977,7 @@ Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty 
 ```
 Create a custom skill called /check-health following the official Claude Code skills documentation.
 
-Reference: https://code.claude.com/docs/en/agent-sdk/slash-commands (skills section)
+Reference: https://code.claude.com/docs/en/agent-sdk/skills
 
 The skill should:
 1. Check if backend server is running (curl localhost:8000/health)
@@ -1040,19 +1040,21 @@ Ask Claude: "Show me what hooks are configured in .claude/settings.json"
 
 ### Step 8.2: Create a Pre-Commit Test Hook
 
+**Let's create a hook that automatically runs tests before every commit!**
+
 **Ask Claude Code:**
 ```
-Create a PreToolUse hook in .claude/settings.json that:
-1. Matches any git commit operations (matcher: "Bash" with command containing "git commit")
-2. Runs: ./run-tests.sh script
-3. Shows status message: "Running tests before commit..."
-4. Blocks commit if tests fail
+Create a hook that runs tests before every commit using the official hooks documentation: https://code.claude.com/docs/en/hooks-guide
 
-Also create the run-tests.sh script that:
-- Activates venv
-- Runs pytest backend/tests/
-- Runs npm test in frontend/
-- Exits with error code if any test fails
+The hook should:
+1. Trigger before git commit commands (PreToolUse hook)
+2. Run all backend and frontend tests
+3. Block the commit if any tests fail
+4. Show a clear message: "Running tests before commit..."
+
+Create:
+- A shell script in .claude/hooks/ folder that runs the tests
+- Configuration in .claude/settings.json to trigger this hook before commits
 ```
 
 **✅ Test It - Hook Blocks Bad Code:**
@@ -1091,17 +1093,22 @@ assert response.status_code == 200  # Correct
 
 ### Step 8.3: Create a File Protection Hook
 
+**Let's protect sensitive files from accidental edits!**
+
 **Ask Claude Code:**
 ```
-Create a PreToolUse hook in .claude/settings.json that:
-1. Matches Edit and Write operations
-2. Blocks editing these files:
-   - .env (contains secrets)
-   - package-lock.json (managed by npm)
-   - poetry.lock (managed by poetry)  
-   - venv/** (virtual environment)
-3. Shows error message explaining why file is protected
-Create a shell script .claude/hooks/protect-files.sh for this
+Create a hook that protects sensitive files from being edited using the official hooks documentation: https://code.claude.com/docs/en/hooks-guide
+
+The hook should:
+1. Trigger before Edit and Write operations (PreToolUse hook)
+2. Block edits to these files:
+   - .env (contains secrets - should be edited manually)
+   - package-lock.json (managed by npm - use npm install instead)
+3. Show helpful error messages explaining why each file is protected
+
+Create:
+- A shell script in .claude/hooks/ folder that checks the file path
+- Configuration in .claude/settings.json to trigger this hook before Edit/Write
 ```
 
 **✅ Test It - Hook Protects Secrets:**
@@ -1136,97 +1143,100 @@ Ask Claude: "Update React version in package-lock.json"
 
 ---
 
-### Step 8.4: Create a SessionStart Context Hook
-
-**Ask Claude Code:**
-```
-Create a SessionStart hook in .claude/settings.json that:
-1. Runs when Claude Code starts
-2. Displays:
-   - Current git branch
-   - Number of uncommitted changes (git status --short | wc -l)
-   - Last commit message (git log -1 --oneline)
-   - Server ports (Backend: 8000, Frontend: 5173)
-   - Quick commands (/start-dev, /test-all, /component)
-Create a script .claude/hooks/project-context.sh for this
-```
-
-**✅ Test It:**
-```
-Restart your Claude Code session
-```
-
-**Watch:** You'll see a welcome message with project context:
-```
-📋 Project Context:
-├─ Branch: feature/add-auth
-├─ Uncommitted changes: 3 files
-├─ Last commit: feat: add user authentication endpoint
-├─ Backend: http://localhost:8000
-├─ Frontend: http://localhost:5173
-└─ Quick commands: /start-dev /test-all /component
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Manually check git status, remember ports, recall commands
-- ✨ **With Hook**: All context loaded automatically at session start
-- ✨ **Benefit**: Get oriented immediately, no context switching
-- ✨ **Time Saved**: 1-2 minutes every session
-
-**Claude Code Feature Learned:** Session initialization hooks
-
----
-
-### Step 8.5: Create a PostToolUse Formatting Hook
-
-**Ask Claude Code:**
-```
-Create a PostToolUse hook that:
-1. Runs after Edit or Write operations on .ts, .tsx, .py files
-2. Formats the file with appropriate tool (prettier for TS, black for Python)
-3. Shows message: "Auto-formatted <filename>"
-```
-
-**✅ Test It:**
-```
-Ask Claude: "Add a new function to agent_service.py with messy formatting"
-```
-
-**Watch:** Claude writes the code, then the hook auto-formats it!
-
-**🎯 What This Improves:**
-- ✨ **Before**: Manually run prettier/black after every change
-- ✨ **With Hook**: Code formatted automatically
-- ✨ **Benefit**: Consistent style, no formatting debates
-
-**Claude Code Feature Learned:** PostToolUse hooks for automation
-
----
-
 ## 🤖 Lab 9: Specialized Agents for Expert Help
 
-### Step 9.1: Understanding Agents
+### Step 9.1: Understanding Agent Creation
 
-**Agents are specialized Claude instances with specific roles, expertise, and tools.**
+**Agents (subagents) are specialized Claude instances with specific roles, expertise, and tools.**
 
-**This reference project includes 4 pre-built agents:**
-- `code-reviewer` - Comprehensive code quality analysis
-- `frontend-improver` - React/UI/UX specialist
-- `frontend-visual-inspector` - Browser testing & screenshots (uses Chrome MCP)
-- `backend-maintainer` - FastAPI/Python backend expert
+**Learn more:** https://code.claude.com/docs/en/sub-agents
 
-**✅ Test It - Explore Agents:**
+**General steps to create any agent:**
+
+1. **Open agent interface:** Type `/agents` in Claude Code
+2. **Switch to "Library" tab** (shows all available agents)
+3. **Click "Create new agent"**
+4. **Choose location:** Select **"Personal"** (saves to `~/.claude/agents/` for all projects)
+5. **Choose creation method:** Select **"Generate with Claude"**
+6. **Describe the agent:** Paste the agent description (we'll provide for each agent)
+7. **Select tools:** Choose which tools the agent can use
+8. **Select model:** Choose **"Sonnet"** (balanced performance)
+9. **Choose color:** Pick a color (helps identify agent in UI)
+10. **Configure memory:** Select **"User scope"** (agent remembers across projects)
+11. **Save:** Press `s` or `Enter`
+
+**Now let's create 4 specialized agents!**
+
+---
+
+### Step 9.2: Create Code Reviewer Agent
+
+**Agent Purpose:** Reviews code for quality, security, and best practices
+
+**Description to use:**
 ```
-Ask Claude: "What custom agents are available in .claude/agents/?"
+You are a Code Reviewer Agent პასუხისმგ responsible for analyzing and improving the overall quality of the codebase.
+
+## Scope
+You review the entire project including:
+- Backend (Python, FastAPI, Strands Agents)
+- Frontend (React, TypeScript)
+- Project structure and architecture
+- Git practices and commit quality
+
+## Responsibilities
+- Identify bugs, inefficiencies, and code smells
+- Suggest improvements for readability and maintainability
+- Enforce best practices across frontend and backend
+- Ensure consistency in coding standards
+- Review API design and data flow
+- Check for missing tests or edge cases
+- Evaluate performance and scalability risks
+
+## When to Use This Agent
+Use this agent when:
+- Reviewing new features or changes
+- Before committing or merging code
+- After major refactoring
+- When debugging complex issues
+- When improving code quality
+- When preparing for production readiness
+
+## Behavior Rules
+- Do NOT directly modify code unless explicitly asked
+- First analyze, then suggest improvements
+- Prioritize critical issues over minor ones
+- Provide actionable, specific feedback
+- Be structured and clear in review
+
+## Constraints
+- Do NOT introduce new features
+- Do NOT rewrite code unnecessarily
+- Focus on improvement, not over-engineering
+
+## Output Format
+Structure your review as:
+1. Critical Issues
+2. Improvements
+3. Suggestions
+4. Optional Enhancements
+
+
+## Output Expectations
+- Be concise but thorough
+- Reference specific files or sections
+- Provide reasoning for each suggestion
 ```
+
+**Tools to select:** Read-only tools only (Read, Grep, Glob, Bash)
+
+**✅ Agent Created!** You now have a code-reviewer agent in `.claude/agents/code-reviewer.md`
 
 ---
 
 ### Step 9.2: Use the Code Review Agent
 
-**The code-reviewer agent specializes in finding bugs and improving code quality.**
-
-**✅ Test It - Get a Code Review:**
+**Now let's test the code-reviewer agent!**
 
 **Ask Claude Code:**
 ```
@@ -1265,9 +1275,91 @@ Use the code-reviewer agent to review my agent_service.py file. Focus on securit
 
 ---
 
-### Step 9.3: Use the Frontend Improver Agent
+### Step 9.3: Create Frontend Improver Agent
 
-**The frontend-improver agent specializes in React and UI/UX.**
+**Let's create an agent specialized in React and UI/UX!**
+
+**Type in Claude Code:**
+```
+/agents
+```
+
+**Switch to "Library" tab → "Create new agent"**
+
+**Follow these steps:**
+
+1. **Choose location:** Select **"Personal"**
+
+2. **Choose creation method:** Select **"Generate with Claude"**
+
+3. **Describe the agent:**
+
+```
+You are a Frontend Improver Agent responsible for enhancing the user interface, user experience, and frontend architecture of this project.
+
+## Scope
+You own all frontend-related code including:
+- React + TypeScript components
+- UI/UX design and layout
+- API integration layer
+- State management
+- Styling and responsiveness
+
+## Responsibilities
+- Improve UI clarity, usability, and responsiveness
+- Ensure consistent design patterns and component reuse
+- Optimize frontend performance
+- Improve API interaction (loading states, error handling, retries)
+- Maintain clean and scalable component architecture
+- Ensure accessibility and good UX practices
+- Implement real-time or streaming UI when applicable
+
+## When to Use This Agent
+Use this agent when:
+- Creating or improving UI components
+- Enhancing user experience
+- Fixing frontend bugs
+- Connecting frontend to backend APIs
+- Improving performance or responsiveness
+- Refactoring frontend structure
+- Adding new features to UI
+
+## Behavior Rules
+- Always understand the existing UI before making changes
+- Maintain consistency in design and components
+- Use TypeScript best practices
+- Prefer reusable components over duplication
+- Ensure proper separation of concerns (UI vs logic)
+
+## Constraints
+- Do NOT modify backend code
+- Do NOT change API contracts without coordination
+- Avoid unnecessary libraries unless justified
+
+## Output Expectations
+- Explain UI/UX improvements clearly
+- Provide clean, readable React + TypeScript code
+- Ensure components are reusable and maintainable
+```
+
+4. **Select tools:** Select these tools:
+   - Read
+   - Write  
+   - Edit
+   - Grep
+   - Glob
+
+5. **Select model:** Choose **"Sonnet"**
+
+6. **Choose color:** Pick a color
+
+7. **Configure memory:** Select **"User scope"**
+
+8. **Save:** Press `s` to save
+
+**✅ Agent Created!** File saved to `~/.claude/agents/frontend-improver.md`
+
+---
 
 **✅ Test It - Improve Your UI:**
 
@@ -1295,9 +1387,49 @@ Use the frontend-improver agent to enhance the ChatInterface component with:
 
 ---
 
-### Step 9.4: Use the Visual Inspector Agent
+### Step 9.4: Create Visual Inspector Agent
 
-**The frontend-visual-inspector works with Chrome DevTools MCP to test visually.**
+**Let's create an agent that uses Chrome DevTools MCP for visual testing!**
+
+**Type in Claude Code:**
+```
+/agents
+```
+
+**Switch to "Library" tab → "Create new agent"**
+
+**Follow these steps:**
+
+1. **Choose location:** Select **"Personal"**
+
+2. **Choose creation method:** Select **"Generate with Claude"**
+
+3. **Describe the agent:**
+
+```
+A visual testing specialist that uses Chrome DevTools to take screenshots, test 
+responsive design, check console errors, and validate UI across different screen 
+sizes (mobile, tablet, desktop).
+```
+
+4. **Select tools:** Select these tools:
+   - Read
+   - Bash
+   - Write (for saving screenshots)
+   - Edit
+   - **All MCP chrome-devtools tools** (scroll down to find MCP section)
+
+5. **Select model:** Choose **"Sonnet"**
+
+6. **Choose color:** Pick a color
+
+7. **Configure memory:** Select **"User scope"**
+
+8. **Save:** Press `s` to save
+
+**✅ Agent Created!** File saved to `~/.claude/agents/frontend-visual-inspector.md`
+
+---
 
 **✅ Test It - Visual Testing:**
 
@@ -1342,9 +1474,101 @@ Use the frontend-visual-inspector agent to:
 
 ---
 
-### Step 9.5: Use the Backend Maintainer Agent
+### Step 9.5: Create Backend Maintainer Agent
 
-**The backend-maintainer agent specializes in FastAPI and Python backend work.**
+**Let's create an agent specialized in FastAPI and Python backend work!**
+
+**Type in Claude Code:**
+```
+/agents
+```
+
+**Switch to "Library" tab → "Create new agent"**
+
+**Follow these steps:**
+
+1. **Choose location:** Select **"Personal"**
+
+2. **Choose creation method:** Select **"Generate with Claude"**
+
+3. **Describe the agent:**
+
+```
+You are a Backend Maintainer Agent responsible for designing, improving, and maintaining the backend system of this project.
+
+## Scope
+You own all backend-related code including:
+- FastAPI application
+- API routes and schemas
+- Business logic and services
+- Integration with Strands Agents SDK
+- Data validation and error handling
+- Performance and scalability improvements
+
+## Responsibilities
+- Ensure backend follows clean architecture principles
+- Keep code modular, readable, and well-structured
+- Optimize API performance and response times
+- Maintain clear separation between routes, services, and agent logic
+- Improve and extend AI agent capabilities using Strands Agents SDK
+- Ensure structured and consistent API responses (prefer JSON)
+- Add logging, monitoring, and error handling where needed
+- Ensure compatibility with frontend requirements
+
+## When to Use This Agent
+Use this agent when:
+- Creating or modifying backend APIs
+- Adding new agent capabilities
+- Refactoring backend code
+- Debugging backend errors
+- Improving performance or scalability
+- Adding middleware, authentication, or validation
+- Integrating external services (via MCP or APIs)
+
+## Behavior Rules
+- Always analyze existing backend structure before making changes
+- Avoid breaking existing APIs unless explicitly instructed
+- Maintain backward compatibility when possible
+- Write clean, production-ready Python code
+- Prefer reusable services over duplicated logic
+- Suggest improvements proactively
+
+## Constraints
+- Do NOT modify frontend code
+- Do NOT change project-wide architecture without justification
+- Do NOT introduce unnecessary dependencies
+
+## Output Expectations
+- Clearly explain changes before applying them
+- Group related changes logically
+- Ensure code is testable and maintainable
+```
+
+4. **Select tools:** Select these tools:
+   - Read
+   - Write
+   - Edit
+   - Grep
+   - Glob
+   - Bash
+
+5. **Select model:** Choose **"Sonnet"**
+
+6. **Choose color:** Pick a color
+
+7. **Configure memory:** Select **"User scope"**
+
+8. **Save:** Press `s` to save
+
+**✅ Agent Created!** File saved to `~/.claude/agents/backend-maintainer.md`
+
+---
+
+### Step 9.6: Use Your Agents!
+
+**Now that you've created all four specialized agents, let's test them!**
+
+**Test the backend-maintainer agent:**
 
 **✅ Test It - Optimize Backend:**
 
@@ -1361,11 +1585,65 @@ Use the backend-maintainer agent to:
 - ✨ **Benefit**: Backend-specific expertise
 - ✨ **Benefit**: Focus on API performance and reliability
 
-**Claude Code Feature Learned:** Backend-focused agent delegation
+**Claude Code Feature Learned:** Using individual specialized agents
 
 ---
 
-### Step 9.6: Create Your Own Custom Agent
+### Step 9.7: Use All Agents Together in a Complete Workflow
+
+**Now let's use all four agents in a real development workflow!**
+
+**Scenario:** Add a new chat history feature to your AI assistant
+
+**Ask Claude Code:**
+```
+I want to add a chat history feature with these requirements:
+
+1. Backend: Create a GET /api/v1/chat/history endpoint that returns the last 10 messages
+2. Frontend: Add a "History" button in the ChatInterface that opens a modal showing message history
+3. Code Review: Review all new code for quality, security, and best practices
+4. Visual Testing: Test the new UI across mobile (375px), tablet (768px), and desktop (1920px)
+
+Use the appropriate specialized agents for each step.
+```
+
+**Watch Claude orchestrate the agents:**
+
+1. **backend-maintainer** creates the new API endpoint with proper error handling
+2. **code-reviewer** analyzes the backend code for issues
+3. **frontend-improver** builds the History button and modal component
+4. **code-reviewer** checks the React component for best practices
+5. **frontend-visual-inspector** takes screenshots and validates responsive design
+
+**Expected workflow output:**
+```
+✅ Backend endpoint created at backend/api/endpoints/agent.py
+✅ Code review: No critical issues, 2 suggestions implemented
+✅ Frontend History component created at frontend/src/components/ChatHistory.tsx
+✅ Code review: Added accessibility attributes, improved TypeScript types
+✅ Visual test results:
+   - Mobile: ✅ Modal fits screen perfectly
+   - Tablet: ✅ Good layout and spacing  
+   - Desktop: ✅ Centered modal, good proportions
+```
+
+**🎯 What This Improves:**
+- ✨ **Before**: You build backend → build frontend → manually test → hope you didn't miss anything
+- ✨ **With Agents**: Expert specialists handle each part with automatic quality checks
+- ✨ **Benefit**: Production-ready code with comprehensive testing
+- ✨ **Time Saved**: 3-4 hours → 30-45 minutes with full expert review
+
+**Try another workflow:**
+```
+Add input validation to the chat endpoint to reject empty messages, then review
+the changes and test the error UI on mobile devices
+```
+
+**Claude Code Feature Learned:** Complete agent-powered development workflow
+
+---
+
+### Step 9.8: Create Your Own Custom Agent (Optional)
 
 **Create a specialized agent for testing.**
 
@@ -1444,7 +1722,7 @@ def test_calculate_should_handle_division_by_zero():
 
 ---
 
-### Step 9.7: Agent Memory
+### Step 9.9: Agent Memory (Bonus)
 
 **Agents can remember preferences and learnings across invocations.**
 
