@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     # Application
-    APP_NAME: str = "ClaudeCode LAbCampp Agent"
+    APP_NAME: str = "Tech News Aggregator"
     APP_ENV: str = "development"
     DEBUG: bool = True
 
@@ -23,6 +23,10 @@ class Settings(BaseSettings):
 
     # Claude Model Configuration
     CLAUDE_MODEL_ID: str = "eu.anthropic.claude-sonnet-4-5-20250929-v1:0"
+
+    # News API Configuration
+    NEWS_API_KEY: str = ""  # Optional: Set via environment for real news API
+    DATABASE_PATH: str = "./data/articles.db"
 
     @field_validator('CORS_ORIGINS', mode='before')
     @classmethod
