@@ -12,6 +12,26 @@ from backend.database.db import db
 
 logger = logging.getLogger(__name__)
 
+# Thread-safe storage for sources used in current query
+_current_sources: List[Dict] = []
+
+
+def clear_sources():
+    """Clear the sources list for a new query."""
+    global _current_sources
+    _current_sources = []
+
+
+def get_sources() -> List[Dict]:
+    """Get the list of sources used in the current query."""
+    return _current_sources.copy()
+
+
+def add_source(article: Dict):
+    """Add an article to the sources list."""
+    global _current_sources
+    _current_sources.append(article)
+
 # RSS feeds for different tech news sources
 RSS_FEEDS = {
     "general": [
@@ -146,6 +166,10 @@ def search_news(topic: str, days: int = 7) -> str:
 
         if not articles:
             return f"No recent articles found for topic: {topic}"
+
+        # Add articles to sources list for frontend display
+        for article in articles:
+            add_source(article)
 
         # Format response with sources
         result = f"📰 Found {len(articles)} recent articles about {topic}:\n\n"

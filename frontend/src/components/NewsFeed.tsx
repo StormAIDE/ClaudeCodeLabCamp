@@ -1,77 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ArticleCard } from './ArticleCard';
-import { TopicFilter } from './TopicFilter';
-import axios from 'axios';
+import { useAgentStore } from '../store/agentStore';
 
 interface Article {
-  id: number;
+  id?: number;
   title: string;
   url: string;
   summary: string;
-  topic: string;
+  topic?: string;
   published_date: string;
-  fetched_at: string;
+  fetched_at?: string;
 }
 
 interface NewsFeedProps {
   selectedTopic: string;
-  onTopicChange: (topic: string) => void;
 }
 
-export const NewsFeed: React.FC<NewsFeedProps> = ({ selectedTopic, onTopicChange }) => {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchArticles = async (topic: string) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const params = topic !== 'All' ? { topic, days: 7 } : { days: 7 };
-      const response = await axios.get('/api/v1/news', { params });
-      setArticles(response.data);
-    } catch (err) {
-      setError('Failed to fetch articles. Please try again.');
-      console.error('Error fetching articles:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchArticles(selectedTopic);
-  }, [selectedTopic]);
+export const NewsFeed: React.FC<NewsFeedProps> = ({ selectedTopic }) => {
+  const { sources } = useAgentStore();
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Tech News Feed</h2>
-        <TopicFilter selectedTopic={selectedTopic} onTopicChange={onTopicChange} />
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          {sources.length > 0 ? 'Sources Used' : 'Sources'}
+        </h2>
+        <p className="text-sm text-gray-600">
+          {sources.length > 0
+            ? `${sources.length} source${sources.length > 1 ? 's' : ''} used for your query`
+            : 'Ask a question to see sources'}
+        </p>
       </div>
 
-      {loading && (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Loading articles...</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
-
-      {!loading && !error && articles.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-600">No articles found for this topic.</p>
+      {sources.length === 0 && (
+        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <p className="text-gray-600 font-medium mb-2">No sources yet</p>
+          <p className="text-gray-500 text-sm">
+            Ask about tech news in the chat and<br />
+            sources will appear here
+          </p>
         </div>
       )}
 
       <div className="space-y-4">
-        {articles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
+        {sources.map((article: Article, index: number) => (
+          <ArticleCard
+            key={article.id || index}
+            article={{
+              ...article,
+              id: article.id || index,
+              topic: article.topic || 'General',
+              fetched_at: article.fetched_at || new Date().toISOString()
+            }}
+          />
         ))}
       </div>
     </div>

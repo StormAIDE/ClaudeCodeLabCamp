@@ -15,6 +15,7 @@ export interface ChatRequest {
 export interface ChatResponse {
   response: string
   tool_calls: any[]
+  sources: any[]
 }
 
 export async function sendMessage(message: string): Promise<ChatResponse> {

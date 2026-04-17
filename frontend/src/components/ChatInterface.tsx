@@ -10,7 +10,7 @@ interface ChatInterfaceProps {
 }
 
 export default function ChatInterface({ selectedTopic }: ChatInterfaceProps) {
-  const { messages, addMessage, setStatus, clearMessages } = useAgentStore()
+  const { messages, addMessage, setStatus, setSources, clearMessages } = useAgentStore()
   const [input, setInput] = useState('')
   const messageListRef = useRef<HTMLDivElement | null>(null)
 
@@ -39,6 +39,7 @@ export default function ChatInterface({ selectedTopic }: ChatInterfaceProps) {
         role: 'assistant',
         content: data.response,
       })
+      setSources(data.sources || [])
       setStatus('ready')
     },
     onError: (error: any) => {

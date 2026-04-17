@@ -30,6 +30,7 @@ class ChatResponse(BaseModel):
     """Response model for chat endpoint."""
     response: str
     tool_calls: list = []
+    sources: list = []
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -50,8 +51,8 @@ async def chat(
 
             return StreamingResponse(generate(), media_type="text/event-stream")
         else:
-            response = await agent_service.chat(request.message)
-            return ChatResponse(response=response, tool_calls=[])
+            response, sources = await agent_service.chat(request.message)
+            return ChatResponse(response=response, tool_calls=[], sources=sources)
 
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")

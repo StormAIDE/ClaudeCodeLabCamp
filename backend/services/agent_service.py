@@ -4,12 +4,7 @@ Agent service for managing AI agent interactions using Strands SDK.
 from strands import Agent
 import logging
 from backend.config import settings
-from backend.tools.news_tools import (
-    search_news,
-    categorize_article,
-    summarize_article,
-    get_trending_topics
-)
+from backend.tools import news_tools
 
 logger = logging.getLogger(__name__)
 
@@ -33,36 +28,46 @@ class AgentService:
 
             Be informative, concise, and help users discover relevant tech news based on their interests.
             When users ask about a topic, always use the search_news tool to find recent articles.""",
-            tools=[search_news, categorize_article, summarize_article, get_trending_topics]
+            tools=[news_tools.search_news, news_tools.categorize_article, news_tools.summarize_article, news_tools.get_trending_topics]
         )
         logger.info(f"Initialized tech news agent with model: {settings.CLAUDE_MODEL_ID}")
 
-    async def chat(self, message: str) -> str:
+    async def chat(self, message: str) -> tuple[str, list]:
         """
-        Send a message to the agent and get a response.
+        Send a message to the agent and get a response with sources.
 
         Args:
             message: User message
 
         Returns:
-            Agent response text
+            Tuple of (response text, list of source articles used)
         """
         try:
+            # Clear previous sources before new query
+            news_tools.clear_sources()
+
             logger.info(f"Processing message: {message}")
             response = await self.agent.invoke_async(message)
             # Get the response dict and extract text from message
             result_dict = response.to_dict()
 
             # Extract text from the assistant's message content
+            response_text = ""
             if 'message' in result_dict and 'content' in result_dict['message']:
                 content = result_dict['message']['content']
                 if isinstance(content, list):
                     text_parts = [block.get('text', '') for block in content if 'text' in block]
-                    return ' '.join(text_parts)
-                return content
+                    response_text = ' '.join(text_parts)
+                else:
+                    response_text = content
+            else:
+                # Fallback: return the entire dict as JSON string
+                response_text = str(result_dict)
 
-            # Fallback: return the entire dict as JSON string
-            return str(result_dict)
+            # Get sources that were used during this query
+            sources = news_tools.get_sources()
+
+            return response_text, sources
         except Exception as e:
             logger.error(f"Error in agent chat: {str(e)}")
             raise

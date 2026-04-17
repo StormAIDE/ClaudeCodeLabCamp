@@ -62,7 +62,7 @@ function App() {
             <ChatInterface selectedTopic={selectedTopic} />
           </div>
           <div className="order-1 lg:order-2">
-            <NewsFeed selectedTopic={selectedTopic} onTopicChange={setSelectedTopic} />
+            <NewsFeed selectedTopic={selectedTopic} />
           </div>
         </main>
       </div>

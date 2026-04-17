@@ -10,14 +10,17 @@ export interface Message {
 interface AgentState {
   messages: Message[]
   status: 'ready' | 'loading' | 'error'
+  sources: any[]
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void
   setStatus: (status: 'ready' | 'loading' | 'error') => void
+  setSources: (sources: any[]) => void
   clearMessages: () => void
 }
 
 export const useAgentStore = create<AgentState>((set) => ({
   messages: [],
   status: 'ready',
+  sources: [],
 
   addMessage: (message) => set((state) => ({
     messages: [
@@ -32,5 +35,7 @@ export const useAgentStore = create<AgentState>((set) => ({
 
   setStatus: (status) => set({ status }),
 
-  clearMessages: () => set({ messages: [] }),
+  setSources: (sources) => set({ sources }),
+
+  clearMessages: () => set({ messages: [], sources: [] }),
 }))
