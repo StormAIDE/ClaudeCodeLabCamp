@@ -5,52 +5,155 @@ from strands import tool
 from datetime import datetime, timedelta
 from typing import List, Dict
 import logging
+import feedparser
+import requests
+from bs4 import BeautifulSoup
+from backend.database.db import db
 
 logger = logging.getLogger(__name__)
+
+# RSS feeds for different tech news sources
+RSS_FEEDS = {
+    "general": [
+        "https://techcrunch.com/feed/",
+        "https://www.theverge.com/rss/index.xml",
+        "https://news.ycombinator.com/rss",
+    ],
+    "ai": [
+        "https://techcrunch.com/category/artificial-intelligence/feed/",
+    ],
+    "cloud": [
+        "https://aws.amazon.com/blogs/aws/feed/",
+    ],
+    "security": [
+        "https://feeds.feedburner.com/TheHackersNews",
+    ]
+}
+
+
+def fetch_rss_articles(topic: str, days: int = 7) -> List[Dict]:
+    """Fetch articles from RSS feeds and cache in database."""
+    cutoff_date = datetime.now() - timedelta(days=days)
+    articles = []
+
+    # Determine which feeds to use based on topic
+    topic_lower = topic.lower()
+    feeds = RSS_FEEDS["general"].copy()
+
+    if "ai" in topic_lower or "ml" in topic_lower:
+        feeds.extend(RSS_FEEDS["ai"])
+    elif "cloud" in topic_lower or "devops" in topic_lower:
+        feeds.extend(RSS_FEEDS["cloud"])
+    elif "security" in topic_lower:
+        feeds.extend(RSS_FEEDS["security"])
+
+    for feed_url in feeds:
+        try:
+            logger.info(f"Fetching RSS feed: {feed_url}")
+            feed = feedparser.parse(feed_url)
+
+            for entry in feed.entries[:5]:  # Limit to 5 articles per feed
+                try:
+                    # Parse published date
+                    pub_date = None
+                    if hasattr(entry, 'published_parsed'):
+                        pub_date = datetime(*entry.published_parsed[:6])
+                    elif hasattr(entry, 'updated_parsed'):
+                        pub_date = datetime(*entry.updated_parsed[:6])
+                    else:
+                        pub_date = datetime.now()
+
+                    # Skip if too old
+                    if pub_date < cutoff_date:
+                        continue
+
+                    # Extract summary
+                    summary = entry.get('summary', '')
+                    if summary:
+                        soup = BeautifulSoup(summary, 'html.parser')
+                        summary = soup.get_text()[:200] + "..."
+                    else:
+                        summary = "No summary available"
+
+                    article = {
+                        "title": entry.get('title', 'No title'),
+                        "url": entry.get('link', ''),
+                        "summary": summary,
+                        "published_date": pub_date.isoformat(),
+                    }
+
+                    articles.append(article)
+                except Exception as e:
+                    logger.error(f"Error parsing entry: {str(e)}")
+                    continue
+
+        except Exception as e:
+            logger.error(f"Error fetching feed {feed_url}: {str(e)}")
+            continue
+
+    return articles
 
 
 @tool
 def search_news(topic: str, days: int = 7) -> str:
     """
     Search for recent tech news articles on a specific topic.
+    First checks database cache, then fetches from RSS feeds if needed.
 
     Args:
         topic: The technology topic to search for (e.g., "AI", "Cloud", "DevOps")
         days: Number of days to look back (default: 7)
 
     Returns:
-        A formatted string with recent news articles
+        A formatted string with recent news articles and their sources
     """
     try:
-        # For demo purposes, return mock data
-        # In production, this would call News API or RSS feeds
-        articles = [
-            {
-                "title": f"Major breakthrough in {topic} technology announced",
-                "url": f"https://example.com/article-1",
-                "date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),
-                "summary": f"Researchers unveil new developments in {topic} that could revolutionize the industry."
-            },
-            {
-                "title": f"{topic} adoption grows 50% year-over-year",
-                "url": f"https://example.com/article-2",
-                "date": (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d"),
-                "summary": f"Industry report shows significant increase in {topic} adoption across enterprises."
-            },
-            {
-                "title": f"Top 10 {topic} tools developers should know in 2025",
-                "url": f"https://example.com/article-3",
-                "date": (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"),
-                "summary": f"A comprehensive guide to the latest {topic} tools and frameworks."
-            }
+        # First, check database for cached articles
+        cached_articles = db.get_articles_by_topic(topic, limit=10)
+
+        # If we have recent cached articles, use them
+        cutoff_date = datetime.now() - timedelta(days=days)
+        recent_cached = [
+            a for a in cached_articles
+            if datetime.fromisoformat(a['fetched_at']) > cutoff_date
         ]
 
-        result = f"Found {len(articles)} articles about {topic} from the last {days} days:\\n\\n"
+        if len(recent_cached) >= 3:
+            logger.info(f"Using {len(recent_cached)} cached articles for topic: {topic}")
+            articles = recent_cached[:5]
+        else:
+            # Fetch fresh articles from RSS feeds
+            logger.info(f"Fetching fresh articles for topic: {topic}")
+            fetched = fetch_rss_articles(topic, days)
+
+            # Categorize and save to database
+            for article in fetched:
+                category = categorize_article(article['title'] + " " + article['summary'])
+                category_name = category.replace("Category: ", "")
+
+                try:
+                    db.add_article(
+                        title=article['title'],
+                        url=article['url'],
+                        summary=article['summary'],
+                        topic=category_name,
+                        published_date=article['published_date']
+                    )
+                except Exception as e:
+                    logger.error(f"Error saving article: {str(e)}")
+
+            articles = fetched[:5]
+
+        if not articles:
+            return f"No recent articles found for topic: {topic}"
+
+        # Format response with sources
+        result = f"📰 Found {len(articles)} recent articles about {topic}:\n\n"
         for i, article in enumerate(articles, 1):
-            result += f"{i}. **{article['title']}**\\n"
-            result += f"   Date: {article['date']}\\n"
-            result += f"   Summary: {article['summary']}\\n"
-            result += f"   URL: {article['url']}\\n\\n"
+            result += f"{i}. **{article['title']}**\n"
+            result += f"   📅 {article.get('published_date', 'Unknown date')}\n"
+            result += f"   📝 {article['summary']}\n"
+            result += f"   🔗 Source: {article['url']}\n\n"
 
         return result
     except Exception as e:
@@ -114,22 +217,22 @@ def summarize_article(url: str) -> str:
 @tool
 def get_trending_topics() -> str:
     """
-    Get the currently trending tech topics based on recent searches.
+    Get the currently trending tech topics based on articles in database.
 
     Returns:
         A list of trending topics with article counts
     """
-    # Mock data - in production, this would query the database
-    trending = [
-        {"topic": "AI", "count": 156},
-        {"topic": "Cloud Computing", "count": 89},
-        {"topic": "Web3", "count": 67},
-        {"topic": "Cybersecurity", "count": 54},
-        {"topic": "DevOps", "count": 43}
-    ]
+    try:
+        trending = db.get_trending_topics(days=7, limit=10)
 
-    result = "🔥 Trending Tech Topics This Week:\\n\\n"
-    for i, item in enumerate(trending, 1):
-        result += f"{i}. {item['topic']} - {item['count']} articles\\n"
+        if not trending:
+            return "No trending topics found. Try searching for specific topics first!"
 
-    return result
+        result = "🔥 Trending Tech Topics This Week:\n\n"
+        for i, item in enumerate(trending, 1):
+            result += f"{i}. {item['topic']} - {item['count']} articles\n"
+
+        return result
+    except Exception as e:
+        logger.error(f"Error getting trending topics: {str(e)}")
+        return f"Error getting trending topics: {str(e)}"
