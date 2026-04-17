@@ -1165,7 +1165,7 @@ Ask Claude: "Update React version in package-lock.json"
 10. **Configure memory:** Select **"User scope"** (agent remembers across projects)
 11. **Save:** Press `s` or `Enter`
 
-**Now let's create 4 specialized agents!**
+**Now let's create 3 specialized agents!**
 
 ---
 
@@ -1230,69 +1230,15 @@ Structure your review as:
 
 **Tools to select:** Read-only tools only (Read, Grep, Glob, Bash)
 
-**✅ Agent Created!** You now have a code-reviewer agent in `.claude/agents/code-reviewer.md`
-
----
-
-### Step 9.2: Use the Code Review Agent
-
-**Now let's test the code-reviewer agent!**
-
-**Ask Claude Code:**
-```
-Use the code-reviewer agent to review my agent_service.py file. Focus on security, error handling, and best practices.
-```
-
-**Watch the agent analyze:**
-1. Security vulnerabilities (SQL injection, eval usage, etc.)
-2. Error handling (try/catch, validation)
-3. Type safety (missing type hints)
-4. Performance concerns (N+1 queries, memory leaks)
-5. Best practice violations
-
-**Example findings:**
-```
-🔍 Security Issues:
-❌ Line 45: Using ast.literal_eval - consider safer alternatives
-✅ Recommendation: Add input validation before evaluation
-
-🔍 Type Safety:
-❌ Line 23: Missing return type hint
-✅ Fix: def chat(message: str) -> dict[str, Any]:
-
-🔍 Error Handling:
-❌ Line 67: No try/catch around API call
-✅ Add: Wrap agent.invoke_async() in try/except
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Hope your code is good or wait for code review
-- ✨ **With Agent**: Instant expert review with actionable feedback
-- ✨ **Benefit**: Catch bugs before they reach production
-- ✨ **Learning**: Understand best practices from feedback
-
-**Claude Code Feature Learned:** Using specialized agents
+**✅ Agent Created!**
 
 ---
 
 ### Step 9.3: Create Frontend Improver Agent
 
-**Let's create an agent specialized in React and UI/UX!**
+**Agent Purpose:** React/UI/UX specialist for frontend development
 
-**Type in Claude Code:**
-```
-/agents
-```
-
-**Switch to "Library" tab → "Create new agent"**
-
-**Follow these steps:**
-
-1. **Choose location:** Select **"Personal"**
-
-2. **Choose creation method:** Select **"Generate with Claude"**
-
-3. **Describe the agent:**
+**Description to use:**
 
 ```
 You are a Frontend Improver Agent responsible for enhancing the user interface, user experience, and frontend architecture of this project.
@@ -1342,156 +1288,17 @@ Use this agent when:
 - Ensure components are reusable and maintainable
 ```
 
-4. **Select tools:** Select these tools:
-   - Read
-   - Write  
-   - Edit
-   - Grep
-   - Glob
+**Tools to select:** Read, Write, Edit, Grep, Glob
 
-5. **Select model:** Choose **"Sonnet"**
-
-6. **Choose color:** Pick a color
-
-7. **Configure memory:** Select **"User scope"**
-
-8. **Save:** Press `s` to save
-
-**✅ Agent Created!** File saved to `~/.claude/agents/frontend-improver.md`
+**✅ Agent Created!**
 
 ---
 
-**✅ Test It - Improve Your UI:**
+### Step 9.4: Create Backend Maintainer Agent
 
-**Ask Claude Code:**
-```
-Use the frontend-improver agent to enhance the ChatInterface component with:
-1. Better loading states (skeleton screens)
-2. Smooth message animations
-3. Better error UI
-4. Accessibility improvements
-```
+**Agent Purpose:** FastAPI/Python backend specialist
 
-**Watch the agent:**
-1. Read your existing component
-2. Analyze UI/UX patterns
-3. Suggest improvements with reasoning
-4. Implement changes following React best practices
-
-**🎯 What This Improves:**
-- ✨ **Before**: Research UI patterns yourself
-- ✨ **With Agent**: Get expert UI/UX improvements
-- ✨ **Benefit**: Professional-looking interface, better UX
-
-**Claude Code Feature Learned:** Frontend-focused agent delegation
-
----
-
-### Step 9.4: Create Visual Inspector Agent
-
-**Let's create an agent that uses Chrome DevTools MCP for visual testing!**
-
-**Type in Claude Code:**
-```
-/agents
-```
-
-**Switch to "Library" tab → "Create new agent"**
-
-**Follow these steps:**
-
-1. **Choose location:** Select **"Personal"**
-
-2. **Choose creation method:** Select **"Generate with Claude"**
-
-3. **Describe the agent:**
-
-```
-A visual testing specialist that uses Chrome DevTools to take screenshots, test 
-responsive design, check console errors, and validate UI across different screen 
-sizes (mobile, tablet, desktop).
-```
-
-4. **Select tools:** Select these tools:
-   - Read
-   - Bash
-   - Write (for saving screenshots)
-   - Edit
-   - **All MCP chrome-devtools tools** (scroll down to find MCP section)
-
-5. **Select model:** Choose **"Sonnet"**
-
-6. **Choose color:** Pick a color
-
-7. **Configure memory:** Select **"User scope"**
-
-8. **Save:** Press `s` to save
-
-**✅ Agent Created!** File saved to `~/.claude/agents/frontend-visual-inspector.md`
-
----
-
-**✅ Test It - Visual Testing:**
-
-**Ask Claude Code:**
-```
-Use the frontend-visual-inspector agent to:
-1. Take screenshots of the chat interface
-2. Test at mobile (375px), tablet (768px), and desktop (1920px) sizes
-3. Identify visual bugs or layout issues
-4. Suggest specific improvements
-```
-
-**Watch the agent:**
-1. Start frontend server if needed
-2. Launch browser via Chrome DevTools MCP
-3. Navigate to http://localhost:5173
-4. Take screenshots at different sizes
-5. Analyze visuals and provide feedback
-
-**Example feedback:**
-```
-📸 Mobile (375px):
-❌ Send button is cut off at bottom
-❌ Messages overflow horizontally
-✅ Fix: Add max-width: 100% and overflow-wrap: break-word
-
-📸 Tablet (768px):
-✅ Layout looks good!
-
-📸 Desktop (1920px):
-❌ Chat interface is too wide (stretches full screen)
-✅ Fix: Add max-width: 800px and center with mx-auto
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Manually resize browser and check each size
-- ✨ **With Agent**: Automated visual testing across devices
-- ✨ **Benefit**: Catch UI bugs early, ensure responsiveness
-- ✨ **Time Saved**: 15-20 minutes of manual testing → 2 minutes
-
-**Claude Code Feature Learned:** Visual testing with agents + MCP
-
----
-
-### Step 9.5: Create Backend Maintainer Agent
-
-**Let's create an agent specialized in FastAPI and Python backend work!**
-
-**Type in Claude Code:**
-```
-/agents
-```
-
-**Switch to "Library" tab → "Create new agent"**
-
-**Follow these steps:**
-
-1. **Choose location:** Select **"Personal"**
-
-2. **Choose creation method:** Select **"Generate with Claude"**
-
-3. **Describe the agent:**
+**Description to use:**
 
 ```
 You are a Backend Maintainer Agent responsible for designing, improving, and maintaining the backend system of this project.
@@ -1544,54 +1351,15 @@ Use this agent when:
 - Ensure code is testable and maintainable
 ```
 
-4. **Select tools:** Select these tools:
-   - Read
-   - Write
-   - Edit
-   - Grep
-   - Glob
-   - Bash
+**Tools to select:** Read, Write, Edit, Grep, Glob, Bash
 
-5. **Select model:** Choose **"Sonnet"**
-
-6. **Choose color:** Pick a color
-
-7. **Configure memory:** Select **"User scope"**
-
-8. **Save:** Press `s` to save
-
-**✅ Agent Created!** File saved to `~/.claude/agents/backend-maintainer.md`
+**✅ Agent Created!**
 
 ---
 
-### Step 9.6: Use Your Agents!
+### Step 9.5: Test All Three Agents Together!
 
-**Now that you've created all four specialized agents, let's test them!**
-
-**Test the backend-maintainer agent:**
-
-**✅ Test It - Optimize Backend:**
-
-**Ask Claude Code:**
-```
-Use the backend-maintainer agent to:
-1. Review agent_service.py for performance improvements
-2. Add proper error handling to the chat endpoint
-3. Implement request validation
-4. Add logging for debugging
-```
-
-**🎯 What This Improves:**
-- ✨ **Benefit**: Backend-specific expertise
-- ✨ **Benefit**: Focus on API performance and reliability
-
-**Claude Code Feature Learned:** Using individual specialized agents
-
----
-
-### Step 9.7: Use All Agents Together in a Complete Workflow
-
-**Now let's use all four agents in a real development workflow!**
+**Now that you've created 3 specialized agents, let's use them in a complete workflow!**
 
 **Scenario:** Add a new chat history feature to your AI assistant
 
@@ -1602,7 +1370,6 @@ I want to add a chat history feature with these requirements:
 1. Backend: Create a GET /api/v1/chat/history endpoint that returns the last 10 messages
 2. Frontend: Add a "History" button in the ChatInterface that opens a modal showing message history
 3. Code Review: Review all new code for quality, security, and best practices
-4. Visual Testing: Test the new UI across mobile (375px), tablet (768px), and desktop (1920px)
 
 Use the appropriate specialized agents for each step.
 ```
@@ -1613,7 +1380,6 @@ Use the appropriate specialized agents for each step.
 2. **code-reviewer** analyzes the backend code for issues
 3. **frontend-improver** builds the History button and modal component
 4. **code-reviewer** checks the React component for best practices
-5. **frontend-visual-inspector** takes screenshots and validates responsive design
 
 **Expected workflow output:**
 ```
@@ -1621,29 +1387,27 @@ Use the appropriate specialized agents for each step.
 ✅ Code review: No critical issues, 2 suggestions implemented
 ✅ Frontend History component created at frontend/src/components/ChatHistory.tsx
 ✅ Code review: Added accessibility attributes, improved TypeScript types
-✅ Visual test results:
-   - Mobile: ✅ Modal fits screen perfectly
-   - Tablet: ✅ Good layout and spacing  
-   - Desktop: ✅ Centered modal, good proportions
 ```
 
 **🎯 What This Improves:**
-- ✨ **Before**: You build backend → build frontend → manually test → hope you didn't miss anything
+- ✨ **Before**: You build backend → build frontend → manually review → hope you didn't miss anything
 - ✨ **With Agents**: Expert specialists handle each part with automatic quality checks
-- ✨ **Benefit**: Production-ready code with comprehensive testing
+- ✨ **Benefit**: Production-ready code with comprehensive review
 - ✨ **Time Saved**: 3-4 hours → 30-45 minutes with full expert review
 
 **Try another workflow:**
 ```
 Add input validation to the chat endpoint to reject empty messages, then review
-the changes and test the error UI on mobile devices
+the changes for security and best practices
 ```
 
 **Claude Code Feature Learned:** Complete agent-powered development workflow
 
+**💡 What's Missing?** We can't see how the UI actually looks! In Lab 10, we'll add MCP for browser testing and create a visual-inspector agent that can take screenshots.
+
 ---
 
-### Step 9.8: Create Your Own Custom Agent (Optional)
+### Step 9.6: (Optional) Create Your Own Custom Agent
 
 **Create a specialized agent for testing.**
 
@@ -1722,7 +1486,7 @@ def test_calculate_should_handle_division_by_zero():
 
 ---
 
-### Step 9.9: Agent Memory (Bonus)
+### Step 9.7: (Optional) Agent Memory
 
 **Agents can remember preferences and learnings across invocations.**
 
@@ -1765,29 +1529,55 @@ Ask Claude: "Show me what the code-reviewer agent remembers about this project"
 
 ---
 
-## 🔌 Lab 10: MCP for Browser Testing & Diagrams
+## 🔌 Lab 10: MCP & Visual Testing Agent
 
-### Step 10.1: Understanding MCP
+### Step 10.1: The Problem - We Can't See the Frontend!
+
+**In Lab 9, we created agents to improve our frontend, but there's a problem:**
+
+Our agents are "blind" - they can read code, but they can't see how the UI actually looks!
+
+```
+❌ Frontend-improver can read ChatInterface.tsx
+❌ But it can't see if buttons are cut off on mobile
+❌ It can't detect visual bugs or layout issues
+❌ It doesn't know if colors clash or text is unreadable
+```
+
+**The solution? MCP (Model Context Protocol) + A Visual Inspector Agent!**
+
+---
+
+### Step 10.2: Understanding MCP
 
 **MCP (Model Context Protocol) connects Claude Code to external tools.**
 
-**This reference project has 2 MCP servers pre-configured:**
-- `chrome-devtools` - Browser automation, screenshots, debugging
-- `drawio` - Architecture diagram generation
+Learn more: https://code.claude.com/docs/en/mcp
 
-**✅ Test It - Check MCP Configuration:**
+**What MCP enables:**
+- Browser automation (screenshots, clicking, testing)
+- External APIs (Slack, GitHub, databases)
+- Custom tools specific to your project
+
+**We'll use:** Chrome DevTools MCP for browser automation
+
+---
+
+### Step 10.3: Install Chrome DevTools MCP
+
+**Let's install the MCP server that gives Claude browser automation powers!**
+
+**Ask Claude Code:**
 ```
-Ask Claude: "Show me the MCP servers configured in .mcp.json"
+Install the Chrome DevTools MCP server so we can take screenshots and test the frontend visually.
+
+Add it to .mcp.json configuration.
 ```
 
-**You should see:**
+**Claude will create/update `.mcp.json`:**
 ```json
 {
   "mcpServers": {
-    "drawio": {
-      "command": "npx",
-      "args": ["-y", "@drawio/mcp"]
-    },
     "chrome-devtools": {
       "command": "npx",
       "args": ["-y", "chrome-devtools-mcp@latest"]
@@ -1796,81 +1586,86 @@ Ask Claude: "Show me the MCP servers configured in .mcp.json"
 }
 ```
 
----
-
-### Step 10.2: Use Chrome DevTools MCP
-
-**Chrome DevTools MCP is already installed! Let's use it.**
-
-**✅ Test It - Take Screenshots:**
-
-**Ask Claude Code:**
+**✅ Test It:**
 ```
-Use Chrome DevTools MCP to:
-1. Start the frontend if needed
-2. Open http://localhost:5173 in a browser
-3. Take a screenshot of the chat interface
-4. Check browser console for any errors or warnings
+Use Chrome DevTools MCP to open http://localhost:5173 and take a screenshot
 ```
 
 **Watch Claude:**
-1. Launch browser via MCP
-2. Navigate to your app
-3. Capture screenshot (you'll see it in the response!)
-4. Read console logs
-5. Report findings
+1. Launch browser
+2. Navigate to localhost:5173
+3. Take a screenshot
+4. You'll see the screenshot in Claude's response!
 
-**🎯 What This Improves:**
-- ✨ **Before**: Manually open browser, take screenshots, check console
-- ✨ **With MCP**: Automated browser testing and screenshots
-- ✨ **Benefit**: Visual verification, catch console errors
-- ✨ **Use Case**: Automated visual regression testing
-
-**Claude Code Feature Learned:** Browser automation via MCP
+**✅ MCP is working!**
 
 ---
 
-### Step 10.3: Test Responsive Design with MCP
+### Step 10.4: Create Visual Inspector Agent (Using MCP!)
 
-**✅ Test It - Multi-Device Testing:**
+**Now that we have MCP, let's create an agent that can "see" the frontend!**
+
+**Type in Claude Code:**
+```
+/agents
+```
+
+**Create the agent:**
+
+**Agent Purpose:** Visual testing specialist using Chrome DevTools MCP
+
+**Description to use:**
+```
+A visual testing specialist that uses Chrome DevTools MCP to take screenshots, 
+test responsive design across device sizes, check console errors, and provide 
+visual feedback about the UI. Helps frontend-improver agent know what actually 
+needs improvement.
+```
+
+**Tools to select:** Read, Write, Bash, Edit, **All MCP chrome-devtools tools**
+
+**✅ Agent Created!**
+
+---
+
+### Step 10.5: Use Visual Inspector to Help Frontend Improver!
+
+**Now let's see the power of combining agents + MCP!**
+
+**Scenario:** Improve the chat interface based on visual testing
 
 **Ask Claude Code:**
 ```
-Use Chrome DevTools MCP to test the chat interface responsiveness:
-1. Mobile (375px width) - iPhone SE size
-2. Tablet (768px width) - iPad size
-3. Desktop (1920px width) - Full HD
-Take screenshots of each and identify any layout issues.
+I want to improve the chat interface:
+
+1. Use visual-inspector agent to take screenshots at mobile (375px), tablet (768px), 
+   and desktop (1920px) sizes
+2. Identify any visual bugs or layout issues
+3. Use frontend-improver agent to fix the issues found
+
+Work together to make the UI perfect across all devices!
 ```
 
-**Watch:** Claude captures 3 screenshots and analyzes them!
+**Watch the workflow:**
+1. **visual-inspector** launches browser, takes 3 screenshots
+2. **visual-inspector** analyzes: "Send button cut off on mobile, chat too wide on desktop"
+3. **frontend-improver** reads the visual feedback
+4. **frontend-improver** fixes ChatInterface.tsx with proper responsive styles
+5. **visual-inspector** takes new screenshots to verify fixes
 
-**Example analysis:**
-```
-📱 Mobile (375px):
-✅ Messages stack vertically (good!)
-❌ Input field is too wide, causes horizontal scroll
-✅ Fix: Add max-width: 100% to input
-
-📱 Tablet (768px):
-✅ Layout looks great!
-
-💻 Desktop (1920px):
-❌ Chat interface stretches too wide
-✅ Fix: Add max-width: 800px and mx-auto
-```
+**This is the power of agents + MCP working together!**
 
 **🎯 What This Improves:**
-- ✨ **Before**: Manually resize browser, test each device
-- ✨ **With MCP**: Automated responsive testing across sizes
-- ✨ **Time Saved**: 20 minutes → 2 minutes
-- ✨ **Benefit**: Ensure mobile users have great experience
+- ✨ **Before**: Frontend-improver is blind, can't see visual issues
+- ✨ **With visual-inspector + MCP**: Frontend-improver gets eyes!
+- ✨ **Benefit**: Fix real visual bugs, not just code issues
+- ✨ **Time Saved**: Hours of manual testing → Automated visual QA
 
-**Claude Code Feature Learned:** Visual regression testing
+**Claude Code Feature Learned:** Agent + MCP integration for visual testing
 
 ---
 
-### Step 10.4: Debug Network Issues with MCP
+### Step 10.6: Debug Network Issues with MCP (Optional)
 
 **✅ Test It - Monitor API Calls:**
 
@@ -1910,7 +1705,7 @@ Response Body: {"response": "Why did the..."}
 
 ---
 
-### Step 10.5: Generate Diagrams with Draw.io MCP
+### Step 10.7: Generate Diagrams with Draw.io MCP (Optional)
 
 **Draw.io MCP is already installed for creating diagrams!**
 
@@ -1960,7 +1755,7 @@ Use Draw.io MCP to create a sequence diagram showing the chat message flow with 
 
 ---
 
-### Step 10.6: Advanced - Agent + MCP Integration
+### Step 10.8: (Optional) Install Draw.io MCP for Diagrams
 
 **Combine agents with MCP for powerful workflows.**
 
@@ -2013,7 +1808,7 @@ Use the frontend-visual-inspector agent to:
 
 ---
 
-### Step 10.7: Create a Custom MCP Server (Advanced Challenge)
+### Step 10.9: (Advanced) Create a Custom MCP Server
 
 **Build your own MCP server for project-specific needs.**
 
