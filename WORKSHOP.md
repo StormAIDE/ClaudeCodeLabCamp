@@ -57,13 +57,8 @@ This workshop covers **all major Claude Code features** through hands-on practic
 
 ### 🔌 MCP Servers (Lab 10)
 - **Chrome DevTools**: Browser automation, screenshots, debugging
+- **Visual Inspector Agent**: Agent that uses MCP to "see" the frontend
 - **Draw.io**: Architecture diagram generation
-- **Custom MCPs**: Build your own integrations
-
-### 🧠 Memory (Lab 11)
-- **Persistent Context**: Claude remembers preferences across sessions
-- **Project Memory**: Store project-specific knowledge
-- **Memory Management**: View and update stored information
 
 ### ⚙️ Settings & Configuration (Throughout)
 - **CLAUDE.md**: Project-specific instructions for Claude
@@ -1586,6 +1581,16 @@ Add it to .mcp.json configuration.
 }
 ```
 
+**Important: Restart Claude Code**
+```
+Exit Claude Code (Ctrl+C or type /exit)
+Then restart: claudecode
+```
+
+**When you restart, Claude will ask permission to use the Chrome DevTools MCP server - approve it!**
+
+---
+
 **✅ Test It:**
 ```
 Use Chrome DevTools MCP to open http://localhost:5173 and take a screenshot
@@ -1755,127 +1760,9 @@ Create a sequence diagram showing the chat message flow with timing
 
 ---
 
-## 📝 Lab 11: Memory for Persistent Context
+## 🧪 Lab 11: Comprehensive Testing & Quality Assurance
 
-### Step 11.1: Use Claude Code Memory
-
-**Claude Code can remember preferences across sessions.**
-
-**✅ Test It - Save Preferences:**
-
-**Tell Claude Code:**
-```
-Remember these project preferences:
-- Backend port: 8000 (never change)
-- Frontend port: 5173 (never change)
-- We use conventional commits (feat:, fix:, chore:, docs:)
-- Always run tests before committing
-- Python virtual environment is "venv"
-```
-
-**Then in a NEW session (restart Claude Code), ask:**
-```
-What ports should I use for this project?
-What commit format does this project use?
-How do I activate the virtual environment?
-```
-
-**Watch:** Claude remembers all preferences!
-
-**🎯 What This Improves:**
-- ✨ **Before**: Explain project setup every session
-- ✨ **With Memory**: Claude knows your preferences automatically
-- ✨ **Benefit**: Consistent behavior, no repetition
-- ✨ **Time Saved**: 5 minutes explanation every session
-
-**Claude Code Feature Learned:** Persistent memory across sessions
-
----
-
-### Step 11.2: Project-Specific Memory
-
-**Tell Claude about your learning goals.**
-
-**✅ Test It - Educational Context:**
-
-**Tell Claude Code:**
-```
-Remember that this is an educational project for learning. Always:
-- Explain concepts clearly with examples
-- Prioritize readable code over clever optimizations
-- Add helpful comments explaining "why", not just "what"
-- Suggest gradual improvements rather than complex refactors
-- Ask if I understand before moving to next step
-```
-
-**Then ask:**
-```
-Add caching to the agent service to improve performance
-```
-
-**Watch:** Claude's approach changes - more explanatory, step-by-step!
-
-**Example response:**
-```
-I'll add caching to improve performance. Let me explain the approach:
-
-1. **Why cache?** Agent responses for the same question don't change, so we can reuse them.
-
-2. **Simple approach:** Use Python's @lru_cache decorator
-   - Stores recent responses in memory
-   - Automatically evicts old entries
-   - No external dependencies needed
-
-3. **Implementation:**
-[Code with detailed comments explaining each line]
-
-4. **Trade-offs to understand:**
-   - Pro: Faster responses for repeated questions
-   - Con: Uses memory (but limited by lru_cache size)
-   - Con: Cached responses might become stale
-
-Do you understand the caching strategy? Should I proceed?
-```
-
-**🎯 What This Improves:**
-- ✨ **Benefit**: Claude adapts to your learning style
-- ✨ **Benefit**: Better explanations, gradual learning
-- ✨ **Use Case**: Teaching, onboarding, documentation
-
-**Claude Code Feature Learned:** Project-specific memory
-
----
-
-### Step 11.3: Check and Update Memory
-
-**✅ Test It - Memory Inspection:**
-
-**Check what Claude remembers:**
-```
-What do you remember about this project's preferences and standards?
-```
-
-**Update memory:**
-```
-Forget about the "gradual improvements" preference. Now prefer complete, production-ready implementations.
-```
-
-**Verify:**
-```
-What's your approach to adding new features now?
-```
-
-**🎯 What This Improves:**
-- ✨ **Benefit**: Control Claude's behavior long-term
-- ✨ **Benefit**: Update preferences as project evolves
-
-**Claude Code Feature Learned:** Memory inspection and management
-
----
-
-## 🧪 Lab 12: Comprehensive Testing & Quality Assurance
-
-### Step 12.1: Add Full Test Suite
+### Step 11.1: Add Full Test Suite
 
 **Ask Claude Code:**
 ```
@@ -1921,7 +1808,7 @@ npm test -- --coverage
 
 ---
 
-### Step 12.2: Create Unified Start Script
+### Step 11.2: Create Unified Start Script
 
 **Ask Claude Code:**
 ```
@@ -1953,9 +1840,9 @@ Create start.sh script that:
 
 ---
 
-## 🏆 Lab 13: Deployment & Documentation
+## 🏆 Lab 12: Deployment & Documentation
 
-### Step 13.1: Add Deployment Config
+### Step 12.1: Add Deployment Config
 
 **Ask Claude Code:**
 ```
@@ -1980,7 +1867,7 @@ docker-compose up --build
 
 ---
 
-### Step 13.2: Complete Documentation
+### Step 12.2: Complete Documentation
 
 **Ask Claude Code:**
 ```
@@ -2008,7 +1895,7 @@ Ask a teammate or friend to set up the project using only your README
 
 ---
 
-### Step 13.3: Create Demo Presentation
+### Step 12.3: Create Demo Presentation
 
 **Ask Claude Code:**
 ```
