@@ -4,13 +4,14 @@
 > 
 > This branch adapts the [main workshop](./WORKSHOP.md) to build a **Tech News Aggregator** instead of a personal assistant. It validates that participants can follow the workshop to create different applications while learning the same Claude Code features.
 
-## 🎯 What This Branch Demonstrates
+## 🎯 About This Branch
 
-This is a **validation branch** that proves the workshop is flexible:
-- ✅ Same Claude Code features (plugins, hooks, agents, MCP)
-- ✅ Same architecture (FastAPI + React + Strands SDK)
-- ✅ Different application domain (news aggregation vs. personal assistant)
-- ✅ Workshop instructions are adaptable
+This branch contains a complete Tech News Aggregator implementation:
+- ✅ Full workshop guide adapted for news aggregation
+- ✅ All Claude Code features (plugins, hooks, agents, MCP)
+- ✅ FastAPI + React + Strands SDK architecture
+- ✅ SQLite database for article storage
+- ✅ Chat interface + visual news feed
 
 ---
 

@@ -1,8 +1,8 @@
-# ClaudeCode LabCamp Workshop Guide
+# Tech News Aggregator Workshop Guide
 
 **Welcome to the hands-on ClaudeCode workshop!** 
 
-In this lab, you'll build your own AI-powered personal assistant from scratch, learning professional development workflows with Claude Code. By the end, you'll have a working full-stack application and understand how to use Claude Code plugins, hooks, and AI agent patterns.
+In this lab, you'll build your own Tech News Aggregator from scratch, learning professional development workflows with Claude Code. By the end, you'll have a working full-stack application that aggregates and analyzes tech news using AI.
 
 **🎯 Workshop Philosophy: "Add Feature → Test Feature → See The Improvement"**
 
@@ -12,16 +12,18 @@ After adding each Claude Code service (plugins, commands, hooks, skills, agents,
 
 ## 🎯 What You'll Build
 
-**Project:** A personal AI assistant that can:
-- Answer questions about your favorite topics (movies, books, sports, etc.)
-- Perform calculations
-- Tell jokes
-- Remember conversation context
-- Stream responses in real-time
+**Project:** A Tech News Aggregator that:
+- Searches for recent tech news articles (AI, Cloud, DevOps, Web Dev, etc.)
+- Categorizes articles by technology domain  
+- Summarizes article content
+- Shows trending tech topics
+- Stores article history in SQLite database
+- Provides a chat interface + visual news feed
 
 **Tech Stack:**
 - Backend: Python + FastAPI + Strands SDK
 - Frontend: React + TypeScript + Vite
+- Database: SQLite for article storage
 - AI: Claude via Amazon Bedrock
 
 ---
@@ -41,23 +43,23 @@ This workshop covers **all major Claude Code features** through hands-on practic
 - **Plugin Marketplace**: Browse and install community plugins
 
 ### 📝 Commands & Skills (Lab 7)
-- **Commands**: Reusable prompt templates (`/test-all`, `/component`)
+- **Commands**: Reusable prompt templates (`/news-search`, `/fetch-trending`)
 - **Skills**: Multi-step workflows (`/commit`, `/review`, `/init`)
 - **Custom Creation**: Build your own commands and skills
 
 ### 🪝 Hooks (Lab 8)
-- **PreToolUse**: Run checks before actions (file protection, safety)
-- **PostToolUse**: Automate after actions (test runs, linting)
+- **PreToolUse**: Run checks before actions (file protection, database safety)
+- **PostToolUse**: Automate after actions (test runs, database backups)
 - **SessionStart**: Initialize project context on startup
 
 ### 🤖 Agents (Lab 9)
-- **Specialized Agents**: Code reviewers, testers, frontend specialists
+- **Specialized Agents**: News analysts, data quality checkers, content reviewers
 - **Agent Delegation**: Assign tasks to expert agents
 - **Agent Memory**: Persistent learning across invocations
 
 ### 🔌 MCP Servers (Lab 10)
-- **Chrome DevTools**: Browser automation, screenshots, debugging
-- **Visual Inspector Agent**: Agent that uses MCP to "see" the frontend
+- **Chrome DevTools**: Browser automation, screenshots, UI testing
+- **Visual Inspector Agent**: Agent that uses MCP to "see" the news feed
 - **Draw.io**: Architecture diagram generation
 
 ### ⚙️ Settings & Configuration (Throughout)
@@ -151,12 +153,12 @@ claudecode --version
 
 ```bash
 # 1. Create your project folder
-mkdir my-ai-assistant
-cd my-ai-assistant
+mkdir tech-news-aggregator
+cd tech-news-aggregator
 
 # 2. Create README.md (so you have something to commit)
-echo "# My AI Assistant" > README.md
-echo "AI-powered personal assistant built with Claude Code" >> README.md
+echo "# Tech News Aggregator" > README.md
+echo "AI-powered tech news aggregation system built with Claude Code" >> README.md
 
 # 3. Initialize git repository
 git init
@@ -185,613 +187,487 @@ source venv/bin/activate
 
 **Create the remote repository:**
 
-1. Go to GitHub.com and create a new repository (e.g., "my-ai-assistant")
+1. Go to GitHub.com and create a new repository (e.g., "tech-news-aggregator")
 2. Don't initialize with README (you already have one)
-3. Copy the HTTPS URL (e.g., `https://github.com/yourusername/my-ai-assistant.git`)
+3. Copy the HTTPS URL (e.g., `https://github.com/yourusername/tech-news-aggregator.git`)
 
 **Connect and push:**
 
 ```bash
 # Add remote repository
-git remote add origin https://github.com/yourusername/my-ai-assistant.git
+git remote add origin https://github.com/yourusername/tech-news-aggregator.git
 
 # Push to GitHub
 git branch -M main
 git push -u origin main
 ```
 
-**✅ Test It:** Visit your GitHub repo URL - you should see your README!
+✅ **Success!** Your repository is now on GitHub.
 
-### Step 0.4: Configure AWS Profile (for Bedrock Access)
+### Step 0.4: Configure AWS Credentials
 
-**Create AWS credentials file or configure profile:**
+**You need AWS credentials to access Claude AI via Bedrock:**
+
+**Option A: AWS CLI Configure (Recommended)**
 
 ```bash
-# Option 1: Use aws configure
-aws configure --profile my-ai-assistant
-# Enter your:
-# - AWS Access Key ID
-# - AWS Secret Access Key
-# - Default region (e.g., us-east-1)
-# - Output format (json)
-
-# Option 2: Or manually create ~/.aws/credentials
-# [my-ai-assistant]
-# aws_access_key_id = YOUR_KEY
-# aws_secret_access_key = YOUR_SECRET
-# region = us-east-1
+aws configure
+# AWS Access Key ID: [your-access-key]
+# AWS Secret Access Key: [your-secret-key]
+# Default region: us-east-1
+# Default output format: json
 ```
 
-**✅ Test It:**
+**Option B: Set Environment Variables**
+
 ```bash
-aws configure list --profile my-ai-assistant
-# Should show your configured credentials
+export AWS_ACCESS_KEY_ID=your-access-key
+export AWS_SECRET_ACCESS_KEY=your-secret-key
+export AWS_SESSION_TOKEN=your-session-token  # If using temporary credentials
 ```
 
-**💡 Why?** Claude Code needs AWS Bedrock access to use Claude AI models.
+**✅ Test your AWS setup:**
+```bash
+aws sts get-caller-identity
+# Should return your AWS account details
+```
+
+**Checklist before proceeding:**
+- [ ] Project folder created (`tech-news-aggregator/`)
+- [ ] Git initialized and pushed to GitHub
+- [ ] Python virtual environment created (`venv/`)
+- [ ] AWS credentials configured
+- [ ] Claude Code CLI installed
 
 ---
 
-**📋 Setup Complete - Verify Your Environment**
-
-At this point, you should have VS Code open in your project folder with a terminal ready.
-
-**Checklist:**
-- ✅ Project folder created
-- ✅ Python virtual environment (venv/)
-- ✅ Git initialized with initial commit
-- ✅ GitHub remote repository connected
-- ✅ AWS credentials configured
-- ✅ VS Code open in project directory
-- ✅ Terminal open in VS Code (View → Terminal)
-
-**Quick verification commands:**
-```bash
-pwd                    # Should show path to my-ai-assistant
-git status            # Should show clean working tree
-git remote -v         # Should show your GitHub repo
-ls -la                # Should see: venv/, .git/, README.md
-```
-
-**💡 Note:** If VS Code prompts "Do you trust the authors of the files in this folder?" - click "Yes, I trust the authors"
-
----
-
-## 🚀 Lab 1: Connect Claude Code and Start Building
+## 🔌 Lab 1: Connect Claude Code
 
 ### Step 1.1: Start Claude Code
 
-**In your VS Code terminal (or regular terminal in project directory):**
+**In your project directory:**
 
 ```bash
-# Make sure you're in the project directory
-cd my-ai-assistant
+# Navigate to project
+cd tech-news-aggregator
 
 # Start Claude Code
 claudecode
 ```
 
-**First-time setup - You'll be prompted:**
-
-1. **"How would you like to connect to Claude?"**
-   - Select: **"Amazon Bedrock"**
-
-2. **"Select AWS profile:"**
-   - Select: **"my-ai-assistant"** (or whatever you named it)
-
-3. **Connection established!** You'll see the Claude Code prompt.
-
-**✅ Test It - Say Hi:**
+**What you'll see:**
 ```
-Hi! Can you confirm you're connected and ready to help?
+Claude Code v[version]
+Connected to: tech-news-aggregator/
+Ready to assist!
 ```
 
-**Claude should respond** - connection successful! 🎉
+### Step 1.2: Test Basic Commands
 
----
+**Try these commands:**
 
-### Step 1.2: Connect GitHub CLI for Automated Git Operations
-
-**Ask Claude Code to help you set up GitHub CLI:**
-
-```
-How do I connect GitHub CLI so you can automatically commit and push changes for me?
-```
-
-**Claude will help you:**
-1. Install `gh` if not present (via homebrew/apt/etc)
-2. Provide the authentication command: `gh auth login`
-
-**Follow the prompts:**
 ```bash
-# Exit from Claude Code first
-# Run this in the terminal
+# Check current directory
+/pwd
+
+# List files
+/ls
+
+# Check git status  
+/git status
+```
+
+✅ Claude Code should respond with directory info and git status!
+
+### Step 1.3: Connect GitHub CLI (Optional but Recommended)
+
+**Install GitHub CLI if not installed:**
+
+```bash
+# Mac
+brew install gh
+
+# Windows (via Chocolatey)
+choco install gh
+
+# Linux
+# See: https://github.com/cli/cli#installation
+```
+
+**Authenticate:**
+
+```bash
 gh auth login
-
-# Select:
-# - GitHub.com
-# - HTTPS
-# - Yes (authenticate Git)
-# - Login with a web browser
-
-# You'll get a code & URL
-# Open URL in browser - enter the code
-# Authorize GitHub CLI
-# Back in terminal, press Enter
+# Follow prompts to authenticate via browser
 ```
 
-**✅ Test It:**
+**✅ Test:**
 ```bash
-gh auth status
-# Should show: "Logged in to github.com"
+gh repo view
+# Should show your repository info
 ```
 
-**💡 Why?** This allows Claude Code to automatically push commits to GitHub for you.
+**🎯 What This Enables:**
+- ✨ Create PRs from Claude Code
+- ✨ Manage issues directly
+- ✨ View PR reviews and checks
 
 ---
 
-### Step 1.3: Reopen Claude Code with GitHub Access
+## 🏗️ Lab 2: Build the Tech News Aggregator Project
 
-**Important:** Reopen Claude Code so it can use the GitHub credentials:
+### Step 2.1: Use Plan Mode to Design the App
 
-```bash
-# Exit Claude Code (Ctrl+C or type /exit)
-
-# Reopen it
-claudecode
+**Enter Plan Mode:**
+```
+Press Shift+Tab before hitting Enter on your prompt
 ```
 
-Now Claude Code has GitHub CLI access in the same terminal session!
-
-### Step 1.4: Give Claude Your GitHub Repository URL
-
-**Tell Claude about your repository and workflow preferences:**
-
+**Ask Claude Code:**
 ```
-Remember this for future sessions:
-- My GitHub repository is: https://github.com/yourusername/my-ai-assistant.git
-- After every feature or fix, please commit with a descriptive message and push to GitHub
-- Use conventional commit format: feat:, fix:, chore:, docs:, test:
-- Always run tests before committing
-```
+Create a full-stack Tech News Aggregator application with:
 
-**Claude will remember** these preferences!
+Backend (Python + FastAPI + Strands SDK):
+- Agent with 4 tools:
+  - search_news(topic: str, days: int = 7) - Find recent tech articles
+  - categorize_article(text: str) - Auto-categorize by tech domain
+  - summarize_article(url: str) - Generate article summaries
+  - get_trending_topics() - Show trending tech topics
+- SQLite database for article storage (articles table with id, title, url, summary, topic, published_date, fetched_at)
+- API endpoints:
+  - POST /api/v1/agent/chat - Chat with agent
+  - GET /api/v1/news?topic=AI&days=7 - Get news articles
+  - GET /api/v1/trending - Get trending topics
+- Configuration: APP_NAME = "Tech News Aggregator", DATABASE_PATH = "./data/articles.db"
 
----
+Frontend (React + TypeScript + Vite):
+- ChatInterface component for agent interaction
+- NewsFeed component - Display article cards with loading states
+- ArticleCard component - Shows title, summary, topic badge, dates, clickable URL
+- TopicFilter component - Filter buttons (All, AI/ML, Cloud/DevOps, Web Development, Mobile, Security, Data Science)
+- Two-column responsive layout: Chat interface (left) + News feed (right)
+- App title: "Tech News Aggregator"
+- Subtitle: "Stay updated with the latest tech news - AI, Cloud, DevOps, and more"
 
-### Step 1.5: Initialize CLAUDE.md for Project Memory
-
-**Ask Claude to create project documentation:**
-
-```
-/init
-```
-
-**OR manually ask:**
-```
-Create a CLAUDE.md file that documents:
-- Project structure and tech stack
-- How to run backend and frontend
-- Testing commands
-- Important rules (ports, commit format, etc.)
-- AWS and GitHub setup
+Use mock data for articles initially (real API integration can be added later).
+Follow FastAPI + React + Strands SDK architecture patterns.
+Backend port: 8000, Frontend port: 5173
 ```
 
-**✅ Test It - Restart Claude Code:**
-```bash
-# Exit and reopen
-claudecode
+**Review the plan**, approve it, and let Claude generate the project structure.
 
-# Ask:
-"What this project is about?"
-```
+### Step 2.2: Start the App
 
-**Claude should reference CLAUDE.md** and know the project setup!
-
----
-
-## 🏗️ Lab 2: Let Claude Code Build Your Project
-
-### Step 2.1: Ask Claude to Create Project Structure
-
-**Now that setup is complete, let Claude Code do the heavy lifting!**
-
-**Let's use plan mode so Claude shows you what it will build before executing:**
-
-**Type this prompt (but don't press Enter yet!):**
-```
-Create a complete, working full-stack AI assistant project using Strands Agents SDK.
-
-Reference: https://strandsagents.com/docs/user-guide/quickstart/python/
-
-Build a fully functional AI assistant with:
-
-**Backend (Python + FastAPI + Strands SDK):**
-- Agent service with Claude AI via Bedrock
-- Tools: weather lookup, calculator, joke generator
-- Chat API endpoint (POST /api/v1/chat)
-- Health check endpoint
-- Error handling and validation
-
-**Frontend (React + TypeScript + Vite):**
-- Chat interface with message history
-- Input field and send button
-- Display user/assistant messages
-- Loading states
-- Modern, clean UI
-
-**Configuration & Setup:**
-- .env.example and .env (CLAUDE_MODEL_ID, APP_NAME, API_PORT)
-- .gitignore (exclude .env, venv/, node_modules/)
-- requirements.txt and package.json
-- Complete README with setup instructions
-
-**Architecture:**
-- Clean separation of concerns
-- Modular code structure
-- API-first design
-
-Make it a complete, working project ready to run immediately.
-```
-
-**Before pressing Enter, press Shift+Tab to switch to Plan Mode!**
-
-You'll see the mode indicator change to "Plan" at the bottom of the prompt.
-
-**Now press Enter to submit.**
-
-**Claude will show you a detailed plan:**
-- What files will be created
-- What the architecture will look like
-- What dependencies will be installed
-
-**Review the plan, then approve it to execute!**
-
-**🎯 What This Improves:**
-- ✨ **Before Claude Code**: Manually create each directory and file
-- ✨ **With Claude Code**: Entire project structure in one command
-- ✨ **With Plan Mode**: See what will happen before it executes
-- ✨ **Time Saved**: 5-10 minutes → 30 seconds
-
-**Claude Code Feature Learned:** Multi-step project scaffolding with plan mode
-
----
-
-### Step 2.2: Start and Test the Application
-
-**Now let's start the application! Simply ask Claude Code:**
-
+**Ask Claude Code:**
 ```
 Start the app
 ```
 
-**Watch Claude automatically:**
-- Activates venv
-- Installs dependencies (backend and frontend)
-- Starts backend server (port 8000, background)
-- Starts frontend server (port 5173, background)
-- Reports both are running with URLs
+Claude will:
+1. Activate virtual environment
+2. Install dependencies (FastAPI, Strands SDK, React, etc.)
+3. Start FastAPI backend on port 8000
+4. Start Vite frontend on port 5173
 
-**✅ Verify Everything Works:**
-- Backend health: http://localhost:8000/health
-- API docs: http://localhost:8000/docs
-- Frontend app: http://localhost:5173
-- **Test the chat**: Send a message like "Tell me a joke" or "Calculate 42 * 37"
+### Step 2.3: Test the Tech News Agent
 
-**🎯 What This Improves:**
-- ✨ **Before Claude Code**: Days of manual coding
-- ✨ **With Claude Code**: Complete working app in minutes
-- ✨ **Time Saved**: 2-3 days → 10 minutes
-- ✨ **Achievement**: Full-stack AI agent with tools, working end-to-end!
+**Open:** http://localhost:5173
 
-**Claude Code Feature Learned:** Complete project generation with one prompt
+**You should see:**
+- Header: "Tech News Aggregator"
+- Two-column layout: Chat (left) + News Feed (right)
+- Topic filter buttons: All, AI/ML, Cloud/DevOps, etc.
+- Empty news feed (database is empty)
+
+**Test queries in the chat:**
+
+**Query 1:**
+```
+What's the latest AI news this week?
+```
+
+**Expected:** Agent calls `search_news("AI", 7)` and returns 3 mock articles with titles, dates, summaries, URLs
+
+**Query 2:**
+```
+What are the trending tech topics?
+```
+
+**Expected:** Agent calls `get_trending_topics()` and returns list like:
+- AI - 156 articles
+- Cloud Computing - 89 articles  
+- Web3 - 67 articles
+- Cybersecurity - 54 articles
+- DevOps - 43 articles
+
+**Query 3:**
+```
+Categorize this: "New Kubernetes update improves container orchestration"
+```
+
+**Expected:** Agent calls `categorize_article()` and returns "Category: Cloud/DevOps"
+
+**🎯 What You Just Built:**
+- ✨ Full-stack app in minutes!
+- ✨ Agent with 4 custom tools
+- ✨ React frontend with TypeScript
+- ✨ FastAPI backend with Strands SDK
+- ✨ SQLite database ready for articles
+- ✨ Two API endpoints + chat endpoint
 
 ---
 
-## 🎨 Lab 3: Share UI Design Ideas with Image Pasting
+## 🧪 Lab 3: Test-Driven Development
 
-### Step 3.1: Paste Your Design Inspiration
-
-**Now that you have a base project, let's make the UI look amazing!**
-
-One of Claude Code's powerful features is that it can understand images - perfect for showing design inspiration!
-
-**Do you have a chat interface design you like?** You can paste an image directly into the Claude Code chat!
-
-**How to paste an image:**
-1. Find an image of a chat interface you like (from Dribbble, Behance, or even a screenshot of your favorite app)
-2. Copy the image to your clipboard
-3. Press `Ctrl+V` in the Claude Code chat
-4. Claude will see the image and understand the design!
+### Step 3.1: Write Backend Tests
 
 **Ask Claude Code:**
 ```
-Here's the design I want for my AI assistant chat interface. 
-Can you update the frontend to look like this?
+Create pytest tests for the Tech News Aggregator in backend/tests/:
+
+test_news_tools.py:
+- test_search_news_returns_articles() - Verify 3 articles returned
+- test_search_news_filters_by_days() - Verify days parameter works
+- test_categorize_article_ai_ml() - Test AI/ML categorization
+- test_categorize_article_cloud_devops() - Test Cloud/DevOps categorization
+- test_summarize_article_returns_summary() - Verify summary generation
+- test_get_trending_topics_returns_list() - Verify 5 topics returned
+
+test_news_endpoints.py:
+- test_get_news_endpoint() - Test GET /api/v1/news
+- test_get_news_with_topic_filter() - Test ?topic=AI parameter
+- test_get_trending_endpoint() - Test GET /api/v1/trending
+- test_post_chat_endpoint() - Test POST /api/v1/agent/chat
+
+test_database.py:
+- test_database_initialization() - Verify articles table created
+- test_add_article() - Test article insertion
+- test_get_articles_by_topic() - Test topic filtering
+- test_get_trending_topics() - Test trending aggregation
 ```
 
-**What Claude can extract from your design image:**
-- Color scheme and theme (purple, blue, dark mode, etc.)
-- Layout structure (header, message list, input area)
-- Message bubble styles (rounded, flat, shadows)
-- Interactive elements (buttons, quick replies, typing indicators)
-- Typography and spacing preferences
-- Status indicators (online, typing, etc.)
+### Step 3.2: Run Tests
 
-**✅ Test It:**
-After pasting your design image, Claude will analyze it and can:
-1. Describe the design elements it sees
-2. Update the React components to match the design
-3. Apply appropriate CSS/Tailwind classes for styling
-4. Adjust colors, spacing, and layout
-
-**🎯 What This Improves:**
-- ✨ **Before**: Try to describe design in words ("make it purple-ish with round bubbles...")
-- ✨ **With Image**: Show exactly what you want - Claude sees it visually
-- ✨ **Benefit**: Start with clear design goals, save hours of design iteration
-- ✨ **Time Saved**: Skip the guesswork - Claude understands your vision immediately
-
-**Example interaction:**
-```
-You: [Paste image of a modern chat interface]
-"I love this chat design with the purple theme and bubble-style messages. 
-Can you update our chat interface to look like this?"
-
-Claude: "I can see this is a modern chat interface with:
-- Purple-themed header with bot avatar and 'Online' status
-- Clean message bubbles with rounded corners
-- Interactive button options for user responses
-- Smooth animations and good spacing
-
-I'll update the ChatInterface component to match this design..."
+```bash
+source venv/bin/activate
+python -m pytest backend/tests/ -v
 ```
 
-**💡 Pro Tip:** You can paste multiple design references to show different aspects:
-- One image for overall layout
-- Another for specific components (buttons, inputs)
-- A third showing color palette or animations
+**Expected:** All tests pass ✅
 
-**No design image?** No problem! You can skip this step and Claude will help you create a clean, modern design from scratch. But if you have visual inspiration, sharing it after the base project helps Claude style the UI perfectly!
+**🎯 What This Teaches:**
+- ✨ TDD workflow with pytest
+- ✨ Testing agent tools
+- ✨ Testing API endpoints
+- ✨ Testing database operations
+
+### Step 3.3: Write Frontend Tests
+
+**Ask Claude Code:**
+```
+Create Vitest tests for frontend components in frontend/src/components/__tests__/:
+
+NewsFeed.test.tsx:
+- renders topic filter buttons
+- calls API when topic changes
+- displays loading state
+- shows "no articles" message when empty
+- renders article cards when data available
+
+ArticleCard.test.tsx:
+- renders article title as clickable link
+- displays summary text
+- shows topic badge
+- formats dates correctly
+
+TopicFilter.test.tsx:
+- renders all topic buttons
+- highlights selected topic
+- calls onChange when clicked
+```
+
+### Step 3.4: Run Frontend Tests
+
+```bash
+cd frontend
+npm test
+```
+
+**Expected:** All tests pass ✅
 
 ---
 
-## 🧪 Lab 4: Testing & CLAUDE.md Configuration
+## 🔍 Lab 4: Add a New Feature with TDD
 
-### Step 4.1: Create Comprehensive Test Suite
+**Feature to add:** Article bookmarking
 
-**Ask Claude Code:**
-```
-Create a comprehensive test suite for both backend and frontend that covers:
-- API endpoints and health checks
-- Configuration loading
-- All dependencies are correctly installed and importable
-- Main components and functionality
-```
-
-**✅ Test It:**
-```
-Ask Claude: "Run all the tests you just created for both backend and frontend"
-```
-
-**Checkpoint:** All tests should pass ✅
-
-**🎯 What This Improves:**
-- ✨ **With Tests**: Confidence your code works (both backend AND frontend)
-- ✨ **Dependency verification**: Catch missing packages early
-- ✨ **Benefit**: Catch bugs before deployment, never commit broken code
-
-### Step 4.2: Create CLAUDE.md (Project Documentation)
-
-**CLAUDE.md tells Claude Code about your project's rules and architecture.**
+### Step 4.1: Write Failing Tests First
 
 **Ask Claude Code:**
-Type in claudecode chat terminal
 ```
-/init
+Add bookmark feature using TDD:
+
+1. Write these failing tests:
+   Backend tests (test_bookmarks.py):
+   - test_bookmark_article() - Mark article as bookmarked
+   - test_unbookmark_article() - Remove bookmark
+   - test_get_bookmarked_articles() - Retrieve bookmarked articles only
+   
+   Frontend tests (BookmarkButton.test.tsx):
+   - test_bookmark_button_renders() - Button appears on article card
+   - test_bookmark_click_toggles_state() - Click saves/removes bookmark
+   - test_bookmarked_articles_have_filled_icon() - Visual indicator
+
+2. Run tests - they should fail ❌
+
+3. Implement the feature:
+   - Add "bookmarked" BOOLEAN column to articles table
+   - Create bookmark_article(article_id: int, bookmarked: bool) tool
+   - Add POST /api/v1/articles/{id}/bookmark endpoint
+   - Add GET /api/v1/bookmarks endpoint
+   - Create BookmarkButton component with filled/unfilled heart icon
+   - Integrate BookmarkButton into ArticleCard
+
+4. Run tests again - they should pass ✅
 ```
 
-**✅ Test It - See Claude Remember:**
-```
-Restart Claude Code session, then ask:
-"How do I run the backend server?"
-```
+### Step 4.2: Test Your New Feature
 
-**Watch:** Claude will reference CLAUDE.md automatically!
+**In the app:**
+1. Get some articles: "Show me AI news"
+2. Click the heart icon on an article card
+3. Filter by "Bookmarked" (new filter button)
+4. See only bookmarked articles
 
-**🎯 What This Improves:**
-- ✨ **Before CLAUDE.md**: Explain project setup every session
-- ✨ **With CLAUDE.md**: Claude knows your project automatically
-- ✨ **Benefit**: Consistent behavior, less repetition
-
-**Claude Code Feature Learned:** Project documentation with CLAUDE.md
+**🎯 What This Teaches:**
+- ✨ TDD: Tests first, then implementation
+- ✨ Database schema migrations
+- ✨ Adding new agent tools
+- ✨ Creating new React components
+- ✨ Full-stack feature development
 
 ---
 
-### Step 4.3: Set Up Automated Testing Hook
+## 🔧 Lab 5: Add Real-Time Updates
+
+### Step 5.1: Implement Server-Sent Events (SSE)
 
 **Ask Claude Code:**
 ```
-Set up automated testing hooks that run tests before every commit:
+Add real-time news updates using SSE:
 
-1. Create .claude/hooks/ folder with a script that runs all tests (backend and frontend)
-2. Configure .claude/settings.json to call this script as a PreToolUse hook before commits
-3. The hook should block the commit if any tests fail
-Here is official docs:
-https://code.claude.com/docs/en/hooks-guide
+1. Backend:
+   - Create GET /api/v1/news/stream endpoint
+   - Return Server-Sent Events stream
+   - Send new articles as they're added to database
+   - Format: data: {"article": {...}}\n\n
+
+2. Frontend:
+   - Update NewsFeed component to use EventSource
+   - Connect to /api/v1/news/stream
+   - Auto-append new articles to feed
+   - Show toast notification: "New article: {title}"
+   - Add "Live Updates" toggle switch
+
+3. Test:
+   - Enable live updates in UI
+   - In another terminal: curl -X POST to add article to DB
+   - Verify new article appears in feed automatically
 ```
 
-**✅ Test It:**
-```
-Make a small change to README.md
-Ask Claude: "Commit this change"
-```
-
-**Watch:** Tests run automatically before commit!
-
-**🎯 What This Improves:**
-- ✨ **Before Hooks**: Manually remember to run tests
-- ✨ **With Hooks**: Tests run automatically before every commit
-- ✨ **Benefit**: Never commit broken code
-
-**Understanding hooks:**
-- **settings.json** - Defines WHEN hooks run (PreToolUse, PostToolUse, SessionStart)
-- **.claude/hooks/** folder - Contains the ACTUAL scripts that execute (.sh files, .txt files)
-
-**Claude Code Feature Learned:** Hooks for workflow automation (we'll explore more in Lab 8)
-
----
-
-## 🔧 Lab 5: Advanced Features (optional)
-
-### Step 5.1: Add Streaming Responses
+### Step 5.2: Test Streaming Chat
 
 **Ask Claude Code:**
 ```
-Implement streaming for real-time responses:
-1. Update agent_service.py to use agent.stream_async()
-2. Create a new /chat/stream endpoint with Server-Sent Events
-3. Update frontend to handle streaming responses
+Test the agent's streaming response:
+
+In chat, type: "Keep me updated on AI news as they come in"
+
+Agent should respond in streaming chunks showing progressive text.
 ```
 
-**✅ Test It:**
-```
-Send a message and watch it appear word-by-word in real-time!
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Wait for entire response
-- ✨ **With Streaming**: See response as it's generated
-- ✨ **Benefit**: Better user experience, feels faster
-
-**Claude Code Feature Learned:** Complex refactoring, async patterns
+**🎯 What This Teaches:**
+- ✨ Server-Sent Events (SSE)
+- ✨ Real-time data updates
+- ✨ Streaming agent responses
+- ✨ EventSource API in React
 
 ---
 
-### Step 5.2: Add Tool for Your Interest
+## 🔌 Lab 6: Plugins (TypeScript & Python LSP)
 
-**Challenge:** Add a custom tool based on your interests:
-- Movie buff? Add `search_movies()` tool
-- Sports fan? Add `get_team_stats()` tool
-- Weather enthusiast? Add `get_forecast()` tool
+### Step 6.1: Install TypeScript LSP Plugin
 
-**Ask Claude Code:**
+**In Claude Code:**
 ```
-Add a new tool called [your_tool_name] to the agent that [describe functionality]
-```
-
----
-
-### Step 5.3: Improve UI/UX
-
-**Ask Claude Code:**
-```
-Enhance the chat interface with:
-1. Dark mode toggle
-2. Copy button for assistant messages
-3. Typing indicator animation
-4. Error handling with user-friendly messages
-```
-
----
-
-## 🎓 Lab 6: Plugins for Code Quality
-
-### Step 6.1: Understanding Claude Code Plugins
-
-**What are plugins?**
-Plugins extend Claude Code with additional capabilities like language servers, external integrations, and specialized tools.
-
-**✅ Test It - Explore Available Plugins:**
-```
-/plugin marketplace list
-```
-
-**You'll see:**
-- LSP plugins (TypeScript, Python, Go, Rust, etc.)
-- Integration plugins (GitHub, Linear, etc.)
-- Tool plugins
-
-### Step 6.2: Install Language Server Plugins (LSPs)
-
-**LSPs automatically check your code for errors as you work with Claude Code.**
-
-**Install them:**
-```
+/plugin marketplace add claude-plugins-official
 /plugin install typescript-lsp@claude-plugins-official
+/reload-plugins
+```
+
+**Test it:**
+
+**Ask Claude Code:**
+```
+In frontend/src/components/NewsFeed.tsx, intentionally add a type error:
+
+const articles: Article[] = "not an array";  // Should error!
+
+Check if LSP catches this.
+```
+
+**Expected:** TypeScript LSP shows error: `Type 'string' is not assignable to type 'Article[]'`
+
+### Step 6.2: Install Pyright LSP Plugin
+
+**In Claude Code:**
+```
 /plugin install pyright-lsp@claude-plugins-official
 /reload-plugins
 ```
 
-**✅ Test It - See LSP Catch Errors Automatically:**
+**Test it:**
 
-**Ask Claude Code to make a change:**
+**Ask Claude Code:**
 ```
-Add a new feature to the chat interface: display the character count of the user's message below the input field
-```
+In backend/services/agent_service.py, add a type error:
 
-**What happens:**
-- Claude will write the code
-- **TypeScript LSP automatically checks** for type errors in the background
-- If there are any type issues, Claude sees them instantly and fixes them
-- You get correct code the first time!
+def chat(self, message: str) -> int:  # Says int but returns str!
+    return "this is wrong"
 
-**Try with backend:**
-```
-Add a new tool to the agent that gets the current time
+Check if Pyright catches this.
 ```
 
-**What happens:**
-- Claude writes the Python code
-- **Pyright LSP automatically checks** for type errors
-- Claude ensures types are correct before showing you the code
-
-**🎯 What This Improves:**
-- ✨ **Before LSP**: Claude writes code → you run it → runtime errors → fix → repeat
-- ✨ **With LSP**: Claude writes code → LSP validates instantly → you get working code
-- ✨ **Benefit**: Fewer bugs, better code quality, no back-and-forth
-- ✨ **Time Saved**: Hours of debugging → Prevention before it happens
-
-**Key point:** You don't need to do anything - LSPs work automatically in the background!
-
-**Claude Code Feature Learned:** LSP plugins for automatic code quality
-
----
+**Expected:** Pyright LSP shows error: `Expression of type 'str' cannot be assigned to return type 'int'`
 
 ### Step 6.3: Install GitHub Plugin (optional)
 
-**Connect Claude Code to GitHub for PR reviews and issue management:**
-
+**In Claude Code:**
 ```
 /plugin install github@claude-plugins-official
 /reload-plugins
 ```
 
-**✅ Test It - GitHub Integration:**
+**Test it:**
 
-1. **Ask Claude Code:**
+**Ask Claude Code:**
 ```
-Show me all open pull requests in this repository
-```
-
-2. **Ask Claude Code:**
-```
-Create an issue titled "Add user authentication" with description: "Implement JWT-based authentication for the chat API"
+Create an issue titled "Add RSS feed integration" with description: "Integrate real RSS feeds from TechCrunch, Hacker News, The Verge for live news updates"
 ```
 
-**🎯 What This Improves:**
-- ✨ **Before**: Switch to GitHub web/CLI for PR/issue management
-- ✨ **With Plugin**: Manage GitHub without leaving Claude Code
-- ✨ **Benefit**: Seamless workflow, stay in context
+**Expected:** Issue created on GitHub!
 
-**Claude Code Feature Learned:** GitHub integration plugin
+**🎯 What This Teaches:**
+- ✨ LSP for real-time type checking
+- ✨ Plugin marketplace usage
+- ✨ GitHub integration for issues/PRs
+- ✨ Developer productivity tools
 
 ---
 
-## 🛠️ Lab 7: Commands & Skills for Rapid Development
+## 📝 Lab 7: Commands & Skills for Rapid Development
 
-### Step 7.1: Create the Component Command
-
-**Let's create a custom `/component` command for rapid React development!**
+### Step 7.1: Create the /component Command
 
 **Ask Claude Code:**
 ```
@@ -818,81 +694,46 @@ Use the official docs format for the command file in .claude/commands/
 
 **Try it:**
 ```
-/component LoadingSpinner Shows a loading indicator
+/component LoadingSpinner Shows a loading indicator while content is loading
 ```
 
-**Watch:** Claude generates a fully-typed React component with:
-- TypeScript interface
-- Tailwind CSS styling
-- Proper project structure
-- Best practices
+**Expected:**
+- File created: `frontend/src/components/LoadingSpinner.tsx`
+- Component has TypeScript interface
+- Tailwind CSS for styling
+- Fully functional!
 
-**Create more components:**
-```
-/component ErrorBoundary Catches and displays React errors
-/component UserAvatar Displays user profile picture with initials fallback
-/component Toast Shows notification messages
-```
+**Use it:**
 
-**Now use a generated component:**
-```
-Ask Claude: "Use the LoadingSpinner component in ChatInterface while waiting for agent response"
-```
+**Ask Claude:** "Use the LoadingSpinner component in NewsFeed while fetching articles"
 
-**🎯 What This Improves:**
-- ✨ **Before**: Manually write each component (10-15 minutes each)
-- ✨ **With /component**: Generate in 30 seconds
-- ✨ **Benefit**: Consistent code style, faster development
-- ✨ **Time Saved**: 10 minutes → 30 seconds per component
+**🎯 What This Teaches:**
+- ✨ Custom command creation using official SDK
+- ✨ Reusable code generation templates
+- ✨ Component scaffolding automation
+- ✨ Time saved: 10 minutes → 30 seconds per component
 
-**Claude Code Feature Learned:** Custom command creation using official SDK docs
-
----
-
-### Step 7.2: Create Your Own Custom Command
-
-**Commands are reusable prompt templates in `.claude/commands/`.**
+### Step 7.2: Create the /news-search Command
 
 **Ask Claude Code:**
 ```
-Create a custom command called /test-all in .claude/commands/test-all.md that:
-1. Activates the virtual environment
-2. Runs backend tests with coverage (pytest backend/tests/ --cov=backend)
-3. Runs frontend tests (cd frontend && npm test)
-4. Reports pass/fail status with color
-5. Shows code coverage percentage
+Create a /news-search command in .claude/commands/news-search.md that:
+1. Accepts: /news-search <topic> <days>
+2. Calls search_news tool with parameters
+3. Formats results as markdown table with columns: Title | Date | Topic | URL
+4. Saves to data/searches/<topic>-<timestamp>.md
+
+Example: /news-search AI 7
 ```
 
-**Command file structure:**
-```markdown
----
-name: test-all
-description: Run all tests with coverage
-usage: /test-all
----
-
-# Run All Tests
-
-Run both backend and frontend test suites with coverage reporting...
+**Test it:**
+```
+/news-search "Cloud Computing" 7
 ```
 
-**✅ Test It:**
-```
-/test-all
-```
+**Expected:** Creates `data/searches/cloud-computing-2026-04-17.md` with formatted table
 
-**Watch:** All tests run in sequence with coverage reports!
-
-**🎯 What This Improves:**
-- ✨ **Before**: Type long test commands manually
-- ✨ **With /test-all**: One command runs everything
-- ✨ **Benefit**: No more forgotten test steps
-
-**Claude Code Feature Learned:** Custom command creation
-
----
-
-### Step 7.3: Create the Start-Dev Skill
+### Step 7.3: Create the /start-dev Skill
 
 **Skills are multi-step automated workflows. Let's create one to start both servers!**
 
@@ -920,64 +761,44 @@ Create the skill in .claude/skills/start-dev/ with proper SKILL.md structure.
 /start-dev
 ```
 
-**Watch Claude:**
-1. Check if virtual environment exists
-2. Activate Python virtual environment
-3. Start FastAPI backend in background (port 8000)
-4. Start Vite frontend (port 5173)
-5. Report server status
-6. Show URLs to visit
-
-**🎯 What This Improves:**
-- ✨ **Before**: Open 2 terminals, run 4-5 commands manually
-- ✨ **With /start-dev**: One command starts everything
-- ✨ **Time Saved**: 2-3 minutes → 10 seconds
-
-**Claude Code Feature Learned:** Custom skills for project workflows
-
----
-
-### Step 7.4: Use Built-in Skills
-
-**Try the commit skill:**
-
-**✅ Test It - Smart Git Commit:**
-
-1. **Make some changes:**
+**Expected:**
 ```
-Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty messages"
+✅ Virtual environment activated
+🚀 Starting backend on port 8000...
+✅ Backend running at http://localhost:8000
+🚀 Starting frontend on port 5173...
+✅ Frontend running at http://localhost:5173
+✨ Both servers are ready!
 ```
 
-2. **Commit with skill:**
-```
-/commit
-```
+**🎯 What This Teaches:**
+- ✨ Multi-step skill creation
+- ✨ Background process management
+- ✨ Error handling in skills
+- ✨ Time saved: Manual steps → One command
 
-**Watch Claude:**
-1. Run `git status` to see changes
-2. Run `git diff` to review what changed
-3. Review git log for commit message style
-4. Generate a conventional commit message: "fix: add validation for empty messages in chat endpoint"
-5. Run pre-commit hooks (tests!)
-6. Create the commit
+### Step 7.4: Create the /test-all Skill
 
-**🎯 What This Improves:**
-- ✨ **Before**: Manual git add, git commit, write message, hope tests pass
-- ✨ **With /commit**: Automatic conventional commit with test verification
-- ✨ **Benefit**: Consistent commit messages, never commit broken code
-
-**Try other built-in skills:**
+**Ask Claude Code:**
 ```
-/init          # Initialize or update CLAUDE.md documentation
-/review <PR#>  # Review a pull request
-/simplify      # Refactor code for simplicity
+Create /test-all skill that:
+1. Activates venv
+2. Runs backend tests: python -m pytest backend/tests/ -v
+3. Runs frontend tests: cd frontend && npm test -- --run
+4. Generates combined coverage report
+5. Shows summary: X/Y tests passed
+
+Save in .claude/skills/test-all/SKILL.md
 ```
 
-**Claude Code Feature Learned:** Built-in skills for git workflows
+**Test it:**
+```
+/test-all
+```
 
----
+**Expected:** Both test suites run, coverage report generated
 
-### Step 7.5: Create Your Own Custom Skill (optional)
+### Step 7.5: Create Your Own Custom Skill
 
 **Skills live in `.claude/skills/` and can have complex logic. Let's create one for system health checks!**
 
@@ -985,7 +806,7 @@ Ask Claude: "Add error handling to the chat endpoint that returns 400 for empty 
 ```
 Create a custom skill called /check-health following the official Claude Code skills documentation.
 
-Reference: https://code.claude.com/docs/en/agent-sdk/skills
+Reference: https://code.claude.com/docs/en/agent-sdk/slash-commands (skills section)
 
 The skill should:
 1. Check if backend server is running (curl localhost:8000/health)
@@ -1000,12 +821,16 @@ Create the skill in .claude/skills/check-health/SKILL.md with proper frontmatter
 ```
 
 **Skill structure:**
-```
-.claude/skills/check-health/
-└── SKILL.md          # Skill prompt and logic
+```markdown
+---
+name: check-health
+description: Check system health (backend, frontend, database)
+---
+
+[Implementation instructions for Claude...]
 ```
 
-**✅ Test It:**
+**Test it:**
 ```
 Stop the backend server, then run:
 /check-health
@@ -1022,1077 +847,671 @@ Start both servers, then run:
 **Watch:** See both services reporting healthy with response times!
 
 **🎯 What This Improves:**
-- ✨ **Benefit**: Quick system health checks
-- ✨ **Benefit**: Helpful debugging when services are down
-- ✨ **Time Saved**: Manual curl testing → One command health report
-
-**Claude Code Feature Learned:** Custom skill development with complex logic
-
----
-
-## 🪝 Lab 8: Hooks for Automated Quality Control
-
-### Step 8.1: Understanding Hooks
-
-**Hooks automatically run actions at specific points in Claude Code's workflow:**
-- `PreToolUse` - Before Claude uses a tool (safety checks, validation)
-- `PostToolUse` - After Claude uses a tool (tests, linting)
-- `SessionStart` - When starting a new session (context loading)
-
-**View current hooks:**
-```
-Ask Claude: "Show me what hooks are configured in .claude/settings.json"
-```
+- ✨ Quick system health checks
+- ✨ Helpful debugging when services are down
+- ✨ Time saved: Manual curl testing → One command health report
+- ✨ Custom skill development with complex logic
 
 ---
 
-### Step 8.2: Create a Pre-Commit Test Hook
+## 🪝 Lab 8: Hooks for Automation
 
-**Let's create a hook that automatically runs tests before every commit!**
+### Step 8.1: Add PreToolUse Hook - Block Dangerous Commands
 
 **Ask Claude Code:**
 ```
-Create a hook that runs tests before every commit using the official hooks documentation: https://code.claude.com/docs/en/hooks-guide
+Create a PreToolUse hook that blocks dangerous commands before execution.
 
-The hook should:
-1. Trigger before git commit commands (PreToolUse hook)
-2. Run all backend and frontend tests
-3. Block the commit if any tests fail
-4. Show a clear message: "Running tests before commit..."
+Reference: https://code.claude.com/docs/en/hooks/examples
 
-Create:
-- A shell script in .claude/hooks/ folder that runs the tests
-- Configuration in .claude/settings.json to trigger this hook before commits
+Add to .claude/settings.json:
+{
+  "hooks": {
+    "PreToolUse:Bash": {
+      "command": ".claude/hooks/block-dangerous.sh"
+    }
+  }
+}
+
+The hook script (.claude/hooks/block-dangerous.sh) should:
+1. Check if command contains: rm -rf, dd, mkfs, :(){ :|:& };:
+2. If dangerous, return non-zero exit code with error message
+3. If safe, return 0 (allow execution)
+
+Test: Try "rm -rf /" - should be blocked!
 ```
 
-**✅ Test It - Hook Blocks Bad Code:**
+**✅ Test It:**
 
-1. **Break a test:**
-```python
-# In backend/tests/test_main.py, change expected status:
-def test_health_endpoint():
-    response = client.get("/health")
-    assert response.status_code == 500  # Wrong! Should be 200
-```
+**Ask Claude:** "Delete all files with rm -rf /"
 
-2. **Try to commit:**
-```
-Ask Claude: "Commit all changes with message 'test hook'"
-```
+**Expected:** Hook blocks it with error: "🔒 BLOCKED: Dangerous command detected"
 
-**Watch:** Hook runs tests, they fail, and commit is blocked! ❌
-
-3. **Fix the test and try again:**
-```python
-assert response.status_code == 200  # Correct
-```
-
-**Watch:** Hook runs tests, they pass, commit succeeds! ✅
-
-**🎯 What This Improves:**
-- ✨ **Before**: Manually remember to run tests before every commit
-- ✨ **With Hook**: Tests run automatically, broken code can't be committed
-- ✨ **Benefit**: Never break the main branch
-- ✨ **Team Benefit**: Entire team protected by automated quality gate
-
-**Claude Code Feature Learned:** Pre-commit hooks for quality gates
-
----
-
-### Step 8.3: Create a File Protection Hook
-
-**Let's protect sensitive files from accidental edits!**
+### Step 8.2: Add PreToolUse Hook - Protect Database and Config Files
 
 **Ask Claude Code:**
 ```
-Create a hook that protects sensitive files from being edited using the official hooks documentation: https://code.claude.com/docs/en/hooks-guide
+Add a hook that protects sensitive files from being edited or deleted.
 
-The hook should:
-1. Trigger before Edit and Write operations (PreToolUse hook)
-2. Block edits to these files:
-   - .env (contains secrets - should be edited manually)
-   - package-lock.json (managed by npm - use npm install instead)
-3. Show helpful error messages explaining why each file is protected
+Reference the official docs: https://code.claude.com/docs/en/hooks/reference
 
-Create:
-- A shell script in .claude/hooks/ folder that checks the file path
-- Configuration in .claude/settings.json to trigger this hook before Edit/Write
+Create .claude/hooks/protect-files.sh that:
+1. Blocks edits to: data/articles.db, .env, venv/, .git/
+2. Returns error message explaining why
+3. Suggests safe alternatives (use API for database, use .env.example for config)
+
+Add to .claude/settings.json:
+{
+  "hooks": {
+    "PreToolUse:Edit": {
+      "command": ".claude/hooks/protect-files.sh"
+    },
+    "PreToolUse:Write": {
+      "command": ".claude/hooks/protect-files.sh"
+    }
+  }
+}
 ```
 
-**✅ Test It - Hook Protects Secrets:**
+**Test:** Try editing `.env` - should be blocked!
 
-**Try to edit .env:**
-```
-Ask Claude: "Add DEBUG=true to my .env file"
-```
+### Step 8.3: Add SessionStart Hook - Show Project Context
 
-**Watch:** Hook blocks the edit with message:
-```
-❌ Cannot edit .env - this file contains secrets and should be edited manually
-```
-
-**Try to edit package-lock.json:**
-```
-Ask Claude: "Update React version in package-lock.json"
-```
-
-**Watch:** Hook blocks with message:
-```
-❌ Cannot edit package-lock.json - this file is managed by npm. Use 'npm install' instead.
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Accidentally commit secrets or break lock files
-- ✨ **With Hook**: Critical files are protected automatically
-- ✨ **Benefit**: Security and dependency management safety
-- ✨ **Real-World Impact**: Prevented AWS keys being committed!
-
-**Claude Code Feature Learned:** File protection hooks
-
----
-
-## 🤖 Lab 9: Specialized Agents for Expert Help
-
-### Step 9.1: Understanding Agent Creation
-
-**Agents (subagents) are specialized Claude instances with specific roles, expertise, and tools.**
-
-**Learn more:** https://code.claude.com/docs/en/sub-agents
-
-**General steps to create any agent:**
-
-1. **Open agent interface:** Type `/agents` in Claude Code
-2. **Switch to "Library" tab** (shows all available agents)
-3. **Click "Create new agent"**
-4. **Choose location:** Select **"Personal"** (saves to `~/.claude/agents/` for all projects)
-5. **Choose creation method:** Select **"Generate with Claude"**
-6. **Describe the agent:** Paste the agent description (we'll provide for each agent)
-7. **Select tools:** Choose which tools the agent can use
-8. **Select model:** Choose **"Sonnet"** (balanced performance)
-9. **Choose color:** Pick a color (helps identify agent in UI)
-10. **Configure memory:** Select **"User scope"** (agent remembers across projects)
-11. **Save:** Press `s` or `Enter`
-
-**Now let's create 3 specialized agents!**
-
----
-
-### Step 9.2: Create Code Reviewer Agent
-
-**Agent Purpose:** Reviews code for quality, security, and best practices
-
-**Description to use:**
-```
-You are a Code Reviewer Agent პასუხისმგ responsible for analyzing and improving the overall quality of the codebase.
-
-## Scope
-You review the entire project including:
-- Backend (Python, FastAPI, Strands Agents)
-- Frontend (React, TypeScript)
-- Project structure and architecture
-- Git practices and commit quality
-
-## Responsibilities
-- Identify bugs, inefficiencies, and code smells
-- Suggest improvements for readability and maintainability
-- Enforce best practices across frontend and backend
-- Ensure consistency in coding standards
-- Review API design and data flow
-- Check for missing tests or edge cases
-- Evaluate performance and scalability risks
-
-## When to Use This Agent
-Use this agent when:
-- Reviewing new features or changes
-- Before committing or merging code
-- After major refactoring
-- When debugging complex issues
-- When improving code quality
-- When preparing for production readiness
-
-## Behavior Rules
-- Do NOT directly modify code unless explicitly asked
-- First analyze, then suggest improvements
-- Prioritize critical issues over minor ones
-- Provide actionable, specific feedback
-- Be structured and clear in review
-
-## Constraints
-- Do NOT introduce new features
-- Do NOT rewrite code unnecessarily
-- Focus on improvement, not over-engineering
-
-## Output Format
-Structure your review as:
-1. Critical Issues
-2. Improvements
-3. Suggestions
-4. Optional Enhancements
-
-
-## Output Expectations
-- Be concise but thorough
-- Reference specific files or sections
-- Provide reasoning for each suggestion
-```
-
-**Tools to select:** Read-only tools only (Read, Grep, Glob, Bash)
-
-**✅ Agent Created!**
-
----
-
-### Step 9.3: Create Frontend Improver Agent
-
-**Agent Purpose:** React/UI/UX specialist for frontend development
-
-**Description to use:**
-
-```
-You are a Frontend Improver Agent responsible for enhancing the user interface, user experience, and frontend architecture of this project.
-
-## Scope
-You own all frontend-related code including:
-- React + TypeScript components
-- UI/UX design and layout
-- API integration layer
-- State management
-- Styling and responsiveness
-
-## Responsibilities
-- Improve UI clarity, usability, and responsiveness
-- Ensure consistent design patterns and component reuse
-- Optimize frontend performance
-- Improve API interaction (loading states, error handling, retries)
-- Maintain clean and scalable component architecture
-- Ensure accessibility and good UX practices
-- Implement real-time or streaming UI when applicable
-
-## When to Use This Agent
-Use this agent when:
-- Creating or improving UI components
-- Enhancing user experience
-- Fixing frontend bugs
-- Connecting frontend to backend APIs
-- Improving performance or responsiveness
-- Refactoring frontend structure
-- Adding new features to UI
-
-## Behavior Rules
-- Always understand the existing UI before making changes
-- Maintain consistency in design and components
-- Use TypeScript best practices
-- Prefer reusable components over duplication
-- Ensure proper separation of concerns (UI vs logic)
-
-## Constraints
-- Do NOT modify backend code
-- Do NOT change API contracts without coordination
-- Avoid unnecessary libraries unless justified
-
-## Output Expectations
-- Explain UI/UX improvements clearly
-- Provide clean, readable React + TypeScript code
-- Ensure components are reusable and maintainable
-```
-
-**Tools to select:** Read, Write, Edit, Grep, Glob
-
-**✅ Agent Created!**
-
----
-
-### Step 9.4: Create Backend Maintainer Agent
-
-**Agent Purpose:** FastAPI/Python backend specialist
-
-**Description to use:**
-
-```
-You are a Backend Maintainer Agent responsible for designing, improving, and maintaining the backend system of this project.
-
-## Scope
-You own all backend-related code including:
-- FastAPI application
-- API routes and schemas
-- Business logic and services
-- Integration with Strands Agents SDK
-- Data validation and error handling
-- Performance and scalability improvements
-
-## Responsibilities
-- Ensure backend follows clean architecture principles
-- Keep code modular, readable, and well-structured
-- Optimize API performance and response times
-- Maintain clear separation between routes, services, and agent logic
-- Improve and extend AI agent capabilities using Strands Agents SDK
-- Ensure structured and consistent API responses (prefer JSON)
-- Add logging, monitoring, and error handling where needed
-- Ensure compatibility with frontend requirements
-
-## When to Use This Agent
-Use this agent when:
-- Creating or modifying backend APIs
-- Adding new agent capabilities
-- Refactoring backend code
-- Debugging backend errors
-- Improving performance or scalability
-- Adding middleware, authentication, or validation
-- Integrating external services (via MCP or APIs)
-
-## Behavior Rules
-- Always analyze existing backend structure before making changes
-- Avoid breaking existing APIs unless explicitly instructed
-- Maintain backward compatibility when possible
-- Write clean, production-ready Python code
-- Prefer reusable services over duplicated logic
-- Suggest improvements proactively
-
-## Constraints
-- Do NOT modify frontend code
-- Do NOT change project-wide architecture without justification
-- Do NOT introduce unnecessary dependencies
-
-## Output Expectations
-- Clearly explain changes before applying them
-- Group related changes logically
-- Ensure code is testable and maintainable
-```
-
-**Tools to select:** Read, Write, Edit, Grep, Glob, Bash
-
-**✅ Agent Created!**
-
----
-
-### Step 9.5: Test All Three Agents Together!
-
-**Now that you've created 3 specialized agents, let's use them in a complete workflow!**
-
-**Scenario:** Add a new chat history feature to your AI assistant
+**This hook runs every time you start Claude Code!**
 
 **Ask Claude Code:**
 ```
-I want to add a chat history feature with these requirements:
+Create a SessionStart hook that shows project context on startup.
 
-1. Backend: Create a GET /api/v1/chat/history endpoint that returns the last 10 messages
-2. Frontend: Add a "History" button in the ChatInterface that opens a modal showing message history
-3. Code Review: Review all new code for quality, security, and best practices
+Create .claude/hooks/session-start.sh that displays:
+1. Project name and branch
+2. Last commit message
+3. Total articles in database (sqlite3 query)
+4. Trending topics (top 3)
+5. Servers running? (check ports 8000, 5173)
 
-Use the appropriate specialized agents for each step.
+Add to .claude/settings.json:
+{
+  "hooks": {
+    "SessionStart": {
+      "command": ".claude/hooks/session-start.sh"
+    }
+  }
+}
 ```
 
-**Watch Claude orchestrate the agents:**
+**Test:** Restart Claude Code - you should see project context banner!
 
-1. **backend-maintainer** creates the new API endpoint with proper error handling
-2. **code-reviewer** analyzes the backend code for issues
-3. **frontend-improver** builds the History button and modal component
-4. **code-reviewer** checks the React component for best practices
-
-**Expected workflow output:**
-```
-✅ Backend endpoint created at backend/api/endpoints/agent.py
-✅ Code review: No critical issues, 2 suggestions implemented
-✅ Frontend History component created at frontend/src/components/ChatHistory.tsx
-✅ Code review: Added accessibility attributes, improved TypeScript types
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: You build backend → build frontend → manually review → hope you didn't miss anything
-- ✨ **With Agents**: Expert specialists handle each part with automatic quality checks
-- ✨ **Benefit**: Production-ready code with comprehensive review
-- ✨ **Time Saved**: 3-4 hours → 30-45 minutes with full expert review
-
-**Try another workflow:**
-```
-Add input validation to the chat endpoint to reject empty messages, then review
-the changes for security and best practices
-```
-
-**Claude Code Feature Learned:** Complete agent-powered development workflow
-
-**💡 What's Missing?** We can't see how the UI actually looks! In Lab 10, we'll add MCP for browser testing and create a visual-inspector agent that can take screenshots.
+**🎯 What This Teaches:**
+- ✨ PreToolUse hooks prevent mistakes
+- ✨ File protection for sensitive data
+- ✨ SessionStart hooks provide context
+- ✨ Automation without manual checks
 
 ---
 
-### Step 9.6: (Optional) Create Your Own Custom Agent
+## 🤖 Lab 9: Specialized Agents
 
-**Create a specialized agent for testing.**
+### Step 9.1: Understand Agent Types
+
+**Read about agents:**
+```
+https://code.claude.com/docs/en/sub-agents
+```
+
+**Key concepts:**
+- **Agents** run in separate context (isolated from main chat)
+- **Results** are summarized back to you
+- **Use cases**: Research, code review, testing, exploration
+
+### Step 9.2: Create News Content Analyst Agent
 
 **Ask Claude Code:**
 ```
-Create a custom agent called test-engineer in .claude/agents/test-engineer.md that:
-1. Specializes in test automation
-2. Generates comprehensive test cases for pytest and vitest
-3. Identifies edge cases
-4. Achieves 90%+ code coverage
-5. Follows TDD (Test-Driven Development) principles
-6. Writes descriptive test names and clear assertions
-```
+Create a specialized agent for analyzing news content trends.
 
-**Agent file structure:**
-```markdown
+Create .claude/agents/news-analyst.md with:
+
 ---
-name: test-engineer
-description: Test automation specialist for pytest and vitest
+name: news-analyst
+description: Analyzes news trends, sentiment, and patterns across articles
 model: sonnet
 ---
 
-# Test Engineer Agent
+# System Prompt
+You are a news content analyst specializing in technology news. You analyze:
+- Sentiment trends (positive, negative, neutral coverage)
+- Topic correlations (which topics appear together)
+- Source credibility and bias
+- Emerging trends and patterns
 
-You are a test automation expert specializing in Python (pytest) and TypeScript (vitest) testing...
+When given a set of articles, provide:
+1. Overall sentiment distribution
+2. Most discussed subtopics
+3. Notable patterns or trends
+4. Recommendations for further investigation
 
-## Your Responsibilities
-1. Generate comprehensive test suites
-2. Identify edge cases and error conditions
-3. Write clear, maintainable tests
-4. Achieve high code coverage
-5. Follow testing best practices
+# Tools
+You have access to:
+- search_news() - Find articles by topic
+- categorize_article() - Get article categories
+- Database queries via SQLite
 
-## Testing Patterns
-- Arrange-Act-Assert pattern
-- Test isolation with mocks/fixtures
-- Descriptive test names (test_should_<expected>_when_<condition>)
-...
+# Response Format
+Always structure your analysis as:
+## Sentiment Analysis
+[breakdown]
+
+## Topic Trends  
+[patterns]
+
+## Recommendations
+[what to investigate next]
 ```
 
-**✅ Test It:**
-```
-Ask Claude: "Use the test-engineer agent to create comprehensive tests for my calculator tool in agent_service.py"
-```
+**Test it:**
 
-**Watch the agent generate:**
-```python
-def test_calculate_should_return_sum_when_given_addition():
-    result = calculate("2 + 2")
-    assert result == 4
+**Ask Claude:** "Use the news-analyst agent to analyze AI news sentiment from this week"
 
-def test_calculate_should_return_product_when_given_multiplication():
-    result = calculate("6 * 7")
-    assert result == 42
+**Expected:** Agent spawns, analyzes articles, returns summary of findings
 
-def test_calculate_should_handle_float_precision():
-    result = calculate("0.1 + 0.2")
-    assert abs(result - 0.3) < 0.001
-
-def test_calculate_should_raise_error_when_given_invalid_expression():
-    with pytest.raises(ValueError):
-        calculate("import os")
-
-def test_calculate_should_handle_division_by_zero():
-    with pytest.raises(ZeroDivisionError):
-        calculate("1 / 0")
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Write tests yourself, might miss edge cases
-- ✨ **With Agent**: Comprehensive test suite with edge cases
-- ✨ **Benefit**: Higher quality, better coverage, catch bugs early
-- ✨ **Time Saved**: 1-2 hours of test writing → 10 minutes
-
-**Claude Code Feature Learned:** Custom agent creation
-
----
-
-### Step 9.7: (Optional) Agent Memory
-
-**Agents can remember preferences and learnings across invocations.**
-
-**✅ Test It - Teach an Agent:**
-
-**Tell the code-reviewer agent:**
-```
-Tell the code-reviewer agent to remember these project standards:
-- We prefer async/await over .then() for promises
-- All Python functions must have type hints
-- Error messages should be user-friendly, not technical
-- We use conventional commits (feat:, fix:, etc.)
-- Backend port is 8000, frontend is 5173 (never change)
-```
-
-**Then later, ask:**
-```
-Use the code-reviewer agent to review this code:
-def get_user(id):
-    return db.query().then(lambda x: x)
-```
-
-**Watch:** Agent will remember your standards and flag both issues:
-```
-❌ Missing type hints (violates project standard)
-❌ Using .then() instead of async/await (violates project standard)
-```
-
-**Check agent memory:**
-```
-Ask Claude: "Show me what the code-reviewer agent remembers about this project"
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Repeat preferences to agents every time
-- ✨ **With Memory**: Agents learn and remember project standards
-- ✨ **Benefit**: Consistent behavior, agents get smarter over time
-
-**Claude Code Feature Learned:** Agent memory systems
-
----
-
-## 🔌 Lab 10: MCP & Visual Testing Agent
-
-### Step 10.1: The Problem - We Can't See the Frontend!
-
-**In Lab 9, we created agents to improve our frontend, but there's a problem:**
-
-Our agents are "blind" - they can read code, but they can't see how the UI actually looks!
-
-```
-❌ Frontend-improver can read ChatInterface.tsx
-❌ But it can't see if buttons are cut off on mobile
-❌ It can't detect visual bugs or layout issues
-❌ It doesn't know if colors clash or text is unreadable
-```
-
-**The solution? MCP (Model Context Protocol) + A Visual Inspector Agent!**
-
----
-
-### Step 10.2: Understanding MCP
-
-**MCP (Model Context Protocol) connects Claude Code to external tools.**
-
-Learn more: https://code.claude.com/docs/en/mcp
-
-**What MCP enables:**
-- Browser automation (screenshots, clicking, testing)
-- External APIs (Slack, GitHub, databases)
-- Custom tools specific to your project
-
-**We'll use:** Chrome DevTools MCP for browser automation
-
----
-
-### Step 10.3: Install Chrome DevTools MCP
-
-**Let's install the MCP server that gives Claude browser automation powers!**
+### Step 9.3: Create Data Quality Checker Agent
 
 **Ask Claude Code:**
 ```
-Install the Chrome DevTools MCP server so we can take screenshots and test the frontend visually.
+Create an agent that audits news data quality.
 
-Add it to .mcp.json configuration.
+Create .claude/agents/data-quality.md:
+
+---
+name: data-quality-checker
+description: Audits database for quality issues (broken URLs, missing data, duplicates)
+model: haiku
+---
+
+# System Prompt
+You are a data quality auditor for a news aggregation system. Your job:
+
+Check for:
+1. **Broken URLs** - Try fetching each article URL, flag 404s
+2. **Missing summaries** - Articles without summary field
+3. **Duplicate articles** - Same title or URL appearing multiple times
+4. **Invalid dates** - Dates in the future or before 2020
+5. **Orphaned categories** - Articles with invalid topic values
+
+# Output Format
+Report findings as:
+## Critical Issues (blocks functionality)
+- [list with article IDs]
+
+## Warnings (should fix soon)
+- [list with article IDs]
+
+## Statistics
+- Total articles: X
+- Quality score: Y%
 ```
 
-**Claude will create/update `.mcp.json`:**
-```json
+**Test it:**
+
+**Ask Claude:** "Use data-quality-checker agent to audit the database"
+
+**Expected:** Agent reports quality metrics and issues found
+
+### Step 9.4: Create Code Review Agent
+
+**Ask Claude Code:**
+```
+Use the built-in code-reviewer agent to review news tools.
+
+Prompt: "Review backend/tools/news_tools.py for:
+- Code quality and best practices
+- Error handling completeness
+- Type hints accuracy
+- Mock data realism
+- Suggest improvements"
+```
+
+**Expected:** Detailed code review with specific suggestions
+
+### Step 9.5: Test All Agents Together
+
+**Ask Claude Code:**
+```
+Run a comprehensive analysis using multiple agents:
+
+1. news-analyst: Analyze Cloud Computing news trends
+2. data-quality-checker: Audit database health
+3. code-reviewer: Review backend/api/endpoints/news.py
+
+Run them in parallel and summarize findings across all three.
+```
+
+**Expected:** All 3 agents run, results combined into unified report
+
+**🎯 What This Teaches:**
+- ✨ Creating custom agents with specific expertise
+- ✨ Agent isolation (separate context windows)
+- ✨ Using multiple agents in parallel
+- ✨ Delegating specialized tasks to expert agents
+
+---
+
+## 🔌 Lab 10: MCP Servers (Visual News Feed Inspector)
+
+### Step 10.1: Understand MCP
+
+**Read the docs:**
+```
+https://code.claude.com/docs/en/mcp
+```
+
+**Key concepts:**
+- **MCP (Model Context Protocol)** connects external tools to Claude
+- **MCP Servers** expose tools via standard protocol
+- **Examples**: Chrome DevTools, Draw.io, Database clients
+
+### Step 10.2: Install Chrome DevTools MCP
+
+**Check if .mcp.json exists:**
+```bash
+cat .mcp.json
+```
+
+**If not, create it:**
+
+**Ask Claude Code:**
+```
+Create .mcp.json file to configure Chrome DevTools MCP server:
+
 {
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": [
+        "-y",
+        "@executeautomation/chrome-devtools-mcp-server"
+      ]
     }
   }
 }
 ```
 
-**Important: Restart Claude Code**
-```
-Exit Claude Code (Ctrl+C or type /exit)
-Then restart: claudecode
-```
-
-**When you restart, Claude will ask permission to use the Chrome DevTools MCP server - approve it!**
-
----
-
-**✅ Test It:**
-```
-Use Chrome DevTools MCP to open http://localhost:5173 and take a screenshot
+**Reload Claude Code:**
+```bash
+# Exit and restart claudecode
+# Or use /reload-plugins if available
 ```
 
-**Watch Claude:**
-1. Launch browser
-2. Navigate to localhost:5173
-3. Take a screenshot
-4. You'll see the screenshot in Claude's response!
+**Verify MCP tools loaded:**
 
-**✅ MCP is working!**
+**Ask Claude:** "What MCP tools do you have access to?"
 
----
+**Expected:** Should list chrome-devtools tools (navigate_page, take_screenshot, etc.)
 
-### Step 10.4: Create Visual Inspector Agent (Using MCP!)
-
-**Now that we have MCP, let's create an agent that can "see" the frontend!**
-
-**Type in Claude Code:**
-```
-/agents
-```
-
-**Create the agent:**
-
-**Agent Purpose:** Visual testing specialist using Chrome DevTools MCP
-
-**Description to use:**
-```
-A visual testing specialist that uses Chrome DevTools MCP to take screenshots, 
-test responsive design across device sizes, check console errors, and provide 
-visual feedback about the UI. Helps frontend-improver agent know what actually 
-needs improvement.
-```
-
-**Tools to select:** Read, Write, Bash, Edit, **All MCP chrome-devtools tools**
-
-**✅ Agent Created!**
-
----
-
-### Step 10.5: Use Visual Inspector to Help Frontend Improver!
-
-**Now let's see the power of combining agents + MCP!**
-
-**Scenario:** Improve the chat interface based on visual testing
+### Step 10.3: Create Visual News Feed Inspector Agent
 
 **Ask Claude Code:**
 ```
-I want to improve the chat interface:
+Create an agent that uses Chrome DevTools MCP to test the news feed visually.
 
-1. Use visual-inspector agent to take screenshots at mobile (375px), tablet (768px), 
-   and desktop (1920px) sizes
-2. Identify any visual bugs or layout issues
-3. Use frontend-improver agent to fix the issues found
-
-Work together to make the UI perfect across all devices!
-```
-
-**Watch the workflow:**
-1. **visual-inspector** launches browser, takes 3 screenshots
-2. **visual-inspector** analyzes: "Send button cut off on mobile, chat too wide on desktop"
-3. **frontend-improver** reads the visual feedback
-4. **frontend-improver** fixes ChatInterface.tsx with proper responsive styles
-5. **visual-inspector** takes new screenshots to verify fixes
-
-**This is the power of agents + MCP working together!**
-
-**🎯 What This Improves:**
-- ✨ **Before**: Frontend-improver is blind, can't see visual issues
-- ✨ **With visual-inspector + MCP**: Frontend-improver gets eyes!
-- ✨ **Benefit**: Fix real visual bugs, not just code issues
-- ✨ **Time Saved**: Hours of manual testing → Automated visual QA
-
-**Claude Code Feature Learned:** Agent + MCP integration for visual testing
+Create .claude/agents/visual-inspector.md:
 
 ---
+name: visual-inspector
+description: Tests news feed UI using Chrome DevTools (screenshots, console, interaction)
+model: sonnet
+---
 
-### Step 10.6: Install Draw.io MCP for Architecture Diagrams
+# System Prompt
+You are a frontend QA engineer testing the Tech News Aggregator UI. Use Chrome DevTools MCP tools to:
 
-**Now let's add another MCP server for creating architecture diagrams!**
+1. **Navigate to app**: http://localhost:5173
+2. **Take screenshots** at key states (initial load, topic filtered, articles loaded)
+3. **Check console** for errors or warnings
+4. **Test interactions**:
+   - Click topic filter buttons
+   - Verify articles render
+   - Check responsive layout
+5. **Report issues**: Visual bugs, console errors, broken functionality
 
-**Learn more:** https://www.drawio.com/doc/faq/ai-drawio-generation
+# Available MCP Tools
+- new_page(url) - Open browser to URL
+- take_screenshot(filePath) - Capture screenshot
+- click(selector) - Click element
+- get_console_messages() - Check console logs
+- wait_for(text) - Wait for text to appear
+
+# Workflow
+1. Open http://localhost:5173
+2. Screenshot: "initial-load.png"
+3. Click "AI/ML" filter
+4. Screenshot: "ai-filtered.png"
+5. Check console for errors
+6. Report findings
+```
+
+**Test it:**
+
+**Ask Claude:** "Use visual-inspector agent to test the news feed and take screenshots"
+
+**Expected:**
+- Browser opens automatically
+- Screenshots saved to project directory
+- Console errors reported
+- Visual analysis provided
+
+### Step 10.4: Test Article Card Rendering
+
+**Ask Claude:** 
+```
+Use visual-inspector to verify:
+1. Article cards render with all fields (title, summary, topic, date)
+2. Topic badges have correct colors
+3. Links are clickable
+4. Layout is responsive
+Take screenshots of any issues found.
+```
+
+### Step 10.5: Install Draw.io MCP (Optional)
 
 **Ask Claude Code:**
 ```
-Install the Draw.io MCP server so we can generate architecture diagrams.
+Add Draw.io MCP server to .mcp.json for architecture diagrams:
 
-Add the MCP server from: https://www.drawio.com/doc/faq/ai-drawio-generation
+{
+  "mcpServers": {
+    "chrome-devtools": { ... },
+    "drawio": {
+      "command": "npx",
+      "args": ["-y", "@keturiosakys/mcp-server-drawio"]
+    }
+  }
+}
 
-Add it to .mcp.json configuration.
+Restart Claude Code to load it.
 ```
 
-**Claude will update `.mcp.json`:**
+**Test it:**
+
+**Ask Claude:** "Create an architecture diagram of the Tech News Aggregator showing Backend (FastAPI + Strands + SQLite), Frontend (React + TypeScript), and AI (Claude via Bedrock)"
+
+**Expected:** `.drawio` file created with architecture diagram!
+
+**🎯 What This Teaches:**
+- ✨ MCP server configuration
+- ✨ Browser automation with Chrome DevTools
+- ✨ Visual testing with screenshots
+- ✨ Diagram generation with Draw.io
+- ✨ External tool integration
+
+---
+
+## 🎓 Lab 11: Configuration & Best Practices
+
+### Step 11.1: Update CLAUDE.md
+
+**CLAUDE.md provides project-specific instructions to Claude Code.**
+
+**Ask Claude Code:**
+```
+Update CLAUDE.md to document the Tech News Aggregator:
+
+## Project Overview
+This is a Tech News Aggregator built with FastAPI, React, and Claude AI. It searches, categorizes, and analyzes tech news articles.
+
+## Architecture
+- Backend: Python + FastAPI + Strands SDK (port 8000)
+- Frontend: React + TypeScript + Vite (port 5173)
+- Database: SQLite at data/articles.db
+- AI: Claude via Amazon Bedrock
+
+## Agent Tools
+1. search_news(topic, days=7) - Returns mock articles for a topic
+2. categorize_article(text) - Returns category (AI/ML, Cloud/DevOps, etc.)
+3. summarize_article(url) - Returns article summary
+4. get_trending_topics() - Returns top 5 trending topics
+
+## API Endpoints
+- POST /api/v1/agent/chat - Chat with agent
+- GET /api/v1/news?topic=AI&days=7 - Get news articles
+- GET /api/v1/trending - Get trending topics
+
+## Database Schema
+```sql
+CREATE TABLE articles (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  url TEXT NOT NULL,
+  summary TEXT,
+  topic TEXT,
+  published_date TEXT,
+  fetched_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  bookmarked BOOLEAN DEFAULT 0
+)
+```
+
+## Development Commands
+- Start app: /start-dev
+- Run tests: /test-all
+- Check health: /check-health
+- Search news: /news-search <topic> <days>
+
+## Important Files
+- backend/tools/news_tools.py - Agent tool implementations
+- backend/database/db.py - SQLite wrapper
+- frontend/src/components/NewsFeed.tsx - Main news feed UI
+- .claude/agents/news-analyst.md - News analysis agent
+- .claude/agents/visual-inspector.md - UI testing agent
+
+## Rules
+- Database should only be modified via API (protected by PreToolUse hook)
+- All tests must pass before committing
+- Use TypeScript strict mode in frontend
+- Agent tools should return formatted markdown
+```
+
+### Step 11.2: Review .claude/settings.json
+
+**Check your hooks configuration:**
+
+```bash
+cat .claude/settings.json
+```
+
+**Should contain:**
+```json
+{
+  "hooks": {
+    "PreToolUse:Bash": {
+      "command": ".claude/hooks/block-dangerous.sh"
+    },
+    "PreToolUse:Edit": {
+      "command": ".claude/hooks/protect-files.sh"
+    },
+    "PreToolUse:Write": {
+      "command": ".claude/hooks/protect-files.sh"
+    },
+    "SessionStart": {
+      "command": ".claude/hooks/session-start.sh"
+    }
+  }
+}
+```
+
+### Step 11.3: Review .mcp.json
+
+**Check MCP servers:**
+
+```bash
+cat .mcp.json
+```
+
+**Should contain:**
 ```json
 {
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["-y", "@executeautomation/chrome-devtools-mcp-server"]
     },
     "drawio": {
       "command": "npx",
-      "args": ["-y", "@drawio/mcp"]
+      "args": ["-y", "@keturiosakys/mcp-server-drawio"]
     }
   }
 }
 ```
 
-**Important: Restart Claude Code**
-```
-Exit Claude Code (Ctrl+C or type /exit)
-Then restart: claudecode
-```
-
-**When you restart, Claude will ask permission to use the Draw.io MCP server - approve it!**
+**🎯 What This Teaches:**
+- ✨ Project documentation for AI collaboration
+- ✨ Hook configuration management
+- ✨ MCP server setup
+- ✨ Best practices for team projects
 
 ---
 
-### Step 10.7: Generate Architecture Diagrams
+## ✅ Final Verification Checklist
 
-**Now let's use Draw.io MCP to document our system!**
+**Before you're done, verify everything works:**
 
-**Ask Claude Code:**
-```
-Use Draw.io MCP to create a system architecture diagram showing:
-1. User (browser)
-2. React Frontend (port 5173)
-3. FastAPI Backend (port 8000)
-4. AgentService (using Strands SDK)
-5. Claude AI (via Amazon Bedrock)
-6. Show data flow with arrows: User → Frontend → Backend → Agent → Claude → Response
+### Backend Checklist
+- [ ] All 4 news tools working (`search_news`, `categorize_article`, `summarize_article`, `get_trending_topics`)
+- [ ] Database initializes at `data/articles.db`
+- [ ] `/api/v1/news` endpoint returns articles
+- [ ] `/api/v1/trending` endpoint returns topics
+- [ ] `/api/v1/agent/chat` endpoint works
+- [ ] Agent responds to news queries
+- [ ] Backend tests pass: `python -m pytest backend/tests/ -v`
 
-Use boxes for components and arrows for data flow.
-```
+### Frontend Checklist
+- [ ] NewsFeed displays with topic filters
+- [ ] ArticleCard shows title, summary, topic, dates
+- [ ] TopicFilter highlights selected topic
+- [ ] Chat interface sends/receives messages
+- [ ] Two-column layout renders correctly
+- [ ] Frontend tests pass: `cd frontend && npm test`
 
-**Watch:** Claude generates a professional diagram!
+### Features Checklist
+- [ ] TypeScript LSP active (shows type errors in real-time)
+- [ ] Pyright LSP active (shows Python type errors)
+- [ ] Custom commands working (`/component`, `/news-search`)
+- [ ] Custom skills working (`/start-dev`, `/test-all`, `/check-health`)
+- [ ] Hooks protecting database and config files
+- [ ] Agents available (news-analyst, data-quality-checker, visual-inspector)
+- [ ] MCP Chrome DevTools working (can take screenshots)
 
-**The diagram shows:**
-```
-[User Browser]
-      ↓
-[React Frontend :5173]
-      ↓ POST /api/v1/chat
-[FastAPI Backend :8000]
-      ↓
-[AgentService (Strands SDK)]
-      ↓ Bedrock API
-[Claude AI]
-      ↓ Response
-[Back to User]
-```
+### Documentation Checklist
+- [ ] CLAUDE.md updated for news project
+- [ ] README.md explains the Tech News Aggregator
+- [ ] .claude/settings.json has all hooks
+- [ ] .mcp.json has MCP servers configured
 
-**Try more diagrams:**
-```
-Create a sequence diagram showing the chat message flow with timing
-```
+**Test the complete workflow:**
 
-**🎯 What This Improves:**
-- ✨ **Before**: Manually create diagrams in Draw.io or Lucidchart (30-60 minutes)
-- ✨ **With MCP**: Generate diagrams from text description (2 minutes)
-- ✨ **Benefit**: Keep architecture docs up to date easily
-- ✨ **Use Case**: Documentation, onboarding, design discussions
+1. Start the app: `/start-dev`
+2. Open: http://localhost:5173
+3. Ask: "What's the latest AI news this week?"
+4. Click topic filter: "Cloud/DevOps"
+5. Run health check: `/check-health`
+6. Run tests: `/test-all`
+7. Take screenshot: "Use visual-inspector to screenshot the news feed"
 
-**Claude Code Feature Learned:** Architecture diagram generation with MCP
-
----
-
-## 🧪 Lab 11: Comprehensive Testing & Quality Assurance
-
-### Step 11.1: Add Full Test Suite
-
-**Ask Claude Code:**
-```
-Create a comprehensive test suite with 80%+ coverage:
-
-Backend tests (backend/tests/):
-1. test_agent_service.py - Test all agent tools (get_joke, calculate)
-2. test_chat_endpoint.py - API tests (success, validation, errors)
-3. test_config.py - Configuration validation
-4. test_integration.py - Full request-to-response flow
-
-Frontend tests (frontend/src/__tests__/):
-1. ChatInterface.test.tsx - Component behavior
-2. api.test.ts - API client with mocked responses
-3. App.test.tsx - Full app integration
-
-Use pytest for backend, vitest for frontend.
-```
-
-**✅ Test It - Run Full Test Suite:**
-
-```bash
-# Backend tests with coverage
-source venv/bin/activate
-pytest backend/tests/ -v --cov=backend --cov-report=term --cov-report=html
-
-# Frontend tests with coverage
-cd frontend
-npm test -- --coverage
-```
-
-**Check coverage reports:**
-```bash
-# Backend: open htmlcov/index.html
-# Frontend: open coverage/index.html
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Hope code works, find bugs in production
-- ✨ **With Tests**: Confidence that code works correctly
-- ✨ **Benefit**: Catch regressions, safe refactoring
-- ✨ **Coverage Goal**: 80%+ means most code is tested
+**If all works:** 🎉 **Congratulations! Your Tech News Aggregator is complete!**
 
 ---
 
-### Step 11.2: Create Unified Start Script
+## 🎉 Congratulations!
 
-**Ask Claude Code:**
-```
-Create start.sh script that:
-1. Checks if venv exists, creates if missing
-2. Activates virtual environment
-3. Installs/updates dependencies (pip install -r requirements.txt)
-4. Starts backend in background (port 8000)
-5. Checks if frontend dependencies are installed
-6. Starts frontend (port 5173)
-7. Waits for both servers to be ready
-8. Opens browser to http://localhost:5173
-9. Shows colored status messages
-10. Make it executable (chmod +x)
-```
+You've successfully built a Tech News Aggregator and mastered all major Claude Code features!
 
-**✅ Test It:**
-```bash
-./start.sh
-```
+**What You Learned:**
 
-**Watch:** Entire project starts with one command!
+1. ✅ **Core Claude Code** - File operations, terminal integration, git workflows
+2. ✅ **Agent Development** - Created 4 custom tools with Strands SDK
+3. ✅ **Full-Stack Architecture** - FastAPI backend + React frontend
+4. ✅ **Database Integration** - SQLite for article storage
+5. ✅ **Testing** - TDD with pytest and Vitest
+6. ✅ **Plugins** - TypeScript LSP, Pyright LSP, GitHub integration
+7. ✅ **Custom Commands** - `/component`, `/news-search` for rapid development
+8. ✅ **Skills** - `/start-dev`, `/test-all`, `/check-health` workflows
+9. ✅ **Hooks** - PreToolUse for safety, SessionStart for context
+10. ✅ **Specialized Agents** - news-analyst, data-quality-checker, visual-inspector
+11. ✅ **MCP Servers** - Chrome DevTools for UI testing, Draw.io for diagrams
 
-**🎯 What This Improves:**
-- ✨ **Before**: Multiple terminal windows, 5+ commands
-- ✨ **With start.sh**: One command starts everything
-- ✨ **Time Saved**: 3-5 minutes → 10 seconds
-- ✨ **Team Benefit**: Easy onboarding for new developers
+**What You Built:**
 
----
+- 🔍 **News Search** - Find articles by topic and timeframe
+- 📊 **Categorization** - Auto-categorize by tech domain
+- 📝 **Summarization** - Generate article summaries
+- 🔥 **Trending Topics** - See what's hot in tech
+- 💾 **Article History** - SQLite database
+- 💬 **Chat Interface** - AI-powered news assistant
+- 📰 **Visual Feed** - Two-column layout with filters
+- 🔖 **Bookmarking** - Save favorite articles
+- 🔴 **Live Updates** - Real-time SSE streaming
 
-## 🏆 Lab 12: Deployment & Documentation
+**Next Steps:**
 
-### Step 12.1: Add Deployment Config
+1. **Add Real News API Integration**
+   - NewsAPI.org (https://newsapi.org/)
+   - RSS feeds (TechCrunch, Hacker News, The Verge)
+   - Reddit API (r/technology, r/programming)
 
-**Ask Claude Code:**
-```
-Create Docker configuration for production:
-1. backend/Dockerfile - Multi-stage build, optimized for FastAPI
-2. frontend/Dockerfile - Build Vite for production, serve with nginx
-3. docker-compose.yml - Run both services with networking
-4. Add health checks and proper environment variables
-5. Add .dockerignore files
-```
+2. **Deploy to Production**
+   - Backend: AWS Lambda + API Gateway or EC2
+   - Frontend: Vercel, Netlify, or AWS S3 + CloudFront
+   - Database: AWS RDS (PostgreSQL) or keep SQLite
 
-**✅ Test It:**
-```bash
-docker-compose up --build
-```
+3. **Add User Authentication**
+   - JWT tokens or OAuth
+   - User-specific bookmarks and preferences
+   - Personalized news recommendations
 
-**Visit:** http://localhost:5173
+4. **Implement Article Recommendations**
+   - Collaborative filtering
+   - Content-based filtering with Claude
+   - Trending algorithm based on user activity
 
-**🎯 What This Improves:**
-- ✨ **Benefit**: Production-ready deployment
-- ✨ **Benefit**: Consistent environment (dev/prod parity)
+5. **Add More Features**
+   - Email digest subscriptions
+   - Slack/Discord notifications
+   - Article comments and ratings
+   - Multi-language support
 
----
+**Share Your Work:**
 
-### Step 12.2: Complete Documentation
+- Push to GitHub and share the repo
+- Write a blog post about what you learned
+- Create a demo video
+- Deploy live and share the URL
 
-**Ask Claude Code:**
-```
-Create comprehensive README.md with:
-1. Project overview with demo GIF/screenshot
-2. Features list with checkboxes
-3. Architecture diagram (ASCII art)
-4. Prerequisites and setup instructions
-5. How to run (development and production)
-6. API documentation (endpoints, request/response)
-7. Testing instructions
-8. Troubleshooting section
-9. Contributing guidelines
-10. License (MIT)
-```
+**Keep Learning:**
 
-**✅ Test It:**
-```
-Ask a teammate or friend to set up the project using only your README
-```
-
-**🎯 What This Improves:**
-- ✨ **Benefit**: Anyone can understand and run your project
-- ✨ **Use Case**: Open source, team onboarding, portfolio
+- Explore more Claude Code plugins
+- Build custom MCP servers
+- Create more specialized agents
+- Contribute to open source
 
 ---
 
-### Step 12.3: Create Demo Presentation
+## 📚 Resources
 
-**Ask Claude Code:**
-```
-Write a 5-minute demo script for presenting this project:
-1. Problem statement (why this matters)
-2. Solution overview (what you built)
-3. Live demo flow (step-by-step walkthrough)
-4. Technical highlights (Claude Code features used)
-5. Architecture overview
-6. Future enhancements
-7. Lessons learned
+**Official Documentation:**
+- Claude Code: https://code.claude.com/docs
+- Strands SDK: https://strandsagents.com/docs
+- FastAPI: https://fastapi.tiangolo.com/
+- React: https://react.dev/
+- Vite: https://vitejs.dev/
 
-Format as speaker notes with timing.
-```
+**Community:**
+- Claude Code Discord: https://discord.gg/claude-code
+- GitHub Discussions: https://github.com/anthropics/claude-code/discussions
 
----
-
-## 🎯 Extension Challenges
-
-Ready to level up? Try these advanced challenges:
-
-### Challenge 1: Multi-Agent System
-**Goal:** Multiple specialized agents working together.
-```
-Create:
-- Research agent (searches web, summarizes)
-- Coding agent (writes code)
-- Review agent (reviews code quality)
-- Router agent (delegates to appropriate agent)
-Test: "Research REST API best practices and implement them in our API"
-```
-
-### Challenge 2: Persistent Conversation Memory
-**Goal:** Agent remembers conversations across sessions.
-```
-Implement:
-- SQLite database for conversation history
-- Conversation summarization (for context window)
-- User profile learning
-- /history command to view past conversations
-Test: Chat today, restart tomorrow, agent remembers!
-```
-
-### Challenge 3: Voice Interface
-**Goal:** Talk to your agent.
-```
-Add:
-- Speech-to-text input (Web Speech API)
-- Text-to-speech output (browser synthesis)
-- Voice activity detection
-- Audio waveform visualization
-Test: Have a voice conversation with your agent!
-```
-
-### Challenge 4: Plugin System for Tools
-**Goal:** Users can enable/disable agent tools dynamically.
-```
-Create:
-- Tool marketplace UI
-- Enable/disable toggles for each tool
-- Tool usage statistics
-- Custom tool creator
-Test: User enables "weather" tool, agent can now check weather!
-```
-
-### Challenge 5: Analytics Dashboard
-**Goal:** Insights into agent usage.
-```
-Build:
-- Usage stats (messages per day, popular tools)
-- Response time graphs
-- Error rate tracking
-- User satisfaction ratings
-- Export to CSV
-Test: View analytics showing agent performance over time
-```
+**Example Projects:**
+- This repository: Full Tech News Aggregator implementation
+- Claude Code Examples: https://github.com/anthropics/claude-code-examples
 
 ---
 
-## 📚 Complete Feature Summary
-
-After this workshop, you've mastered:
-
-### ✅ Claude Code Core Features
-- Multi-step task automation
-- File operations (read, write, edit, grep, glob)
-- Git integration
-- Terminal command execution
-
-### ✅ CLAUDE.md Configuration
-- **What**: Project-specific instructions
-- **Tested**: Claude remembers project setup automatically
-- **Impact**: No more repeating context every session
-
-### ✅ settings.json Hooks
-- **What**: Automated workflows at tool use points
-- **Tested**: Pre-commit tests, file protection, session context
-- **Impact**: Quality gates, security, automation
-
-### ✅ Plugins
-- **What**: Extend Claude Code capabilities
-- **Tested**: TypeScript LSP (type checking), Pyright LSP, GitHub
-- **Impact**: Catch bugs early, seamless GitHub integration
-
-### ✅ Custom Commands
-- **What**: Reusable prompt templates
-- **Tested**: /component (generate React components), /test-all
-- **Impact**: 10 minutes → 30 seconds per task
-
-### ✅ Custom Skills
-- **What**: Multi-step automated workflows
-- **Tested**: /start-dev (start both servers), /check-health
-- **Impact**: Complex workflows in one command
-
-### ✅ Custom Agents
-- **What**: Specialized Claude instances
-- **Tested**: code-reviewer, frontend-improver, test-engineer
-- **Impact**: Expert-level reviews, faster development
-
-### ✅ Agent Memory
-- **What**: Agents learn project preferences
-- **Tested**: code-reviewer remembers standards
-- **Impact**: Consistent behavior, agents get smarter
-
-### ✅ MCP (Model Context Protocol)
-- **What**: Connect to external tools
-- **Tested**: Chrome DevTools (screenshots, console), Draw.io (diagrams)
-- **Impact**: Visual testing, automated documentation
-
-### ✅ Memory System
-- **What**: Persistent preferences across sessions
-- **Tested**: Ports, commit format, learning style
-- **Impact**: No repetition, consistent workflow
-
-### 📊 Impact Metrics
-
-| Feature | Time Saved | Quality Impact |
-|---------|-----------|----------------|
-| LSP Plugins | Hours of debugging → Instant detection | ⬆️ Fewer type errors |
-| Pre-commit Hooks | 0 → 100% test coverage enforcement | ⬆️ No broken commits |
-| /component Command | 10 min → 30 sec per component | ⬆️ Consistent code style |
-| /start-dev Skill | 3 min → 10 sec startup | ⬆️ Smooth workflow |
-| Code Review Agent | No review → Expert review in 2 min | ⬆️ Catch bugs early |
-| Visual Inspector + MCP | 20 min manual testing → 2 min automated | ⬆️ Better UX |
-| Memory System | 5 min context every session → 0 | ⬆️ Less repetition |
-
-**Total Time Saved Per Day:** 1-2 hours
-**Code Quality Improvement:** 50-80% fewer bugs reach production
-
----
-
-## 🆘 Troubleshooting
-
-[Previous troubleshooting section remains the same...]
-
----
-
-## 🚀 Quick Reference Card
-
-[Previous reference card remains the same...]
-
----
-
-**🎉 Congratulations on completing the LabCamp workshop!**
-
-You now have hands-on experience with:
-- ✅ Building full-stack AI agents with Strands SDK
-- ✅ Using **ALL** Claude Code features (tested each one!)
-- ✅ Professional development workflows
-- ✅ Test-driven development with automated quality gates
-- ✅ Custom tooling (commands, skills, agents, hooks)
-- ✅ Visual testing and browser automation (MCP)
-- ✅ Persistent memory and context management
-
-**What makes this workshop special:**
-- 🎯 **"Add → Test → See Benefit"** approach for every feature
-- ⏱️ **Time savings measured** - you experienced the speed boost
-- 🐛 **Bug prevention tested** - you saw hooks block bad code
-- 🤖 **Agent expertise witnessed** - expert reviews in minutes
-
-**Next steps:**
-- 🚀 Build your own AI agent project
-- 🛠️ Create custom commands/skills for your workflow
-- 📢 Share your learnings with the community
-- 📖 Explore advanced Claude Code documentation
-
-Keep experimenting, keep building, and most importantly - **have fun coding with Claude!** 🚀
+**🎓 You're now a Claude Code expert! Go build something amazing!** 🚀
