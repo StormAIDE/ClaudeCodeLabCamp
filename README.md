@@ -25,13 +25,13 @@ This branch contains a complete Tech News Aggregator implementation:
 
 **Tech News Aggregator** - Stay updated with the latest technology developments:
 
-- 🔍 **Search News**: Find articles on AI, Cloud, DevOps, Web Dev, Security, etc.
-- 📊 **Categorize**: Auto-categorize articles by technology domain
-- 📝 **Summarize**: Generate concise article summaries
-- 🔥 **Trending Topics**: See what's hot in tech this week
-- 💾 **Article History**: SQLite database stores past articles
-- 💬 **Chat Interface**: Ask questions like "What's new in AI this week?"
-- 📰 **Visual Feed**: Two-column layout with chat + article cards
+- 🔍 **Real-Time News Search**: Ask questions and agent searches live RSS feeds (TechCrunch, The Verge, Hacker News, AWS Blogs)
+- 📊 **Auto-Categorize**: Articles automatically categorized by technology domain (AI/ML, Cloud, Security, etc.)
+- 💾 **Smart Caching**: SQLite database caches articles to avoid re-fetching same news
+- 💬 **Chat Interface**: Natural language queries like "What are the latest AI developments?"
+- 📰 **Sources Panel**: Right side shows actual sources used for your specific query
+- 🔗 **Real URLs**: All articles link to actual tech news sites with full source attribution
+- 🎨 **Modern UI**: Dark glassmorphism design with vibrant gradients
 
 ## 📋 What You'll Learn
 

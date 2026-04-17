@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import ChatInterface from './components/ChatInterface'
 import { NewsFeed } from './components/NewsFeed'
 import { useAgentStore } from './store/agentStore'
 
 function App() {
   const { status, messages } = useAgentStore()
-  const [selectedTopic, setSelectedTopic] = useState<string>('All')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
@@ -59,10 +57,10 @@ function App() {
 
         <main className="relative grid lg:grid-cols-2 gap-6">
           <div className="order-2 lg:order-1">
-            <ChatInterface selectedTopic={selectedTopic} />
+            <ChatInterface />
           </div>
           <div className="order-1 lg:order-2">
-            <NewsFeed selectedTopic={selectedTopic} />
+            <NewsFeed />
           </div>
         </main>
       </div>

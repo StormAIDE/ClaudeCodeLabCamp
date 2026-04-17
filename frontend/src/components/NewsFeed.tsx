@@ -12,11 +12,7 @@ interface Article {
   fetched_at?: string;
 }
 
-interface NewsFeedProps {
-  selectedTopic: string;
-}
-
-export const NewsFeed: React.FC<NewsFeedProps> = ({ selectedTopic }) => {
+export const NewsFeed: React.FC = () => {
   const { sources } = useAgentStore();
 
   return (
