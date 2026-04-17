@@ -1665,189 +1665,93 @@ Work together to make the UI perfect across all devices!
 
 ---
 
-### Step 10.6: Debug Network Issues with MCP (Optional)
+### Step 10.6: Install Draw.io MCP for Architecture Diagrams
 
-**✅ Test It - Monitor API Calls:**
+**Now let's add another MCP server for creating architecture diagrams!**
 
-**Ask Claude Code:**
-```
-Use Chrome DevTools MCP to:
-1. Open the app and monitor network requests
-2. Send a chat message "Tell me a joke"
-3. Capture the API call to /api/v1/chat
-4. Show request/response details
-5. Measure response time
-6. Identify any errors or slow requests
-```
-
-**Watch:** Claude monitors network and reports:
-```
-🌐 Network Analysis:
-Request: POST http://localhost:8000/api/v1/chat
-Status: 200 OK
-Response Time: 1.2s
-Request Body: {"message": "Tell me a joke"}
-Response Body: {"response": "Why did the..."}
-
-⚡ Performance:
-- Response time is good (< 2s)
-- No failed requests
-- Consider adding request caching for common queries
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Open DevTools manually, check network tab
-- ✨ **With MCP**: Automated network monitoring and analysis
-- ✨ **Benefit**: Catch slow APIs, debug network issues
-- ✨ **Use Case**: Performance testing and optimization
-
-**Claude Code Feature Learned:** Network debugging via MCP
-
----
-
-### Step 10.7: Generate Diagrams with Draw.io MCP (Optional)
-
-**Draw.io MCP is already installed for creating diagrams!**
-
-**✅ Test It - Architecture Diagram:**
+**Learn more:** https://www.drawio.com/doc/faq/ai-drawio-generation
 
 **Ask Claude Code:**
 ```
-Use Draw.io MCP to create a system architecture diagram showing:
-1. User (browser)
-2. React Frontend (port 5173) - Vite dev server
-3. FastAPI Backend (port 8000)
-4. AgentService (using Strands SDK)
-5. Claude AI (via Amazon Bedrock)
-6. Show data flow: User → Frontend → Backend → Agent → Claude → Back
-Use boxes for components and arrows for data flow.
+Install the Draw.io MCP server so we can generate architecture diagrams.
+
+Add the MCP server from: https://www.drawio.com/doc/faq/ai-drawio-generation
+
+Add it to .mcp.json configuration.
 ```
 
-**Watch:** Claude generates a professional diagram!
-
-**The diagram will show:**
-```
-[User Browser]
-      ↓
-[React Frontend :5173]
-      ↓ HTTP POST /api/v1/chat
-[FastAPI Backend :8000]
-      ↓
-[AgentService (Strands SDK)]
-      ↓ Bedrock API
-[Claude AI Model]
-      ↓ Response
-[Back through stack]
-```
-
-**🎯 What This Improves:**
-- ✨ **Before**: Manually create diagrams in Draw.io or Lucidchart
-- ✨ **With MCP**: Generate diagrams from text description
-- ✨ **Time Saved**: 30-60 minutes → 2 minutes
-- ✨ **Benefit**: Keep architecture docs up to date
-
-**Create more diagrams:**
-```
-Use Draw.io MCP to create a sequence diagram showing the chat message flow with timing
-```
-
-**Claude Code Feature Learned:** Architecture diagram generation
-
----
-
-### Step 10.8: (Optional) Install Draw.io MCP for Diagrams
-
-**Combine agents with MCP for powerful workflows.**
-
-**✅ Test It - Automated Visual Testing:**
-
-**Ask Claude Code:**
-```
-Use the frontend-visual-inspector agent to:
-1. Test the entire user journey (load page, send message, receive response)
-2. Take screenshots at each step
-3. Check for UI bugs or inconsistencies
-4. Test accessibility (check for proper ARIA labels)
-5. Provide a comprehensive visual test report
-```
-
-**Watch:** The agent uses Chrome DevTools MCP internally!
-
-**Example report:**
-```
-📋 Visual Test Report
-
-✅ Step 1: Page Load
-- Screenshot captured
-- No console errors
-- Page loads in 0.8s
-
-✅ Step 2: User Types Message
-- Input field is accessible (has aria-label)
-- Character count shows correctly
-
-❌ Step 3: Message Sent
-- Loading spinner not visible (should show while waiting)
-- Fix: Add LoadingSpinner component
-
-✅ Step 4: Response Received
-- Message appears correctly
-- Timestamp is formatted properly
-
-🎯 Accessibility Issues:
-❌ Send button missing aria-label
-✅ Fix: Add aria-label="Send message"
-```
-
-**🎯 What This Improves:**
-- ✨ **Benefit**: Combines agent intelligence + MCP tools
-- ✨ **Benefit**: Comprehensive automated testing
-- ✨ **Use Case**: Pre-deployment visual QA
-
-**Claude Code Feature Learned:** Agent + MCP integration
-
----
-
-### Step 10.9: (Advanced) Create a Custom MCP Server
-
-**Build your own MCP server for project-specific needs.**
-
-**Ask Claude Code:**
-```
-Create a custom MCP server called "project-tools" that provides:
-1. Database query interface (for SQLite)
-2. Log file analyzer (parse backend logs for errors)
-3. Performance metrics (calculate avg response time from logs)
-4. Test coverage checker (parse pytest coverage reports)
-
-Create:
-- .mcp.json entry for "project-tools"
-- Node.js MCP server at mcp-servers/project-tools.js
-- Tools for each functionality above
-```
-
-**MCP server structure:**
+**Claude will update `.mcp.json`:**
 ```json
 {
   "mcpServers": {
-    "project-tools": {
-      "command": "node",
-      "args": ["./mcp-servers/project-tools.js"]
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "drawio": {
+      "command": "npx",
+      "args": ["-y", "@drawio/mcp"]
     }
   }
 }
 ```
 
-**✅ Test It:**
+**Important: Restart Claude Code**
 ```
-Ask Claude: "Use project-tools MCP to analyze backend logs and show error rate"
+Exit Claude Code (Ctrl+C or type /exit)
+Then restart: claudecode
+```
+
+**When you restart, Claude will ask permission to use the Draw.io MCP server - approve it!**
+
+---
+
+### Step 10.7: Generate Architecture Diagrams
+
+**Now let's use Draw.io MCP to document our system!**
+
+**Ask Claude Code:**
+```
+Use Draw.io MCP to create a system architecture diagram showing:
+1. User (browser)
+2. React Frontend (port 5173)
+3. FastAPI Backend (port 8000)
+4. AgentService (using Strands SDK)
+5. Claude AI (via Amazon Bedrock)
+6. Show data flow with arrows: User → Frontend → Backend → Agent → Claude → Response
+
+Use boxes for components and arrows for data flow.
+```
+
+**Watch:** Claude generates a professional diagram!
+
+**The diagram shows:**
+```
+[User Browser]
+      ↓
+[React Frontend :5173]
+      ↓ POST /api/v1/chat
+[FastAPI Backend :8000]
+      ↓
+[AgentService (Strands SDK)]
+      ↓ Bedrock API
+[Claude AI]
+      ↓ Response
+[Back to User]
+```
+
+**Try more diagrams:**
+```
+Create a sequence diagram showing the chat message flow with timing
 ```
 
 **🎯 What This Improves:**
-- ✨ **Benefit**: Extend Claude Code with project-specific tools
-- ✨ **Use Case**: Custom debugging, monitoring, analytics
+- ✨ **Before**: Manually create diagrams in Draw.io or Lucidchart (30-60 minutes)
+- ✨ **With MCP**: Generate diagrams from text description (2 minutes)
+- ✨ **Benefit**: Keep architecture docs up to date easily
+- ✨ **Use Case**: Documentation, onboarding, design discussions
 
-**Claude Code Feature Learned:** Custom MCP server development
+**Claude Code Feature Learned:** Architecture diagram generation with MCP
 
 ---
 
