@@ -1,4 +1,5 @@
 import ChatInterface from './components/ChatInterface'
+import { NewsFeed } from './components/NewsFeed'
 import { useAgentStore } from './store/agentStore'
 
 function App() {
@@ -20,12 +21,12 @@ function App() {
               </svg>
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
-              ClaudeCode Lab Agent
+              Tech News Aggregator
             </h1>
           </div>
 
           <p className="text-slate-400 text-lg mb-4 max-w-2xl mx-auto">
-            AI Assistant powered by Claude 4 via Strands SDK
+            Stay updated with the latest tech news - AI, Cloud, DevOps, and more
           </p>
 
           <div className="flex items-center justify-center gap-4">
@@ -54,8 +55,13 @@ function App() {
           </div>
         </header>
 
-        <main className="relative">
-          <ChatInterface />
+        <main className="relative grid lg:grid-cols-2 gap-6">
+          <div className="order-2 lg:order-1">
+            <ChatInterface />
+          </div>
+          <div className="order-1 lg:order-2">
+            <NewsFeed />
+          </div>
         </main>
       </div>
     </div>
