@@ -459,25 +459,18 @@ You'll see the mode indicator change to "Plan" at the bottom of the prompt.
 
 ### Step 2.2: Start and Test the Application
 
-**Now let's start the application! Ask Claude Code to do it:**
+**Now let's start the application! Simply ask Claude Code:**
 
 ```
-Start the application:
-1. Activate the Python virtual environment
-2. Install backend dependencies from requirements.txt
-3. Start the FastAPI backend on port 8000 in the background
-4. Install frontend dependencies
-5. Start the Vite frontend on port 5173 in the background
-6. Show me the URLs when both are running
+Start the app
 ```
 
-**Watch Claude:**
+**Watch Claude automatically:**
 - Activates venv
-- Installs Python dependencies
-- Starts backend server (background)
-- Installs npm dependencies  
-- Starts frontend server (background)
-- Reports both are running
+- Installs dependencies (backend and frontend)
+- Starts backend server (port 8000, background)
+- Starts frontend server (port 5173, background)
+- Reports both are running with URLs
 
 **✅ Verify Everything Works:**
 - Backend health: http://localhost:8000/health
