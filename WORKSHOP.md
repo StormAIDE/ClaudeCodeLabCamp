@@ -396,7 +396,12 @@ claudecode
 
 **Now that setup is complete, let Claude Code do the heavy lifting!**
 
-**Ask Claude Code:**
+**First, enter plan mode so Claude shows you what it will build before executing:**
+```
+/plan
+```
+
+**Then ask Claude Code:**
 ```
 Create a complete, working full-stack AI assistant project using Strands Agents SDK.
 
@@ -432,12 +437,20 @@ Build a fully functional AI assistant with:
 Make it a complete, working project ready to run immediately.
 ```
 
+**Claude will show you a detailed plan:**
+- What files will be created
+- What the architecture will look like
+- What dependencies will be installed
+
+**Review the plan, then approve it to execute!**
+
 **🎯 What This Improves:**
 - ✨ **Before Claude Code**: Manually create each directory and file
 - ✨ **With Claude Code**: Entire project structure in one command
+- ✨ **With Plan Mode**: See what will happen before it executes
 - ✨ **Time Saved**: 5-10 minutes → 30 seconds
 
-**Claude Code Feature Learned:** Multi-step project scaffolding
+**Claude Code Feature Learned:** Multi-step project scaffolding with plan mode
 
 ---
 
