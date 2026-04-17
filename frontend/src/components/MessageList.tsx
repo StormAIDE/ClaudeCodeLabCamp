@@ -54,21 +54,24 @@ export default function MessageList({ messages, containerRef, isLoading = false 
           </div>
 
           <h3 className="text-xl font-semibold text-white mb-2">
-            Welcome to your AI Assistant
+            Welcome to Tech News Aggregator
           </h3>
           <p className="text-slate-300 mb-5 max-w-md mx-auto leading-relaxed">
-            Start a conversation below. Ask about weather, calculations, or anything else!
+            Ask me about the latest tech news and I'll search real sources for you!
           </p>
 
           <div className="flex flex-wrap justify-center gap-2">
             <div className="px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs text-blue-200 hover:bg-blue-500/30 hover:border-blue-500/40 transition-all duration-200 cursor-default shadow-sm shadow-blue-500/10">
-              Weather queries
+              Latest AI news
             </div>
             <div className="px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded-full text-xs text-purple-200 hover:bg-purple-500/30 hover:border-purple-500/40 transition-all duration-200 cursor-default shadow-sm shadow-purple-500/10">
-              Math calculations
+              Cloud trends
+            </div>
+            <div className="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-xs text-emerald-200 hover:bg-emerald-500/30 hover:border-emerald-500/40 transition-all duration-200 cursor-default shadow-sm shadow-emerald-500/10">
+              Security updates
             </div>
             <div className="px-3 py-1.5 bg-white/[0.08] border border-white/[0.15] rounded-full text-xs text-slate-300 hover:bg-white/[0.12] hover:border-white/[0.2] transition-all duration-200 cursor-default">
-              General questions
+              Trending topics
             </div>
           </div>
         </div>
