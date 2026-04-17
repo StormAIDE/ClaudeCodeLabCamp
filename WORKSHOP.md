@@ -457,25 +457,29 @@ You'll see the mode indicator change to "Plan" at the bottom of the prompt.
 
 ---
 
-### Step 2.2: Test the Full Application
+### Step 2.2: Start and Test the Application
 
-**✅ Test It - Start Both Backend and Frontend:**
+**Now let's start the application! Ask Claude Code to do it:**
 
-**Terminal 1 - Backend:**
-```bash
-source venv/bin/activate
-pip install -r requirements.txt
-python -m uvicorn backend.main:app --reload --port 8000
+```
+Start the application:
+1. Activate the Python virtual environment
+2. Install backend dependencies from requirements.txt
+3. Start the FastAPI backend on port 8000 in the background
+4. Install frontend dependencies
+5. Start the Vite frontend on port 5173 in the background
+6. Show me the URLs when both are running
 ```
 
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
+**Watch Claude:**
+- Activates venv
+- Installs Python dependencies
+- Starts backend server (background)
+- Installs npm dependencies  
+- Starts frontend server (background)
+- Reports both are running
 
-**Verify Everything Works:**
+**✅ Verify Everything Works:**
 - Backend health: http://localhost:8000/health
 - API docs: http://localhost:8000/docs
 - Frontend app: http://localhost:5173
