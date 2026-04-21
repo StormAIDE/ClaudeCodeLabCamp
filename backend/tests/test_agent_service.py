@@ -2,176 +2,162 @@
 Unit tests for agent service module.
 """
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
-from backend.services.agent_service import AgentService, get_weather, calculate
+from unittest.mock import Mock, patch, MagicMock
+from anthropic import AuthenticationError, APIError
 
 
-# Test tool functions
-def test_get_weather_tool():
-    """Test get_weather tool function."""
-    result = get_weather("New York")
-
-    assert "New York" in result
-    assert "sunny" in result or "weather" in result.lower()
-
-
-def test_calculate_tool_valid():
-    """Test calculate tool with valid expression."""
-    result = calculate("2 + 2")
-
-    assert "4" in result
+def _make_text_response(text: str) -> Mock:
+    """Build a mock Anthropic Messages response with stop_reason='end_turn'."""
+    block = Mock()
+    block.type = "text"
+    block.text = text
+    response = Mock()
+    response.stop_reason = "end_turn"
+    response.content = [block]
+    return response
 
 
-def test_calculate_tool_complex():
-    """Test calculate tool with complex expression."""
-    result = calculate("(10 + 5) * 2")
+def _make_tool_response(tool_name: str, tool_id: str, tool_input: dict) -> Mock:
+    """Build a mock response with stop_reason='tool_use'."""
+    block = Mock()
+    block.type = "tool_use"
+    block.name = tool_name
+    block.id = tool_id
+    block.input = tool_input
+    response = Mock()
+    response.stop_reason = "tool_use"
+    response.content = [block]
+    return response
 
-    assert "30" in result
 
-
-def test_calculate_tool_invalid():
-    """Test calculate tool with invalid expression."""
-    result = calculate("invalid expression")
-
-    assert "Error" in result
-
-
-# Test AgentService class
 @pytest.mark.asyncio
 async def test_agent_service_initialization():
-    """Test that AgentService initializes correctly."""
-    with patch('backend.services.agent_service.Agent') as MockAgent:
-        mock_agent_instance = Mock()
-        MockAgent.return_value = mock_agent_instance
+    """AgentService stores client and model on init."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic:
+        mock_client = Mock()
+        MockAnthropic.return_value = mock_client
 
+        from backend.services.agent_service import AgentService
         service = AgentService()
 
-        MockAgent.assert_called_once()
-        call_kwargs = MockAgent.call_args.kwargs
-        assert call_kwargs['name'] == "lab-assistant"
-        assert 'model' in call_kwargs
-        assert 'system_prompt' in call_kwargs
-        assert 'tools' in call_kwargs
-        assert len(call_kwargs['tools']) >= 2  # get_weather and calculate
+        MockAnthropic.assert_called_once()
+        assert service._client is mock_client
 
 
 @pytest.mark.asyncio
-async def test_agent_service_chat():
-    """Test chat method returns response."""
-    with patch('backend.services.agent_service.Agent') as MockAgent:
-        mock_agent_instance = Mock()
-        mock_response = Mock()
-        mock_response.to_dict = Mock(return_value={
-            'message': {
-                'role': 'assistant',
-                'content': [{'text': "Hello! I'm ready to help."}]
-            }
-        })
-        mock_agent_instance.invoke_async = AsyncMock(return_value=mock_response)
-        MockAgent.return_value = mock_agent_instance
+async def test_agent_service_chat_end_turn():
+    """chat() returns text when model responds with end_turn immediately."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic:
+        mock_client = Mock()
+        mock_client.messages.create.return_value = _make_text_response("Hello! I can help.")
+        MockAnthropic.return_value = mock_client
 
+        from backend.services.agent_service import AgentService
         service = AgentService()
-        response = await service.chat("Hello")
+        response_text, sources = await service.chat("Hello")
 
-        assert response == "Hello! I'm ready to help."
-        mock_agent_instance.invoke_async.assert_called_once_with("Hello")
+        assert "Hello! I can help." in response_text
+        assert isinstance(sources, list)
+        mock_client.messages.create.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_agent_service_chat_tool_loop():
+    """chat() dispatches tool call then continues to end_turn."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic, \
+         patch('backend.services.agent_service.TOOL_DISPATCH') as MockDispatch:
+
+        mock_client = Mock()
+        tool_response = _make_tool_response("search_news", "tu_001", {"topic": "AI"})
+        text_response = _make_text_response("Here are the AI news articles.")
+        mock_client.messages.create.side_effect = [tool_response, text_response]
+        MockAnthropic.return_value = mock_client
+
+        mock_tool_fn = Mock(return_value="Found 3 articles about AI")
+        MockDispatch.__getitem__ = Mock(return_value=mock_tool_fn)
+        MockDispatch.get = Mock(return_value=mock_tool_fn)
+
+        from backend.services.agent_service import AgentService
+        service = AgentService()
+        response_text, sources = await service.chat("Find AI news")
+
+        assert "Here are the AI news articles." in response_text
+        assert mock_client.messages.create.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_service_chat_max_iterations():
+    """chat() exits after MAX_ITERATIONS without hanging."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic, \
+         patch('backend.services.agent_service.TOOL_DISPATCH') as MockDispatch:
+
+        mock_client = Mock()
+        # Always return tool_use — never end_turn
+        mock_client.messages.create.return_value = _make_tool_response(
+            "search_news", "tu_loop", {"topic": "test"}
+        )
+        MockAnthropic.return_value = mock_client
+
+        mock_tool_fn = Mock(return_value="result")
+        MockDispatch.get = Mock(return_value=mock_tool_fn)
+
+        from backend.services.agent_service import AgentService, MAX_ITERATIONS
+        service = AgentService()
+        response_text, sources = await service.chat("Loop forever")
+
+        assert "Max" in response_text or "maximum" in response_text.lower()
+        assert mock_client.messages.create.call_count == MAX_ITERATIONS
+
+
+@pytest.mark.asyncio
+async def test_agent_service_chat_authentication_error():
+    """chat() raises ValueError with clear message on authentication failure."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic:
+        mock_client = Mock()
+        mock_response = Mock()
+        mock_response.status_code = 401
+        mock_client.messages.create.side_effect = AuthenticationError(
+            message="Invalid API key",
+            response=mock_response,
+            body={}
+        )
+        MockAnthropic.return_value = mock_client
+
+        from backend.services.agent_service import AgentService
+        service = AgentService()
+
+        with pytest.raises(ValueError, match="ANTHROPIC_API_KEY"):
+            await service.chat("Hello")
+
+
+@pytest.mark.asyncio
+async def test_agent_service_chat_unknown_tool():
+    """chat() handles unknown tool names gracefully without crashing."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic:
+        mock_client = Mock()
+        tool_response = _make_tool_response("nonexistent_tool", "tu_bad", {})
+        text_response = _make_text_response("I handled it.")
+        mock_client.messages.create.side_effect = [tool_response, text_response]
+        MockAnthropic.return_value = mock_client
+
+        from backend.services.agent_service import AgentService
+        service = AgentService()
+        response_text, _ = await service.chat("Use a bad tool")
+
+        # Should not raise; second call produces the final text
+        assert "I handled it." in response_text
 
 
 @pytest.mark.asyncio
 async def test_agent_service_chat_error_handling():
-    """Test that chat method handles errors properly."""
-    with patch('backend.services.agent_service.Agent') as MockAgent:
-        mock_agent_instance = Mock()
-        mock_agent_instance.invoke_async = AsyncMock(side_effect=Exception("Test error"))
-        MockAgent.return_value = mock_agent_instance
+    """chat() propagates unexpected exceptions."""
+    with patch('backend.services.agent_service.Anthropic') as MockAnthropic:
+        mock_client = Mock()
+        mock_client.messages.create.side_effect = RuntimeError("Unexpected")
+        MockAnthropic.return_value = mock_client
 
+        from backend.services.agent_service import AgentService
         service = AgentService()
 
-        with pytest.raises(Exception) as exc_info:
+        with pytest.raises(RuntimeError, match="Unexpected"):
             await service.chat("Hello")
-
-        assert "Test error" in str(exc_info.value)
-
-
-@pytest.mark.asyncio
-async def test_agent_service_stream_chat():
-    """Test stream_chat method yields chunks."""
-    with patch('backend.services.agent_service.Agent') as MockAgent:
-        mock_agent_instance = Mock()
-
-        # Create async generator for streaming
-        async def mock_stream(message):
-            chunks = [
-                Mock(content="Hello "),
-                Mock(content="World"),
-                Mock(content="!")
-            ]
-            for chunk in chunks:
-                yield chunk
-
-        mock_agent_instance.stream_async = mock_stream
-        MockAgent.return_value = mock_agent_instance
-
-        service = AgentService()
-        chunks = []
-
-        async for chunk in service.stream_chat("Hello"):
-            chunks.append(chunk)
-
-        assert len(chunks) == 3
-        assert all("data:" in chunk for chunk in chunks)
-        assert "Hello " in chunks[0]
-        assert "World" in chunks[1]
-
-
-@pytest.mark.asyncio
-async def test_agent_service_stream_chat_error():
-    """Test stream_chat error handling."""
-    with patch('backend.services.agent_service.Agent') as MockAgent:
-        mock_agent_instance = Mock()
-
-        async def mock_stream_error(message):
-            raise Exception("Stream error")
-            yield  # This won't be reached but needed for generator
-
-        mock_agent_instance.stream_async = mock_stream_error
-        MockAgent.return_value = mock_agent_instance
-
-        service = AgentService()
-        chunks = []
-
-        async for chunk in service.stream_chat("Hello"):
-            chunks.append(chunk)
-
-        assert len(chunks) == 1
-        assert "Error" in chunks[0]
-
-
-@pytest.mark.asyncio
-async def test_agent_service_stream_chat_empty_content():
-    """Test stream_chat with chunks that have no content."""
-    with patch('backend.services.agent_service.Agent') as MockAgent:
-        mock_agent_instance = Mock()
-
-        async def mock_stream(message):
-            chunks = [
-                Mock(content="Valid"),
-                Mock(content=""),  # Empty content
-                Mock(content=None),  # None content
-                Mock(spec=[]),  # No content attribute
-            ]
-            for chunk in chunks:
-                yield chunk
-
-        mock_agent_instance.stream_async = mock_stream
-        MockAgent.return_value = mock_agent_instance
-
-        service = AgentService()
-        chunks = []
-
-        async for chunk in service.stream_chat("Hello"):
-            chunks.append(chunk)
-
-        # Should only yield chunks with valid content
-        assert len(chunks) == 1
-        assert "Valid" in chunks[0]

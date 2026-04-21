@@ -1,7 +1,12 @@
 """
 News aggregation tools for the tech news agent.
 """
-from strands import tool
+try:
+    from strands import tool as _strands_tool
+except ImportError:
+    def _strands_tool(fn):  # no-op when strands not installed
+        return fn
+
 from datetime import datetime, timedelta
 from typing import List, Dict
 import logging
@@ -114,7 +119,7 @@ def fetch_rss_articles(topic: str, days: int = 7) -> List[Dict]:
     return articles
 
 
-@tool
+@_strands_tool
 def search_news(topic: str, days: int = 7) -> str:
     """
     Search for recent tech news articles on a specific topic.
@@ -185,7 +190,7 @@ def search_news(topic: str, days: int = 7) -> str:
         return f"Error searching for news: {str(e)}"
 
 
-@tool
+@_strands_tool
 def categorize_article(text: str) -> str:
     """
     Categorize an article based on its content.
@@ -216,7 +221,7 @@ def categorize_article(text: str) -> str:
     return "Category: General Tech"
 
 
-@tool
+@_strands_tool
 def summarize_article(url: str) -> str:
     """
     Fetch and summarize an article from a URL.
@@ -238,7 +243,7 @@ def summarize_article(url: str) -> str:
         return f"Error summarizing article: {str(e)}"
 
 
-@tool
+@_strands_tool
 def get_trending_topics() -> str:
     """
     Get the currently trending tech topics based on articles in database.
@@ -260,3 +265,74 @@ def get_trending_topics() -> str:
     except Exception as e:
         logger.error(f"Error getting trending topics: {str(e)}")
         return f"Error getting trending topics: {str(e)}"
+
+
+# Anthropic tool schemas — consumed by agent_service agentic loop
+TOOL_SCHEMAS = [
+    {
+        "name": "search_news",
+        "description": (
+            "Search for recent tech news articles on a specific topic. "
+            "First checks database cache, then fetches from RSS feeds if needed."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "topic": {
+                    "type": "string",
+                    "description": "The technology topic to search for (e.g., 'AI', 'Cloud', 'DevOps')"
+                },
+                "days": {
+                    "type": "integer",
+                    "description": "Number of days to look back (default: 7)"
+                }
+            },
+            "required": ["topic"]
+        }
+    },
+    {
+        "name": "categorize_article",
+        "description": "Categorize an article based on its content using keyword matching.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "description": "The article text or title to categorize"
+                }
+            },
+            "required": ["text"]
+        }
+    },
+    {
+        "name": "summarize_article",
+        "description": "Fetch and summarize an article from a URL.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "description": "The URL of the article to summarize"
+                }
+            },
+            "required": ["url"]
+        }
+    },
+    {
+        "name": "get_trending_topics",
+        "description": "Get the currently trending tech topics based on articles in the database.",
+        "input_schema": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+]
+
+# Maps tool names to callable Python functions
+TOOL_DISPATCH: Dict = {
+    "search_news": search_news,
+    "categorize_article": categorize_article,
+    "summarize_article": summarize_article,
+    "get_trending_topics": get_trending_topics,
+}

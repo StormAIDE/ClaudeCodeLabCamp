@@ -30,7 +30,7 @@ def test_chat_endpoint_non_streaming(test_client):
     """Test chat endpoint with non-streaming response."""
     with patch('backend.api.dependencies.AgentService') as MockService:
         mock_instance = Mock()
-        mock_instance.chat = AsyncMock(return_value="This is a test response")
+        mock_instance.chat = AsyncMock(return_value=("This is a test response", []))
         MockService.return_value = mock_instance
 
         response = test_client.post(
@@ -84,7 +84,7 @@ def test_chat_endpoint_empty_message(test_client):
     """Test chat endpoint with empty message."""
     with patch('backend.api.dependencies.AgentService') as MockService:
         mock_instance = Mock()
-        mock_instance.chat = AsyncMock(return_value="Please provide a message")
+        mock_instance.chat = AsyncMock(return_value=("Please provide a message", []))
         MockService.return_value = mock_instance
 
         response = test_client.post(

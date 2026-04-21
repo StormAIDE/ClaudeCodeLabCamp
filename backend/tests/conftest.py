@@ -32,6 +32,7 @@ def mock_settings():
         API_HOST="localhost",
         API_PORT=8000,
         CORS_ORIGINS="http://localhost:5173,http://localhost:3000",
+        ANTHROPIC_API_KEY="sk-ant-test",
         CLAUDE_MODEL_ID="test-model-id"
     )
 

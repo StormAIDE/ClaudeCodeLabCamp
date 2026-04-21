@@ -21,12 +21,26 @@ class Settings(BaseSettings):
     # CORS
     CORS_ORIGINS: Union[List[str], str] = "http://localhost:5173,http://localhost:3000"
 
-    # Claude Model Configuration
-    CLAUDE_MODEL_ID: str = "eu.anthropic.claude-sonnet-4-5-20250929-v1:0"
+    # Anthropic direct API (fallback when no AWS credentials)
+    ANTHROPIC_API_KEY: str = ""
+
+    # AWS / Bedrock credentials (takes priority if set)
+    AWS_ACCESS_KEY_ID: str = ""
+    AWS_SECRET_ACCESS_KEY: str = ""
+    AWS_SESSION_TOKEN: str = ""
+    AWS_DEFAULT_REGION: str = "eu-west-1"
+
+    # Model ID — use Bedrock ARN when on AWS, plain model name for Anthropic API
+    CLAUDE_MODEL_ID: str = "claude-sonnet-4-6"
 
     # News API Configuration
     NEWS_API_KEY: str = ""  # Optional: Set via environment for real news API
     DATABASE_PATH: str = "./data/articles.db"
+
+    @property
+    def use_bedrock(self) -> bool:
+        """True when AWS credentials are present — use Strands SDK + Bedrock."""
+        return bool(self.AWS_ACCESS_KEY_ID and self.AWS_SECRET_ACCESS_KEY)
 
     @field_validator('CORS_ORIGINS', mode='before')
     @classmethod
@@ -39,7 +53,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=True
+        case_sensitive=True,
+        env_ignore_empty=True,
     )
 
 

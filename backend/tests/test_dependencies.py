@@ -31,14 +31,12 @@ def test_import_pydantic_settings():
     assert SettingsConfigDict is not None
 
 
-def test_import_strands():
-    """Test that strands-agents is installed and importable."""
-    try:
-        from strands import Agent, tool
-        assert Agent is not None
-        assert tool is not None
-    except ImportError as e:
-        pytest.skip(f"Strands SDK not available: {e}")
+def test_import_anthropic():
+    """Test that anthropic SDK is installed and importable."""
+    import anthropic
+    assert hasattr(anthropic, 'Anthropic')
+    assert hasattr(anthropic, 'AuthenticationError')
+    assert hasattr(anthropic, 'APIError')
 
 
 def test_import_python_dotenv():
