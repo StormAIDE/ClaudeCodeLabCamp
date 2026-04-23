@@ -4,7 +4,7 @@ SQLite database for storing article history.
 import sqlite3
 import os
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -136,6 +136,23 @@ class Database:
 
         conn.close()
         return results
+
+    def search_articles(self, query: str, days: int = 7, limit: int = 10) -> List[Dict]:
+        """Full-text search across all cached articles."""
+        cutoff = (datetime.now() - timedelta(days=days)).isoformat()
+        pattern = f"%{query}%"
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute(
+                """SELECT id, title, url, summary, topic, fetched_at, published_date
+                   FROM articles
+                   WHERE (title LIKE ? OR summary LIKE ?)
+                     AND fetched_at > ?
+                   ORDER BY fetched_at DESC
+                   LIMIT ?""",
+                (pattern, pattern, cutoff, limit)
+            )
+            return [dict(row) for row in cursor.fetchall()]
 
     def get_trending_topics(self, days: int = 7, limit: int = 5) -> List[Dict]:
         """Get trending topics based on article counts."""

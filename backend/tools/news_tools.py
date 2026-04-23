@@ -267,6 +267,65 @@ def get_trending_topics() -> str:
         return f"Error getting trending topics: {str(e)}"
 
 
+@_strands_tool
+def search_all_news(query: str, days: int = 7) -> str:
+    """
+    Search for news across all cached articles from all topic feeds.
+
+    Searches the local database first for speed, falls back to live RSS fetch
+    if nothing found. Use this for specific queries like company names, people,
+    or events.
+
+    Args:
+        query: The search query (e.g., "Boston Dynamics", "GPT-5", "AWS re:Invent")
+        days: Number of days to look back (default: 7)
+
+    Returns:
+        A formatted string with matching news articles and their sources
+    """
+    try:
+        articles = db.search_articles(query, days, limit=8)
+
+        if not articles:
+            # Fall back to live RSS fetch
+            logger.info("No DB results for '%s'; falling back to RSS fetch", query)
+            fetched = fetch_rss_articles(query, days)
+
+            for article in fetched:
+                category = categorize_article(article['title'] + " " + article['summary'])
+                category_name = category.replace("Category: ", "")
+                try:
+                    db.add_article(
+                        title=article['title'],
+                        url=article['url'],
+                        summary=article['summary'],
+                        topic=category_name,
+                        published_date=article['published_date'],
+                    )
+                except Exception as e:
+                    logger.error("Error saving article during search_all_news fallback: %s", str(e))
+
+            articles = fetched[:8]
+
+        if not articles:
+            return f"No recent articles found matching: {query}"
+
+        for article in articles:
+            add_source(article)
+
+        result = f"Found {len(articles)} articles matching '{query}':\n\n"
+        for i, article in enumerate(articles, 1):
+            result += f"{i}. **{article['title']}**\n"
+            result += f"   {article.get('published_date', 'Unknown date')}\n"
+            result += f"   {article['summary']}\n"
+            result += f"   Source: {article['url']}\n\n"
+
+        return result
+    except Exception as e:
+        logger.error("Error in search_all_news: %s", str(e))
+        return f"Error searching news: {str(e)}"
+
+
 # Anthropic tool schemas — consumed by agent_service agentic loop
 TOOL_SCHEMAS = [
     {
@@ -327,6 +386,29 @@ TOOL_SCHEMAS = [
             "required": []
         }
     },
+    {
+        "name": "search_all_news",
+        "description": (
+            "Search for news across all cached articles from all topic feeds "
+            "(robotics, AI, cloud, etc.). Searches the local database first for speed, "
+            "falls back to live RSS fetch if nothing found. Use this for specific queries "
+            "like company names, people, or events."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The search query (e.g., 'Boston Dynamics', 'GPT-5', 'AWS re:Invent')"
+                },
+                "days": {
+                    "type": "integer",
+                    "description": "Number of days to look back (default: 7)"
+                }
+            },
+            "required": ["query"]
+        }
+    },
 ]
 
 # Maps tool names to callable Python functions
@@ -335,4 +417,5 @@ TOOL_DISPATCH: Dict = {
     "categorize_article": categorize_article,
     "summarize_article": summarize_article,
     "get_trending_topics": get_trending_topics,
+    "search_all_news": search_all_news,
 }

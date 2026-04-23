@@ -9,6 +9,7 @@ from backend.tools.robotics_tools import (
     search_robotics_news,
     fetch_robotics_articles,
 )
+from backend.tools.news_tools import search_all_news
 
 
 # ── Tool-level tests ──────────────────────────────────────────────────────────
@@ -77,6 +78,38 @@ def test_search_robotics_news_fetches_when_no_cache():
 
     assert "drones" in result
     mock_fetch.assert_called_once_with("drones", 7)
+
+
+def test_search_all_news_hits_db():
+    """search_all_news returns DB articles when search_articles finds matches."""
+    fake_articles = [
+        {
+            "id": 1,
+            "title": "Boston Dynamics unveils new robot",
+            "url": "https://example.com/boston-dynamics-1",
+            "summary": "Boston Dynamics announced a new humanoid robot today.",
+            "topic": "robotics",
+            "fetched_at": "2026-04-22T10:00:00",
+            "published_date": "2026-04-22T09:00:00",
+        },
+        {
+            "id": 2,
+            "title": "Boston Dynamics raises funding",
+            "url": "https://example.com/boston-dynamics-2",
+            "summary": "The robotics firm secured series C funding.",
+            "topic": "robotics",
+            "fetched_at": "2026-04-21T10:00:00",
+            "published_date": "2026-04-21T09:00:00",
+        },
+    ]
+
+    with patch('backend.tools.news_tools.db') as mock_db:
+        mock_db.search_articles.return_value = fake_articles
+        result = search_all_news("Boston Dynamics")
+
+    assert "Boston Dynamics" in result
+    mock_db.search_articles.assert_called_once_with("Boston Dynamics", 7, limit=8)
+    assert "Boston Dynamics unveils new robot" in result or "Boston Dynamics raises funding" in result
 
 
 # ── API endpoint tests ────────────────────────────────────────────────────────

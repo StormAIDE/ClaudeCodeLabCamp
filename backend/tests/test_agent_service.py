@@ -65,7 +65,7 @@ async def test_agent_service_chat_end_turn():
 async def test_agent_service_chat_tool_loop():
     """chat() dispatches tool call then continues to end_turn."""
     with patch('backend.services.agent_service.Anthropic') as MockAnthropic, \
-         patch('backend.services.agent_service.TOOL_DISPATCH') as MockDispatch:
+         patch('backend.services.agent_service.ALL_TOOL_DISPATCH') as MockDispatch:
 
         mock_client = Mock()
         tool_response = _make_tool_response("search_news", "tu_001", {"topic": "AI"})
@@ -89,7 +89,7 @@ async def test_agent_service_chat_tool_loop():
 async def test_agent_service_chat_max_iterations():
     """chat() exits after MAX_ITERATIONS without hanging."""
     with patch('backend.services.agent_service.Anthropic') as MockAnthropic, \
-         patch('backend.services.agent_service.TOOL_DISPATCH') as MockDispatch:
+         patch('backend.services.agent_service.ALL_TOOL_DISPATCH') as MockDispatch:
 
         mock_client = Mock()
         # Always return tool_use — never end_turn

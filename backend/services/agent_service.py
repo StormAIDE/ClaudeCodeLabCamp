@@ -7,6 +7,11 @@ import logging
 from anthropic import Anthropic, AuthenticationError, APIError
 from backend.config import settings
 from backend.tools.news_tools import TOOL_SCHEMAS, TOOL_DISPATCH, clear_sources, get_sources
+from backend.tools.robotics_tools import (
+    search_robotics_news,
+    ROBOTICS_TOOL_SCHEMAS,
+    ROBOTICS_TOOL_DISPATCH,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +19,26 @@ SYSTEM_PROMPT = """You are a Tech News Aggregator AI assistant. Your purpose is 
 stay up-to-date with the latest technology news and developments.
 
 You can:
-- Search for recent news articles on specific tech topics (AI, Cloud, DevOps, Web Dev, etc.)
+- Search for recent news articles on specific tech topics (AI, Cloud, DevOps, Web Dev, Robotics, etc.)
+- Search across ALL cached news feeds for specific companies, people, or events
 - Categorize articles by technology domain
 - Summarize article content
 - Show trending tech topics
 
+How to choose the right tool:
+- For broad topic searches (e.g. "AI news", "cloud updates"): use search_news
+- For specific queries (e.g. "Boston Dynamics", "GPT-5", "AWS re:Invent"): use search_all_news
+- For robotics-specific news: use search_robotics_news
+- For trending topics: use get_trending_topics
+
+The news database is continuously populated by the topic digest pages. search_all_news and
+search_robotics_news read from this cache first (fast), then fetch live if needed.
+
 Be informative, concise, and help users discover relevant tech news based on their interests.
-When users ask about a topic, always use the search_news tool to find recent articles."""
+Always use a search tool to find recent articles before answering news questions."""
+
+ALL_TOOL_SCHEMAS = TOOL_SCHEMAS + ROBOTICS_TOOL_SCHEMAS
+ALL_TOOL_DISPATCH = {**TOOL_DISPATCH, **ROBOTICS_TOOL_DISPATCH}
 
 MAX_ITERATIONS = 10
 
@@ -42,7 +60,7 @@ class AgentService:
 
     def _init_bedrock(self):
         from strands import Agent
-        from backend.tools import news_tools
+        from backend.tools import news_tools, robotics_tools
 
         self._provider = "bedrock"
         self._agent = Agent(
@@ -51,9 +69,11 @@ class AgentService:
             system_prompt=SYSTEM_PROMPT,
             tools=[
                 news_tools.search_news,
+                news_tools.search_all_news,
                 news_tools.categorize_article,
                 news_tools.summarize_article,
                 news_tools.get_trending_topics,
+                robotics_tools.search_robotics_news,
             ],
         )
         logger.info(
@@ -136,7 +156,7 @@ class AgentService:
                     self._client.messages.create,
                     model=self._model,
                     system=SYSTEM_PROMPT,
-                    tools=TOOL_SCHEMAS,
+                    tools=ALL_TOOL_SCHEMAS,
                     messages=messages,
                     max_tokens=4096,
                 )
@@ -158,7 +178,7 @@ class AgentService:
 
                 tool_results = []
                 for block in tool_blocks:
-                    tool_fn = TOOL_DISPATCH.get(block.name)
+                    tool_fn = ALL_TOOL_DISPATCH.get(block.name)
                     if tool_fn is None:
                         logger.warning("Unknown tool requested: %s", block.name)
                         result = f"Error: unknown tool '{block.name}'"
@@ -200,7 +220,7 @@ class AgentService:
                 with self._client.messages.stream(
                     model=self._model,
                     system=SYSTEM_PROMPT,
-                    tools=TOOL_SCHEMAS,
+                    tools=ALL_TOOL_SCHEMAS,
                     messages=[{"role": "user", "content": message}],
                     max_tokens=4096,
                 ) as stream:
