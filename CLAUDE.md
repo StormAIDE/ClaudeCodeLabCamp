@@ -73,6 +73,23 @@ source claudecodeenv/bin/activate && python -m backend.main
 cd frontend && npm run dev
 ```
 
+### Starting the App on Windows (via Claude Code)
+
+When the user says "start the app", do the following steps in order:
+
+1. **Check/create venv** — venv is at `claudecodeenv/` in project root; activation script is `claudecodeenv/Scripts/activate` (not `bin/activate`)
+2. **Install backend deps if needed:** `source claudecodeenv/Scripts/activate && pip install -r requirements.txt`
+3. **Start backend in background:** `source claudecodeenv/Scripts/activate && uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 > /tmp/backend.log 2>&1 &`
+4. **Start frontend in background:** `cd frontend && npm run dev > /tmp/frontend.log 2>&1 &`
+5. **Verify** both started by checking `/tmp/backend.log` and `/tmp/frontend.log`
+
+URLs once running:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+
+> AWS credentials must be configured in the environment for Bedrock/agent calls to work.
+
 ## Testing
 
 ### Backend Testing

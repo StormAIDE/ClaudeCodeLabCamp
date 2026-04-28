@@ -136,38 +136,7 @@ def search_news(topic: str, days: int = 7) -> str:
         # First, check database for cached articles
         cached_articles = db.get_articles_by_topic(topic, limit=10)
 
-        # If we have recent cached articles, use them
-        cutoff_date = datetime.now() - timedelta(days=days)
-        recent_cached = [
-            a for a in cached_articles
-            if datetime.fromisoformat(a['fetched_at']) > cutoff_date
-        ]
-
-        if len(recent_cached) >= 3:
-            logger.info(f"Using {len(recent_cached)} cached articles for topic: {topic}")
-            articles = recent_cached[:5]
-        else:
-            # Fetch fresh articles from RSS feeds
-            logger.info(f"Fetching fresh articles for topic: {topic}")
-            fetched = fetch_rss_articles(topic, days)
-
-            # Categorize and save to database
-            for article in fetched:
-                category = categorize_article(article['title'] + " " + article['summary'])
-                category_name = category.replace("Category: ", "")
-
-                try:
-                    db.add_article(
-                        title=article['title'],
-                        url=article['url'],
-                        summary=article['summary'],
-                        topic=category_name,
-                        published_date=article['published_date']
-                    )
-                except Exception as e:
-                    logger.error(f"Error saving article: {str(e)}")
-
-            articles = fetched[:5]
+        articles = cached_articles[:5]
 
         if not articles:
             return f"No recent articles found for topic: {topic}"
@@ -286,26 +255,6 @@ def search_all_news(query: str, days: int = 7) -> str:
     try:
         articles = db.search_articles(query, days, limit=8)
 
-        if not articles:
-            # Fall back to live RSS fetch
-            logger.info("No DB results for '%s'; falling back to RSS fetch", query)
-            fetched = fetch_rss_articles(query, days)
-
-            for article in fetched:
-                category = categorize_article(article['title'] + " " + article['summary'])
-                category_name = category.replace("Category: ", "")
-                try:
-                    db.add_article(
-                        title=article['title'],
-                        url=article['url'],
-                        summary=article['summary'],
-                        topic=category_name,
-                        published_date=article['published_date'],
-                    )
-                except Exception as e:
-                    logger.error("Error saving article during search_all_news fallback: %s", str(e))
-
-            articles = fetched[:8]
 
         if not articles:
             return f"No recent articles found matching: {query}"

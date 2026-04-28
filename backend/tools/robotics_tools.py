@@ -131,32 +131,7 @@ def search_robotics_news(subtopic: str = "general", days: int = 7) -> str:
         from backend.database.db import db
 
         cached = db.get_robotics_articles(subtopic=subtopic, limit=10)
-        cutoff_date = datetime.now() - timedelta(days=days)
-        recent_cached = [
-            a for a in cached
-            if a.get('fetched_at') and datetime.fromisoformat(a['fetched_at']) > cutoff_date
-        ]
-
-        if len(recent_cached) >= 3:
-            logger.info("Using %d cached robotics articles for subtopic: %s", len(recent_cached), subtopic)
-            articles = recent_cached[:5]
-        else:
-            logger.info("Fetching fresh robotics articles for subtopic: %s", subtopic)
-            fetched = fetch_robotics_articles(subtopic, days)
-
-            for article in fetched:
-                try:
-                    db.add_robotics_article(
-                        title=article['title'],
-                        url=article['url'],
-                        summary=article['summary'],
-                        subtopic=subtopic,
-                        published_date=article['published_date'],
-                    )
-                except Exception as e:
-                    logger.error("Error saving robotics article: %s", str(e))
-
-            articles = fetched[:5]
+        articles = cached[:5]
 
         if not articles:
             return f"No recent robotics articles found for sub-topic: {subtopic}"

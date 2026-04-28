@@ -59,13 +59,29 @@ class AgentService:
     # ── Provider initialisation ───────────────────────────────────────────────
 
     def _init_bedrock(self):
+        import os
         from strands import Agent
+        from strands.models.bedrock import BedrockModel
         from backend.tools import news_tools, robotics_tools
+
+        # botocore reads credentials from os.environ, not from pydantic .env values
+        if settings.AWS_ACCESS_KEY_ID:
+            os.environ["AWS_ACCESS_KEY_ID"] = settings.AWS_ACCESS_KEY_ID
+        if settings.AWS_SECRET_ACCESS_KEY:
+            os.environ["AWS_SECRET_ACCESS_KEY"] = settings.AWS_SECRET_ACCESS_KEY
+        if settings.AWS_SESSION_TOKEN:
+            os.environ["AWS_SESSION_TOKEN"] = settings.AWS_SESSION_TOKEN
+        os.environ["AWS_DEFAULT_REGION"] = settings.AWS_DEFAULT_REGION
+
+        bedrock_model = BedrockModel(
+            model_id=settings.CLAUDE_MODEL_ID,
+            region_name=settings.AWS_DEFAULT_REGION,
+        )
 
         self._provider = "bedrock"
         self._agent = Agent(
-            name="tech-news-agent",
-            model=settings.CLAUDE_MODEL_ID,
+            model=bedrock_model,
+            callback_handler=None,
             system_prompt=SYSTEM_PROMPT,
             tools=[
                 news_tools.search_news,
@@ -112,22 +128,8 @@ class AgentService:
         try:
             clear_sources()
             logger.info("Bedrock chat: %s", message[:50])
-            response = await self._agent.invoke_async(message)
-            result_dict = response.to_dict()
-
-            response_text = ""
-            if "message" in result_dict and "content" in result_dict["message"]:
-                content = result_dict["message"]["content"]
-                if isinstance(content, list):
-                    response_text = " ".join(
-                        block.get("text", "") for block in content if "text" in block
-                    )
-                else:
-                    response_text = str(content)
-            else:
-                response_text = str(result_dict)
-
-            return response_text, get_sources()
+            result = await asyncio.to_thread(self._agent, message)
+            return str(result).strip(), get_sources()
         except Exception as e:
             logger.error("Bedrock chat error: %s", str(e))
             raise
@@ -136,8 +138,8 @@ class AgentService:
         try:
             logger.info("Bedrock stream: %s", message[:50])
             async for chunk in self._agent.stream_async(message):
-                if hasattr(chunk, "content") and chunk.content:
-                    yield f"data: {chunk.content}\n\n"
+                if isinstance(chunk, dict) and chunk.get("data"):
+                    yield f"data: {chunk['data']}\n\n"
         except Exception as e:
             logger.error("Bedrock stream error: %s", str(e))
             yield f"data: Error: {str(e)}\n\n"

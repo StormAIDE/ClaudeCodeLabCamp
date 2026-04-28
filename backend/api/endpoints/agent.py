@@ -62,4 +62,10 @@ async def chat(
 @router.get("/status")
 async def agent_status():
     """Check agent service status."""
-    return {"status": "ready", "model": "claude-4-bedrock"}
+    from backend.config import settings
+    return {
+        "status": "ready",
+        "model": settings.CLAUDE_MODEL_ID,
+        "use_bedrock": settings.use_bedrock,
+        "aws_key_set": bool(settings.AWS_ACCESS_KEY_ID),
+    }

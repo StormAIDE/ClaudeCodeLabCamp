@@ -137,9 +137,9 @@ class Database:
         conn.close()
         return results
 
-    def search_articles(self, query: str, days: int = 7, limit: int = 10) -> List[Dict]:
+    def search_articles(self, query: str, days: int = 7, limit: int = 10, minutes: int = 10) -> List[Dict]:
         """Full-text search across all cached articles."""
-        cutoff = (datetime.now() - timedelta(days=days)).isoformat()
+        cutoff = (datetime.now() - timedelta(minutes=minutes)).isoformat()
         pattern = f"%{query}%"
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
