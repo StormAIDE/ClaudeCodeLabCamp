@@ -1429,6 +1429,214 @@ cat .mcp.json
 
 ---
 
+## 🗞️ Lab 12: Add Your Own News Digest Page
+
+Now that the base app is running, you will extend it with a fully personalised news digest — a dedicated page that scrapes RSS feeds on a schedule, caches articles in the shared SQLite database, and lets users filter by sub-topic.
+
+The digest page and the chatbot share the same database: the page scrapes specialist feeds every 60 seconds, and the chatbot reads from that cache to answer questions like *"What has SpaceX launched lately?"* — instantly, because the data is already there.
+
+---
+
+### Step 12.1: Choose Your Topic and Sub-topics
+
+Pick a news topic. Some ideas: `Space & Aerospace`, `Cybersecurity`, `DevOps`, `Quantum Computing`, `Green Tech`, `Gaming`, `Web3`, `Fintech`, `AR/VR`, `Open Source`
+
+For your topic, define:
+- **4 to 6 sub-topics** (e.g. for Cybersecurity: `vulnerabilities`, `ransomware`, `privacy`, `cloud-security`, `appsec`, `threat-intel`)
+- **RSS feeds** for each sub-topic — you can ask Claude: *"Find me 2 good RSS feeds for [subtopic] news"*
+
+---
+
+### Step 12.2: Enter Plan Mode
+
+Enter Plan Mode before writing any code:
+
+```
+Press: Shift + Tab + Tab
+```
+
+Then paste this prompt, filling in your topic and sub-topics:
+
+```
+I want to add a "[YOUR TOPIC]" news digest page to this project.
+
+The page should work like this:
+- A dedicated tab in the navigation
+- Sub-topic filter chips: [LIST YOUR SUBTOPICS]
+- Articles fetched from RSS feeds per sub-topic and cached in SQLite
+- Auto-fetch from feeds when the DB cache is empty for a sub-topic
+- 60-second auto-refresh interval in the UI
+
+Architecture to implement (full stack):
+
+Backend:
+1. backend/tools/[topic]_tools.py
+   - TOPIC_SUBTOPICS: list of allowed subtopic strings (the allowlist)
+   - TOPIC_RSS_FEEDS: dict mapping each subtopic to a list of RSS feed URLs
+   - fetch_[topic]_articles(subtopic, days=7): fetches from feedparser,
+     strips HTML with BeautifulSoup, validates URL scheme (http/https only),
+     returns list of {title, url, summary, published_date, subtopic}
+   - search_[topic]_news(subtopic, days=7): agent tool that queries the DB
+     cache and returns formatted markdown; rejects subtopics not in the allowlist
+   - TOPIC_TOOL_SCHEMAS: list with the tool's JSON schema (enum field
+     constrains the AI to the allowlist)
+   - TOPIC_TOOL_DISPATCH: dict mapping tool name to function
+
+2. backend/database/db.py — add two new methods:
+   - add_[topic]_article(title, url, summary, subtopic, published_date):
+     validates subtopic against allowlist before inserting; uses
+     INSERT OR IGNORE so duplicates are silently skipped; all SQL uses
+     ? placeholders only
+   - get_[topic]_articles(subtopic=None, limit=10): two separate
+     parameterised queries (one for all articles, one filtered by subtopic);
+     topic column is a hardcoded string literal, never user input
+   - add a _migrate_add_url_unique_index migration and call it from init_db
+
+3. backend/api/endpoints/[topic].py
+   - _VALID_SUBTOPICS = frozenset(TOPIC_SUBTOPICS) at module level
+   - GET /[topic]?subtopic=...&limit=... : validates subtopic against
+     frozenset before any DB call (HTTP 400 if invalid); limit bounded
+     ge=1, le=50; on empty result auto-fetches from RSS and re-queries
+   - GET /[topic]/subtopics: returns TOPIC_SUBTOPICS list
+
+4. backend/services/agent_service.py
+   - Import TOPIC_TOOL_SCHEMAS, TOPIC_TOOL_DISPATCH, search_[topic]_news
+   - Extend ALL_TOOL_SCHEMAS and ALL_TOOL_DISPATCH to include them
+   - Add search_[topic]_news to the Bedrock tools list
+   - Add a line to SYSTEM_PROMPT describing when to use search_[topic]_news
+
+5. backend/api/routes.py
+   - Import the new endpoint module and include_router
+
+6. backend/main.py
+   - Import TOPIC_SUBTOPICS and fetch_[topic]_articles
+   - Add a scraper loop inside _scrape_all_feeds that iterates TOPIC_SUBTOPICS
+     and calls db.add_[topic]_article; log failures at debug level
+
+Frontend:
+7. frontend/src/types/api.ts — append:
+   - TOPIC_SUBTOPICS as const tuple (include 'all' as first entry)
+   - TopicSubtopic type derived from the tuple
+   - TOPIC_SUBTOPIC_LABELS array with slug + display label for each entry
+
+8. frontend/src/api/[topic].ts
+   - fetchTopicArticles(subtopic, limit=20): GET /[topic]; if subtopic
+     is 'all' omit the subtopic param; return Promise<Article[]>
+
+9. frontend/src/hooks/useTopicNews.ts
+   - React Query hook with queryKey: ['[topic]', subtopic]
+   - refetchInterval and staleTime both 60_000 ms
+
+10. frontend/src/pages/TopicPage.tsx
+    - ArticleCardSkeleton for loading state
+    - FilterChips component mapping TOPIC_SUBTOPIC_LABELS
+    - EmptyState and ErrorState components
+    - Main page: useState for active subtopic, useTopicNews hook,
+      responsive article grid (1 / md:2 / xl:3 columns)
+
+11. frontend/src/App.tsx
+    - Add '[topic]' to the View union type
+    - Add a nav button (use a distinct Tailwind colour from existing tabs)
+    - Add TopicPage to the conditional render
+
+Tests:
+12. backend/tests/test_[topic].py — mirror the robotics test file:
+    - subtopics list shape and contents
+    - invalid subtopic → error string (not exception)
+    - SQL injection string → blocked by allowlist
+    - valid subtopic with mocked DB cache
+    - fallback fetch when DB empty
+    - URL scheme validation (_is_valid_url): http, https, javascript:, empty
+    - GET /[topic]/subtopics → 200
+    - GET /[topic]?subtopic=invalid → 400
+    - GET /[topic]?limit=999 → 422
+
+Security requirements:
+- Allowlist-validate all subtopic inputs at every layer
+  (tool function, API endpoint, DB insert)
+- Parameterised queries only — no f-strings or .format() in SQL
+- No user-controlled strings in SQL
+- URL scheme validation at RSS ingest time
+
+Use a code-reviewer agent to review the security of the plan
+and an Explore agent to map which files need to change.
+Produce a detailed step-by-step implementation plan.
+```
+
+Review the plan saved to `.claude/plans/`. Read it, ask questions, and adjust anything before approving.
+
+---
+
+### Step 12.3: Approve and Implement
+
+Once you are happy with the plan:
+
+```
+The plan looks good. Implement it — backend first (tools file,
+DB migration, endpoint, route registration, scraper loop, agent service),
+then frontend (types, API client, hook, page component, App.tsx nav).
+Run the full test suite after each major step and fix any failures before
+moving on.
+```
+
+Watch Claude spawn sub-agents to handle each layer.
+
+---
+
+### Step 12.4: Run Tests
+
+```bash
+source venv/bin/activate
+python -m pytest backend/tests/ -v
+```
+
+All original tests must still pass, plus the new tests for your topic.
+
+If there are failures:
+
+```
+The test suite has failures. Read the output and fix them.
+```
+
+---
+
+### Step 12.5: Verify in the Browser
+
+1. Restart the backend: `python -m backend.main`
+2. Open [http://localhost:5173](http://localhost:5173)
+3. Click your new tab in the nav bar
+4. Articles should load from RSS feeds
+5. Click each sub-topic filter — articles should re-fetch and display
+
+If a filter shows no articles:
+
+```
+The [subtopic] filter shows no articles. Trace why and fix it.
+```
+
+---
+
+### Step 12.6: Chat With Your Digest
+
+The chatbot and your digest page share the same SQLite database. Once your page has scraped some articles, the chatbot can answer questions from that cache.
+
+Try these in the chat:
+
+```
+What is the latest news about [your topic]?
+What has [specific company] released this week?
+Show me the most recent [subtopic] news.
+```
+
+**🎯 What This Teaches:**
+- ✨ Full-stack feature development with Plan Mode
+- ✨ Security-first design: allowlists, parameterised SQL, URL validation
+- ✨ Shared DB architecture: pages scrape, chatbot reads from cache
+- ✨ Using backend-maintainer and frontend-improver agents in parallel
+- ✨ Code-reviewer agent validates security before implementation
+
+---
+
 ## 🎉 Congratulations!
 
 You've successfully built a Tech News Aggregator and mastered all major Claude Code features!
