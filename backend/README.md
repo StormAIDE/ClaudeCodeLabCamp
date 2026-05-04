@@ -1,6 +1,6 @@
 # Backend - ClaudeCode Lab Agent
 
-Python FastAPI backend with Strands Agents SDK for AI-powered chat using Claude 4 via Amazon Bedrock.
+Python FastAPI backend with Strands Agents SDK for AI-powered chat using Claude 4 via Amazon Bedrock. 
 
 ## Setup
 
