@@ -1,64 +1,47 @@
-# Tech News Aggregator - ClaudeCode Labcamp Adaptation
+# Tech News Aggregator
 
-> **Branch:** `test/workshop-news-aggregator`
-> 
-> This branch adapts the [main workshop](./WORKSHOP.md) to build a **Tech News Aggregator** instead of a personal assistant. It validates that participants can follow the workshop to create different applications while learning the same Claude Code features.
+> **Full-stack AI agent built with Claude Code**
 
-## 🚀 Quick Start (Run This App Locally)
+AI-powered tech news aggregation system demonstrating professional Claude Code workflows.
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- **Python 3.14.0+** installed
-- **Node.js 18+** and npm installed
-- **AWS Account** with Bedrock access (Claude 4 enabled)
-- **AWS CLI** configured with credentials
+- Python 3.11+
+- Node.js 18+
+- AWS account with Bedrock access
+- AWS credentials configured
 
-### Step 1: Clone and Setup
+### Installation
+
 ```bash
-# Clone the repository
+# Clone and setup
 git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 cd ClaudeCodeLabCamp
-
-# Switch to news aggregator branch
 git checkout test/workshop-news-aggregator
 
-# Configure AWS credentials (required for Bedrock)
+# Configure AWS credentials
 aws configure
 # OR export directly:
 export AWS_ACCESS_KEY_ID=your_key
 export AWS_SECRET_ACCESS_KEY=your_secret
 export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
-```
 
-### Step 2: Backend Setup
-```bash
-# Create Python virtual environment
+# Backend setup
 python3 -m venv claudecodeenv
-
-# Activate virtual environment
 source claudecodeenv/bin/activate
-
-# Install backend dependencies
 pip install -r requirements.txt
-
-# Create .env file (AWS credentials are from terminal, not .env)
 cp .env.example .env
+
+# Frontend setup
+cd frontend && npm install && cd ..
 ```
 
-### Step 3: Frontend Setup
-```bash
-# Navigate to frontend directory
-cd frontend
+### Run the App
 
-# Install dependencies
-npm install
-
-# Return to project root
-cd ..
-```
-
-### Step 4: Run the Application
-
-**Option A: Manual Start (Recommended - 2 terminals)**
+**Option A: Manual (2 terminals)**
 
 Terminal 1 - Backend:
 ```bash
@@ -72,843 +55,116 @@ cd frontend
 npm run dev
 ```
 
-**Option B: Quick Start Script (if available)**
+**Option B: Quick Start Script**
 ```bash
-./start.sh  # Starts both services
+./start.sh
 ```
 
-### Step 5: Access the Application
+### Access Points
 - **Frontend:** http://localhost:5173
 - **Backend API:** http://localhost:8000
 - **API Docs:** http://localhost:8000/docs
 
-### Step 6: Use the App
-1. Open http://localhost:5173 in your browser
-2. Ask a question like "What are the latest AI developments?"
-3. Agent searches real RSS feeds (TechCrunch, The Verge, Hacker News, AWS)
-4. Sources appear on the right side showing articles used
-5. Click URLs to visit actual news sites
-
-### Troubleshooting
-- **Port already in use:** Kill existing processes with `lsof -ti:8000 | xargs kill -9` (backend) or `lsof -ti:5173 | xargs kill -9` (frontend)
-- **AWS credentials error:** Verify with `aws sts get-caller-identity`
-- **Module not found:** Ensure virtual environment is activated: `source claudecodeenv/bin/activate`
+### Usage
+1. Open http://localhost:5173
+2. Ask: "What are the latest AI developments?"
+3. Agent searches RSS feeds (TechCrunch, The Verge, Hacker News, AWS)
+4. Sources appear on right side
+5. Click URLs to visit articles
 
 ---
-
-## 🎯 About This Branch
-
-This branch contains a complete Tech News Aggregator implementation:
-- ✅ Full workshop guide adapted for news aggregation
-- ✅ All Claude Code features (plugins, hooks, agents, MCP)
-- ✅ FastAPI + React + Strands SDK architecture
-- ✅ SQLite database for article storage
-- ✅ Real-time RSS news fetching with smart caching
-- ✅ Query-based source attribution
-
----
-
-# Tech News Aggregator: Full-Stack AI Agent Project
-
-> **Learn Claude Code by building a practical news app**
-> 
-> A hands-on project demonstrating ALL Claude Code features working together to build a real-world tech news aggregation system.
 
 ## 📋 What This App Does
 
-**Tech News Aggregator** - Stay updated with the latest technology developments:
+**Tech News Aggregator** - AI-powered news discovery:
 
-- 🔍 **Real-Time News Search**: Ask questions and agent searches live RSS feeds (TechCrunch, The Verge, Hacker News, AWS Blogs)
-- 📊 **Auto-Categorize**: Articles automatically categorized by technology domain (AI/ML, Cloud, Security, etc.)
-- 💾 **Smart Caching**: SQLite database caches articles to avoid re-fetching same news
-- 💬 **Chat Interface**: Natural language queries like "What are the latest AI developments?"
-- 📰 **Sources Panel**: Right side shows actual sources used for your specific query
-- 🔗 **Real URLs**: All articles link to actual tech news sites with full source attribution
-- 🎨 **Modern UI**: Dark glassmorphism design with vibrant gradients
-
-## 📋 What You'll Learn
-
-This project showcases how Claude Code integrates 8 powerful features into building a real-world news app:
-
-1. **CLAUDE.md** - Project documentation that guides AI behavior
-2. **Hooks** - Automated workflows (database protection, backups)
-3. **Plugins** - IDE features (type checking, GitHub integration)
-4. **Custom Commands** - `/news-search`, `/fetch-trending` commands
-5. **Skills** - Multi-step news aggregation workflows
-6. **Custom Agents** - Specialized agents (news-analyst, data-quality-checker)
-7. **MCP Servers** - Visual news feed inspection with Chrome DevTools
-8. **settings.json** - Centralized configuration
+- 🔍 **Real-Time Search**: Natural language queries search live RSS feeds
+- 📊 **Auto-Categorize**: Articles tagged by domain (AI/ML, Cloud, Security, etc.)
+- 💾 **Smart Caching**: SQLite stores articles to avoid re-fetching
+- 💬 **Chat Interface**: Ask questions, get instant answers
+- 📰 **Source Attribution**: Right panel shows articles used in response
+- 🔗 **Real URLs**: Links to actual tech news sites
+- 🎨 **Modern UI**: Dark glassmorphism with vibrant gradients
 
 ---
 
-## 🤔 What's the Difference? (Skills vs Agents vs Hooks vs Plugins vs MCP vs Commands)
+## 🛠️ Tech Stack
 
-Participants often ask: **"These features sound similar - what's the actual difference?"**
+**Backend:**
+- FastAPI + Strands Agents SDK + Pydantic
+- SQLite database
+- Claude 4 via Amazon Bedrock
+- Python 3.11+
 
-Here's a comparison based on official Claude Code documentation:
+**Frontend:**
+- React 19 + TypeScript + Vite
+- Zustand (client state) + TanStack Query (server state)
+- Tailwind CSS
 
-| Feature | What It Is | How To Use | Used In This Project? |
-|---------|-----------|------------|----------------------|
-| **Skills** | Prompt templates (SKILL.md or .md files) that extend Claude's capabilities - you or Claude can invoke them | `/skill-name` or Claude invokes when relevant | ✅ Yes - 2 skills: `/start-dev`, `/component` (see `.claude/skills/` and `.claude/commands/`) |
-| **Agents** | Specialized AI subagents that run in separate contexts with custom system prompts and tool access | Claude spawns automatically or you delegate explicitly | ✅ Yes - 4 custom agents (see `.claude/agents/`) |
-| **Hooks** | Shell scripts/HTTP endpoints/prompts that execute automatically at lifecycle events (PreToolUse, PostToolUse, SessionStart) | Configure in `.claude/settings.json` | ✅ Yes - 4 active hooks (see `.claude/hooks/`) |
-| **Plugins** | Packaged bundles from marketplaces that can include skills, agents, hooks, and MCP servers (curated, easy install) | `/plugin install <name>@marketplace` | ✅ Yes - Recommended but **not pre-installed** (see PLUGINS.md) |
-| **MCP Servers** | External tools via Model Context Protocol - can be standalone (configured in `.mcp.json`) OR bundled in plugins | Configure in `.mcp.json` or install via plugin | ✅ Yes - 2 servers configured: drawio, chrome-devtools (see `.mcp.json`) |
-| **Commands (Built-in)** | CLI commands that are part of Claude Code itself - **NOT** the same as custom commands (which are Skills) | `/help`, `/clear`, `/settings`, `/hooks` | ✅ Yes - Built-in commands used throughout |
-
-> **Note:** Skills, Agents, Hooks, and MCP Servers are **committed to the repo** in `.claude/` and `.mcp.json`. Plugins are **runtime-installed** per user (not in git) - see [PLUGINS.md](PLUGINS.md) for installation instructions.
-> 
-> **Skills vs Commands:** Custom commands (`.claude/commands/*.md`) have been merged into skills in Claude Code. Both `/component` (in commands) and `/start-dev` (in skills) work identically - they're both skills invokable with `/name`. The table refers to built-in commands like `/help` and `/settings` that are part of Claude Code itself.
-
-**Quick Mental Model:**
-
-- **Skills** = Instructions Claude can load on-demand (think: playbooks in a binder) - includes both `.claude/skills/` and `.claude/commands/`
-- **Agents** = Specialized AI workers in separate contexts (think: delegation to experts)
-- **Hooks** = Automation that runs at specific lifecycle events (think: guardrails & triggers)
-- **Plugins** = Packaged bundles from marketplaces (think: app store downloads)
-- **MCP Servers** = External tool connections via protocol (think: API integrations)
-- **Commands (Built-in)** = Non-extensible CLI features part of Claude Code itself (think: control panel buttons you can't customize)
-
-**Key Differences Explained:**
-
-**Plugins vs MCP Servers:**
-- **Plugins** bundle multiple things together (skills + agents + hooks + MCP servers) and are distributed via marketplaces
-- **MCP Servers** are just the external tool connection layer - can exist standalone OR inside a plugin
-- Example: The `github` plugin contains an MCP server for GitHub API, plus skills for PR workflows
-- Example: We configure `drawio` and `chrome-devtools` MCP servers directly in `.mcp.json` (no plugin wrapper)
-
-**Skills vs Agents:**
-- **Skills** are prompt templates that run in your current context - content stays in conversation
-- **Agents** are separate AI workers with their own context window - results summarized back to you
-- Skills: good for guidelines, checklists, workflows you want to stay visible
-- Agents: good for research/exploration that would flood your context with search results
-
-**Real Example from This Project:**
-
-1. You type `/start-dev` → **Skill** (SKILL.md) runs instructions to start both servers
-2. You ask "review my code" → Claude spawns **code-reviewer Agent** in separate context to analyze it
-3. You try `rm -rf backend/` → **Hook** (PreToolUse) blocks this dangerous command before execution
-4. You type in Python → **Pyright Plugin** provides type checking (plugin bundles the LSP MCP server)
-5. You ask "create a diagram" → **drawio MCP Server** (standalone config in `.mcp.json`) generates diagram
-6. You type `/hooks` → **Command** (built-in) shows all active hooks
-
-**When to use which:**
-- Need reusable instructions/checklists? → Create a **Skill** (`.claude/skills/name/SKILL.md`)
-- Need specialized AI help in isolation? → Define a custom **Agent** (`.claude/agents/name.md`)
-- Need automation on events (safety, validation)? → Add a **Hook** (`.claude/settings.json`)
-- Need IDE features from marketplace? → Install a **Plugin** (`/plugin install name@marketplace`)
-- Need custom external tool connection? → Configure **MCP Server** (`.mcp.json`)
-- Need to control Claude Code itself? → Use built-in **Commands** (`/help`, `/settings`, etc.)
+**Testing:**
+- Pytest: 43 backend tests
+- Vitest: 19 frontend tests
+- Total: 62 tests
 
 ---
 
-## 📚 Detailed Setup Guide
+## 🎓 Claude Code Features
 
-> **Quick Start:** See the section at the top of this README for fast setup instructions.
+This project demonstrates ALL major Claude Code features:
 
-This section provides additional context for the installation process.
+| Feature | Implementation | Location |
+|---------|---------------|----------|
+| **CLAUDE.md** | Project instructions for AI | `/CLAUDE.md` |
+| **Hooks** | Automated workflows & safety | `.claude/hooks/` + `.claude/settings.json` |
+| **Plugins** | LSP, GitHub integration | Install via `/plugin` command |
+| **Commands** | `/component` generator | `.claude/commands/` |
+| **Skills** | `/start-dev` workflow | `.claude/skills/` |
+| **Agents** | Backend, frontend, reviewer | `.claude/agents/` |
+| **MCP Servers** | Browser tools, diagrams | `.mcp.json` |
+| **settings.json** | Central config | `.claude/settings.json` |
 
-### Prerequisites
+### Active Hooks
 
-- **Python 3.14.0+** (you'll create a virtual environment)
-- **Node.js 18+** and npm
-- **AWS Account** with Bedrock access (Claude 4 enabled)
-- **AWS CLI** configured with credentials
-- **Git**
-- **Claude Code** (optional - for labcamp features) ([claude.ai/code](https://claude.ai/code))
+**1. Block Dangerous Commands** (PreToolUse)
+- Prevents: `rm -rf /`, `dd`, fork bombs, pipe-to-shell
+- Script: `.claude/hooks/block-dangerous.sh`
 
-### Installation Steps Explained
+**2. Protect Sensitive Files** (PreToolUse)
+- Protects: `.env`, lock files, `.git/`, `venv/`
+- Script: `.claude/hooks/protect-files.sh`
 
-```bash
-# 1. Clone the repository and switch to news aggregator branch
-git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
-cd ClaudeCodeLabCamp
-git checkout test/workshop-news-aggregator
+**3. Auto-Run Tests** (PostToolUse)
+- Runs pytest after `.py` edits
+- Runs Vitest after `.ts`/`.tsx` edits
+- Script: `.claude/hooks/run-tests.sh`
 
-# 2. Create Python virtual environment (if not exists)
-python3 -m venv claudecodeenv
+**4. Project Context Injection** (SessionStart)
+- Loads project rules on startup
+- File: `.claude/hooks/project-context.txt`
 
-# 3. Configure AWS credentials (terminal session)
-aws configure
-# OR export credentials directly:
-export AWS_ACCESS_KEY_ID=your_key
-export AWS_SECRET_ACCESS_KEY=your_secret
-export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
-
-# 4. Create .env file
-cp .env.example .env
-# Note: AWS credentials are NOT in .env - they're in your terminal session
-
-# 5. Install backend dependencies
-source claudecodeenv/bin/activate
-pip install -r requirements.txt
-
-# 6. Install frontend dependencies
-cd frontend
-npm install
-cd ..
-```
-
-### Running the Application
-
-**Manual Start (Recommended - 2 terminals)**
-```bash
-# Terminal 1 - Backend
-source claudecodeenv/bin/activate
-python -m backend.main
-
-# Terminal 2 - Frontend
-cd frontend
-npm run dev
-```
-
-**Access Points:**
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-
-### Stopping the Application
-
-```bash
-# Kill backend (port 8000)
-lsof -ti:8000 | xargs kill -9
-
-# Kill frontend (port 5173)
-lsof -ti:5173 | xargs kill -9
-```
-
----
-
-## 🏗️ Project Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Frontend                              │
-│  React 19 + TypeScript + Vite + Tailwind CSS               │
-│  - ChatInterface: Main UI                                   │
-│  - Zustand: Client state management                         │
-│  - TanStack Query: Server state & caching                   │
-└────────────────┬────────────────────────────────────────────┘
-                 │ HTTP/SSE
-                 ↓
-┌─────────────────────────────────────────────────────────────┐
-│                         Backend                              │
-│  FastAPI + Strands Agents SDK + Pydantic                    │
-│  - Agent Service: Claude 4 via Amazon Bedrock               │
-│  - Safe Tools: Weather, AST-based calculator                │
-│  - Dependency Injection: Singleton pattern                  │
-└────────────────┬────────────────────────────────────────────┘
-                 │
-                 ↓
-┌─────────────────────────────────────────────────────────────┐
-│              Claude 4 (Amazon Bedrock)                       │
-│  model: eu.anthropic.claude-sonnet-4-5-20250929-v1:0       │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key Technologies:**
-- **Backend:** FastAPI, Strands SDK, Pydantic, Python 3.14
-- **Frontend:** React 19, TypeScript, Vite, Zustand, TanStack Query, Tailwind CSS
-- **AI:** Claude 4 via Amazon Bedrock
-- **Testing:** Pytest (backend: 43 tests), Vitest (frontend: 19 tests) - 62 tests total
-
----
-
-## 🎓 Labcamp Learning Path: Claude Code Features in Action
-
-### Step 1: CLAUDE.md - Project Documentation
-
-**What it is:**
-A markdown file that contains instructions for Claude Code about your project. It's like a project guide that tells Claude how to work with your codebase.
-
-**Where to find it:**
-- File: `/CLAUDE.md`
-- [Official docs](https://code.claude.com/docs/en/memory)
-
-**What it does:**
-- Defines development commands (backend, frontend, testing)
-- Specifies architecture patterns and project structure
-- Sets rules (always run tests, use conventional commits, never modify .env)
-- Documents tech stack and configuration
-
-**Try it yourself:**
-1. Open `CLAUDE.md` in your editor
-2. Notice sections like "Development Commands", "Testing Requirements", "Architecture Overview"
-3. In Claude Code, ask: "What are the development commands for this project?"
-4. Claude will reference CLAUDE.md and give you the exact commands
-
-**Example:**
-```
-You: "How do I run the backend?"
-Claude: "According to CLAUDE.md, run: source claudecodeenv/bin/activate && python -m backend.main"
-```
-
-**Educational Value:**
-- **Consistency:** All developers (human or AI) follow the same rules
-- **Onboarding:** New team members read CLAUDE.md to understand the project
-- **Documentation-as-code:** Project rules are version-controlled
-
----
-
-### Step 2: Hooks - Automated Workflows
-
-**What they are:**
-Shell scripts that run automatically at specific points in Claude Code's lifecycle (before/after tool calls, session start/end, etc.)
-
-**Where to find them:**
-- Configuration: `.claude/settings.json`
-- Scripts: `.claude/hooks/*.sh`
-- Command: `/hooks` (shows all configured hooks)
-
-**Active Hooks in This Project:**
-
-#### Hook #1: Block Dangerous Commands
-**Event:** `PreToolUse` (before Bash tool)
-**Script:** `.claude/hooks/block-dangerous.sh`
-**What it does:** Prevents destructive operations like `rm -rf /`, `dd`, fork bombs, pipe to shell
-**Status:** ✅ **Working** (requires `jq` - install with `brew install jq`)
-
-**Blocked patterns:**
-- `rm -rf /`, `rm -rf ~`, `rm -rf $HOME`
-- `dd if=` (disk destroyer)
-- `> /dev/sda` (overwrite disk)
-- `mkfs` (format filesystem)
-- Fork bomb: `:(){ :|:& };:`
-- Pipe to shell: `curl * | bash`, `wget * | sh`
-- `chmod 777` (overly permissive)
-- `sudo rm` (dangerous sudo)
-
-**Try it:**
-```
-You: "Run the command: rm -rf /"
-Claude: [BLOCKED] 🚫 Command matches dangerous pattern 'rm -rf /'
-```
-
-#### Hook #2: Protect Sensitive Files
-**Event:** `PreToolUse` (before Edit/Write tools)
-**Script:** `.claude/hooks/protect-files.sh`
-**What it does:** Blocks edits to `.env`, lock files, `.git/`, `claudecodeenv/`
-**Status:** ✅ **Working** (requires `jq` - install with `brew install jq`)
-
-**Protected patterns:**
-- `.env`, `.env.local`, `.env.production` (credentials)
-- `package-lock.json`, `yarn.lock`, `poetry.lock`, `Pipfile.lock` (lock files)
-- `.git/` (git internals)
-- `node_modules/`, `claudecodeenv/`, `venv/`, `.venv/`, `__pycache__/` (dependencies)
-
-**Try it:**
-```
-You: "Edit the .env file to add a new variable"
-Claude: [BLOCKED] 🔒 .env is protected - this file should not be modified by automation
-```
-
-#### Hook #3: Run Tests After Code Changes
-**Event:** `PostToolUse` (after Edit/Write tools)
-**Script:** `.claude/hooks/run-tests.sh`
-**What it does:** Automatically runs test suite after editing `.py`, `.ts`, or `.tsx` files
-**Status:** ✅ **Working** (requires `jq` - install with `brew install jq`)
-
-**How it works:**
-- **Python files (`.py`)**: Runs `python -m pytest backend/tests/` in virtual environment
-- **TypeScript files (`.ts`, `.tsx`)**: Runs `npm test -- --run` in frontend directory
-- **Non-blocking**: Warns if tests fail but doesn't prevent the edit
-- **Smart filtering**: Only runs for code files, skips config/docs
-
-**Try it:**
-1. Ask Claude to modify `backend/config.py`
-2. Watch the test suite run automatically
-3. See test results in real-time
-
-**Not the same as `run-all-tests.sh`:**
-- **Hook (`.claude/hooks/run-tests.sh`)**: Runs automatically after each edit, tests only the relevant suite (fast feedback)
-- **Script (`./run-all-tests.sh`)**: Run manually before commits, tests everything comprehensively (73 tests + builds + linting)
-
-#### Hook #4: Inject Project Context
-**Event:** `SessionStart`
-**File:** `.claude/hooks/project-context.txt`
-**What it does:** Reminds Claude of project rules every session (ports, commit format, test requirements)
-**Status:** ✅ **Working**
-
-**Try it:**
-1. Start a new Claude Code session
-2. Ask Claude about the project
-3. Notice it already knows the ports (8000, 5173) and commit format without you telling it
-
-**Educational Value:**
-- **Safety:** Prevents accidents (rm -rf, editing credentials)
-- **Consistency:** Same rules apply every time, every session
-- **Productivity:** Focus on features, not repetitive tasks
-- **Quality:** Tests run automatically after every code change
-- **Context:** Claude knows project rules on session start
-
-**Prerequisites:**
-All hooks require `jq` (JSON processor) to be installed:
+**Prerequisite:** All hooks require `jq`:
 ```bash
 brew install jq
 ```
 
-**View all hooks:**
-```bash
-/hooks  # Interactive browser showing all configured hooks
-```
+### Custom Agents
 
----
+**1. backend-maintainer** - FastAPI, Strands SDK, Python  
+**2. code-reviewer** - Quality analysis before commits  
+**3. frontend-improver** - React, UI/UX improvements  
+**4. frontend-visual-inspector** - Screenshot-based testing
 
-### Step 3: Plugins - IDE Features
+### MCP Servers
 
-**What they are:**
-Extensions that add IDE-like features to Claude Code (type checking, code navigation, GitHub integration)
+**1. drawio** - Architecture diagrams  
+**2. chrome-devtools** - Browser automation, screenshots
 
-**Where to configure them:**
-- Command: `/plugin` (interactive plugin manager)
-- Marketplace: `claude-plugins-official` (auto-added)
+View MCP config: `.mcp.json`
 
-**Recommended Plugins for This Project:**
+### Custom Commands & Skills
 
-#### Plugin #1: TypeScript LSP
-**What:** Real-time type checking for React/TypeScript code
-**Install:** `/plugin install typescript-lsp@claude-plugins-official`
-**Prerequisite:** `npm install -g typescript-language-server typescript`
-
-**What it does:**
-- Detects type errors immediately after edits
-- Shows diagnostics without running the app
-- Enables "Go to Definition", "Find References"
-
-**Try it:**
-1. Install the plugin: `/plugin install typescript-lsp@claude-plugins-official`
-2. Reload: `/reload-plugins`
-3. Ask Claude: "Add a new prop to ChatInterface.tsx with wrong type"
-4. Watch the TypeScript LSP catch the error instantly (no need to run the app!)
-5. Claude will see the diagnostic and can fix it immediately
-
-**Verification command for participants:**
-```
-Ask Claude: "Add a maxMessages prop to ChatInterface with type string, then try to use it in math"
-Expected: TypeScript LSP reports type error immediately
-```
-
-#### Plugin #2: Pyright LSP
-**What:** Type checking for Python/FastAPI backend
-**Install:** `/plugin install pyright-lsp@claude-plugins-official`
-**Prerequisite:** `pip install pyright`
-
-**What it does:**
-- Validates type hints automatically
-- Catches async/await errors
-- Ensures Pydantic models are correct
-
-**Try it:**
-1. Install the plugin: `/plugin install pyright-lsp@claude-plugins-official`
-2. Reload: `/reload-plugins`
-3. Ask Claude: "Add a type annotation error to backend/config.py"
-4. Pyright catches it before runtime
-
-**Verification command for participants:**
-```
-Ask Claude: "Add a line to backend/config.py: test_port: int = '8000'"
-Expected: Pyright LSP reports type mismatch (str assigned to int)
-```
-
-#### Plugin #3: GitHub Integration
-**What:** PR creation, issue management, code review automation
-**Install:** `/plugin install github@claude-plugins-official`
-
-**What it does:**
-- Create pull requests from Claude Code
-- View/create/close issues
-- Review PRs with AI assistance
-
-**Try it:**
-1. Install the plugin: `/plugin install github@claude-plugins-official`
-2. Reload: `/reload-plugins`
-3. Ask Claude: "Show me the PRs for this branch"
-
-**Verification command for participants:**
-```
-Ask Claude: "Use the GitHub plugin to list all open PRs for the feature/lab-work branch"
-Expected: Claude uses `gh pr list` command and shows PR details
-```
-
-#### Plugin #4: Commit Commands
-**What:** Automated conventional commit messages
-**Install:** 
-```bash
-/plugin marketplace add anthropics/claude-code
-/plugin install commit-commands@anthropics-claude-code
-```
-
-**What it does:**
-- Analyzes changes with `git diff`
-- Generates conventional commit message (feat:, fix:, chore:)
-- Commits automatically
-
-**Try it:**
-1. Install the plugin:
-   ```bash
-   /plugin marketplace add anthropics/claude-code
-   /plugin install commit-commands@anthropics-claude-code
-   /reload-plugins
-   ```
-2. Make a small change (edit any file)
-3. Ask Claude: "Use the commit-commands skill to commit these changes"
-
-**Verification command for participants:**
-```
-1. Make a change: Ask Claude to "Add a comment to backend/config.py"
-2. Ask Claude: "Use the commit skill to create a commit"
-Expected: Claude analyzes changes, generates conventional commit message, commits
-```
-
-**Educational Value:**
-- **Professional tooling:** Same features as VS Code, JetBrains IDEs
-- **Shift-left testing:** Catch bugs at compile-time, not runtime
-- **Type-driven development:** Type system guides implementation
-- **GitHub workflow:** Automate PR creation and reviews
-
-**View/manage plugins:**
-```bash
-/plugin                    # Interactive plugin manager
-/reload-plugins            # Apply plugin changes
-```
-
----
-
-### Step 4: Custom Commands - Slash Commands
-
-**What they are:**
-Reusable commands you create for common tasks, invoked with `/command-name`
-
-**Where to find them:**
-- File: `.claude/commands/component.md`
-- Format: Markdown with frontmatter (YAML metadata)
-
-**Example: Component Generator**
-
-**Command:** `/component ComponentName [description]`
-
-**What it does:**
-1. Creates a new React TypeScript component
-2. Generates proper file structure with TypeScript interfaces
-3. Applies Tailwind CSS styling from project theme
-4. Follows project conventions (functional components, type imports)
-
-**Try it:**
-```bash
-/component LoadingSpinner Shows a loading indicator
-```
-
-**Claude will:**
-1. Create `frontend/src/components/LoadingSpinner.tsx`
-2. Generate component with proper TypeScript types
-3. Apply project's Tailwind CSS color scheme
-4. Add props interface (`LoadingSpinnerProps`)
-5. Show you the code and suggest where to use it
-
-**Example Output:**
-```typescript
-interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-}
-
-export default function LoadingSpinner({ 
-  size = 'md', 
-  className = '' 
-}: LoadingSpinnerProps) {
-  return (
-    <div className="flex items-center justify-center">
-      <div className="animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-    </div>
-  )
-}
-```
-
-**Educational Value:**
-- **Code generation:** Automate repetitive component creation
-- **Consistency:** All components follow the same structure
-- **Productivity:** Create components in seconds, not minutes
-- **Customization:** Define your own commands for your workflow
-
-**Verification command for participants:**
-```
-Ask Claude: "Use the /component command to create TestButton with description 'A simple test button', then delete it"
-Expected: Claude creates frontend/src/components/TestButton.tsx with proper TypeScript types and Tailwind styling, then removes it
-What it proves: Custom command generates components following project conventions
-```
-
-**Create your own command:**
-1. Create `.claude/commands/your-command.md`
-2. Add YAML frontmatter (name, description, usage)
-3. Write instructions for Claude
-4. Use it with `/your-command`
-
----
-
-### Step 5: Skills - Complex Workflows
-
-**What they are:**
-Multi-step automated workflows that orchestrate multiple commands
-
-**Where to find them:**
-- File: `.claude/skills/start-dev/SKILL.md`
-- Format: Markdown with instructions for Claude
-
-**Example: Start Development Servers**
-
-**Skill:** `/start-dev` (or use the Skill tool)
-
-**What it does:**
-1. Activates Python virtual environment
-2. Starts FastAPI backend on port 8000 (background process)
-3. Starts Vite frontend on port 5173 (background process)
-4. Reports status and URLs to you
-
-**Try it:**
-```bash
-# Just run the skill
-/start-dev
-
-# Claude will:
-# ✓ Activate claudecodeenv
-# ✓ Start backend: uvicorn backend.main:app --reload
-# ✓ Start frontend: npm run dev
-# ✓ Report both URLs
-```
-
-**Educational Value:**
-- **Workflow automation:** Complex tasks become one command
-- **Consistency:** Same startup process every time
-- **Error handling:** Skill handles environment setup
-- **Background processes:** Both servers run simultaneously
-
-**Verification command for participants:**
-```
-Ask Claude: "Use the start-dev skill to start both servers, then stop them"
-Expected: Claude starts backend (port 8000) and frontend (port 5173) in background, confirms URLs, then stops both
-What it proves: Multi-step workflow automation with background processes
-```
-
-**Create your own skill:**
-1. Create `.claude/skills/your-skill/SKILL.md`
-2. Write step-by-step instructions
-3. Claude executes the workflow automatically
-4. Use it by asking Claude to run the skill
-
-**Difference between Commands vs Skills:**
-- **Commands:** User-invocable with `/slash` syntax, simpler use case
-- **Skills:** More complex, can have multiple steps, Claude invokes based on context
-
----
-
-### Step 6: Custom Agents - Specialized AI
-
-**What they are:**
-Specialized AI agents trained for specific tasks (backend, frontend, code review, visual inspection)
-
-**Where to find them:**
-- Directory: `.claude/agents/`
-- Files: 4 agent definitions (YAML frontmatter + markdown)
-
-**Available Agents:**
-
-#### Agent #1: backend-maintainer
-**Purpose:** Backend development tasks (FastAPI, Strands SDK, Python)
-**When to use:** API endpoints, service layer, agent tools, database work
-
-**Try it:**
-```
-You: "Add a new endpoint to get user profile"
-Claude: [Delegates to backend-maintainer agent]
-Agent: [Creates endpoint, adds validation, writes tests]
-```
-
-#### Agent #2: code-reviewer
-**Purpose:** Comprehensive code quality analysis
-**When to use:** Before commits, after refactoring, debugging complex issues
-
-**Try it:**
-```
-You: "Review the changes in this branch"
-Claude: [Spawns code-reviewer agent]
-Agent: [Analyzes backend + frontend, checks tests, reports issues]
-```
-
-#### Agent #3: frontend-improver
-**Purpose:** UI/UX improvements, React components, frontend architecture
-**When to use:** Component development, state management, client-side work
-
-**Try it:**
-```
-You: "Improve the chat interface with better UX"
-Claude: [Launches frontend-improver agent]
-Agent: [Analyzes UI, proposes improvements, implements changes]
-```
-
-#### Agent #4: frontend-visual-inspector
-**Purpose:** Visual analysis of UI (takes screenshots, checks layout)
-**When to use:** Visual bugs, responsive design, UI/UX validation
-
-**Try it:**
-```
-You: "Check if the chat interface looks good on mobile"
-Claude: [Spawns frontend-visual-inspector agent]
-Agent: [Takes screenshots, analyzes layout, suggests fixes]
-```
-
-**Educational Value:**
-- **Specialization:** Each agent has deep expertise in its domain
-- **Parallel work:** Multiple agents can work simultaneously
-- **Context isolation:** Agents work in separate contexts (worktrees)
-- **Multi-agent systems:** Shows how AI teams collaborate
-
-**How agents work:**
-1. You ask Claude to do something
-2. Claude recognizes it matches an agent's specialty
-3. Agent is spawned with specific instructions
-4. Agent completes task and reports back
-5. Claude integrates the results
-
----
-
-### Step 7: MCP Servers - External Tools
-
-**What they are:**
-Model Context Protocol servers that connect Claude Code to external services (diagrams, browsers, databases, APIs)
-
-**Where to find them:**
-- File: `.mcp.json`
-- Format: JSON configuration with server definitions
-
-**Configured MCP Servers:**
-
-#### MCP #1: drawio
-**Purpose:** Create and edit diagrams (flowcharts, architecture diagrams, UML, ERD, network diagrams)
-**Command:** `npx -y @drawio/mcp`
-**Package:** `@drawio/mcp` (auto-installed via npx)
-
-**What it does:**
-- Create diagrams from natural language descriptions using 3 specialized tools:
-  - **XML format** - Full control with draw.io XML syntax (most powerful)
-  - **CSV format** - Structured data to generate flowcharts/org charts (easiest)
-  - **Mermaid format** - Text-based diagram syntax (most readable)
-- Edit existing .drawio files (round-trip editing)
-- Support for multiple diagram types: flowcharts, sequence diagrams, component diagrams, ERD, network topologies
-- Output to .drawio, .xml, .svg, .png formats
-- Professional styling and automatic layout
-
-**Try it:**
-```
-You: "Create an architecture diagram showing FastAPI backend (port 8000), React frontend (port 5173), and AWS Bedrock connection with Claude Sonnet. Save as architecture.drawio"
-Claude: [Uses drawio MCP server with CSV format]
-Result: Generates architecture.drawio with 3-tier architecture diagram
-
-You: "Create a sequence diagram for the chat API flow using Mermaid syntax"
-Claude: [Uses drawio MCP server with Mermaid format]
-Result: Generates sequence-diagram.drawio with API interaction flow
-
-You: "Edit architecture.drawio and add a database component connected to the backend"
-Claude: [Reads existing XML, modifies it, writes back]
-Result: Updates architecture.drawio with database node
-```
-
-**Educational Value:**
-- **Visual documentation:** Generate architecture diagrams automatically from code
-- **Design communication:** Create flowcharts for complex algorithms
-- **Team collaboration:** Convert discussions into visual diagrams
-- **Format flexibility:** Choose between XML (power), CSV (structure), or Mermaid (readability)
-
-#### MCP #2: chrome-devtools
-**Purpose:** Browser automation (screenshots, console logs, network requests)
-**Command:** `npx -y chrome-devtools-mcp@latest`
-
-**Try it:**
-```
-You: "Take a screenshot of the chat interface"
-Claude: [Uses chrome-devtools MCP]
-Result: Opens browser, navigates to localhost:5173, captures screenshot
-```
-
-**Educational Value:**
-- **External integration:** Connect AI to any tool or service  
-- **Visual outputs:** Generate diagrams, take screenshots
-- **Automation:** Browser testing, API calls, file operations
-- **Extensibility:** Add any MCP server to extend capabilities
-
-**How MCP works:**
-1. MCP server runs as a subprocess
-2. Claude sends requests to the server
-3. Server performs action (create diagram, take screenshot, etc.)
-4. Server returns results
-5. Claude integrates results into conversation
-
-**Add your own MCP server:**
-```json
-{
-  "mcpServers": {
-    "your-server": {
-      "command": "npx",
-      "args": ["-y", "your-mcp-package"]
-    }
-  }
-}
-```
-
-**Popular MCP servers:**
-- `@modelcontextprotocol/server-filesystem` - File operations
-- `@modelcontextprotocol/server-postgres` - Database access
-- `@modelcontextprotocol/server-slack` - Slack integration
-- `@modelcontextprotocol/server-github` - GitHub API
-
----
-
-### Step 8: settings.json - Configuration Hub
-
-**What it is:**
-Central configuration file that ties all Claude Code features together
-
-**Where to find it:**
-- Project: `.claude/settings.json` (shared with team)
-- User: `~/.claude/settings.json` (personal preferences)
-- Local: `.claude/settings.local.json` (gitignored, local overrides)
-
-**What's Configured:**
-
-**Hooks:**
-```json
-{
-  "hooks": {
-    "PreToolUse": [...],      // Block dangerous commands, protect files
-    "SessionStart": [...]     // Inject project context
-  }
-}
-```
-
-**Permissions:**
-```json
-{
-  "permissions": {
-    "allowed": [
-      "Bash(npm *)",          // Allow npm commands
-      "Bash(git *)",          // Allow git commands
-      "mcp__*"                // Allow all MCP tools
-    ]
-  }
-}
-```
-
-**Educational Value:**
-- **Centralization:** All configuration in one place
-- **Version control:** Project settings committed to git
-- **Scopes:** User settings (personal), project (team), local (gitignored)
-- **Transparency:** Easy to see what's enabled/disabled
-
-**View configuration:**
-```bash
-/hooks              # Browse all hooks
-/plugin             # Manage plugins
-cat .claude/settings.json  # View raw config
-```
+**Command:** `/component <Name> <description>` - Generate React component  
+**Skill:** `/start-dev` - Start backend + frontend servers
 
 ---
 
@@ -916,404 +172,122 @@ cat .claude/settings.json  # View raw config
 
 ```
 ClaudeCodeLabCamp/
-├── backend/                      # FastAPI backend
-│   ├── main.py                  # Entry point (USE THIS)
-│   ├── config.py                # Pydantic Settings
-│   ├── api/                     # API layer
-│   │   ├── routes.py           # Route aggregation
-│   │   ├── dependencies.py     # Dependency injection
-│   │   └── endpoints/
-│   │       └── agent.py        # Agent chat endpoints
-│   ├── services/                # Business logic
-│   │   └── agent_service.py    # Strands SDK agent service
-│   └── tests/                   # Test suite (35 tests)
-│       ├── test_config.py      
-│       ├── test_dependencies.py
-│       ├── test_agent_service.py
-│       └── test_endpoints.py
+├── backend/
+│   ├── main.py              # FastAPI entry point
+│   ├── config.py            # Pydantic Settings
+│   ├── api/
+│   │   └── endpoints/       # API routes
+│   ├── services/
+│   │   └── agent_service.py # Strands SDK agent
+│   └── tests/               # 43 pytest tests
 │
-├── frontend/                     # React TypeScript frontend
+├── frontend/
 │   ├── src/
-│   │   ├── App.tsx              # Main app
-│   │   ├── main.tsx             # Entry point
-│   │   ├── components/          # React components
-│   │   │   ├── ChatInterface.tsx
-│   │   │   ├── MessageList.tsx
-│   │   │   └── MessageInput.tsx
-│   │   ├── api/
-│   │   │   └── agent.ts         # API client
-│   │   ├── store/
-│   │   │   └── agentStore.ts    # Zustand store
-│   │   └── test/                # Test files
-│   ├── package.json
-│   └── vite.config.ts
+│   │   ├── components/      # React components
+│   │   ├── api/             # Axios client
+│   │   ├── store/           # Zustand store
+│   │   └── test/            # 19 Vitest tests
+│   └── package.json
 │
-├── .claude/                      # Claude Code configuration
-│   ├── settings.json            # Hooks, permissions
-│   ├── hooks/                   # Hook scripts
-│   │   └── project-context.txt  # Context injection
-│   ├── agents/                  # Custom agents
-│   │   ├── backend-maintainer.md
-│   │   ├── code-reviewer.md
-│   │   ├── frontend-improver.md
-│   │   └── frontend-visual-inspector.md
-│   ├── commands/                # Custom commands
-│   │   └── component.md         # /component generator
-│   └── skills/                  # Skills
-│       └── start-dev/
-│           └── SKILL.md         # Start dev servers
+├── .claude/
+│   ├── settings.json        # Hooks, permissions
+│   ├── hooks/               # Shell scripts
+│   ├── agents/              # 4 custom agents
+│   ├── commands/            # /component
+│   └── skills/              # /start-dev
 │
-├── .mcp.json                    # MCP server config
-├── .env.example                 # Environment template
-├── CLAUDE.md                    # Project documentation for Claude Code
-├── README.md                    # This file (labcamp guide)
-├── start.sh                     # Quick start script (both servers)
-├── stop.sh                      # Stop all services (cleanup script)
-├── run-all-tests.sh            # Test orchestration (with auto-cleanup)
-└── requirements.txt             # Python dependencies
+├── .mcp.json                # MCP server config
+├── CLAUDE.md                # Project docs for AI
+├── WORKSHOP.md              # Workshop guide
+└── requirements.txt
 ```
 
 ---
 
-## 🛠️ Complete Development Workflow Example
+## 🧪 Testing
 
-Let's walk through a real development session showing ALL features working together:
+```bash
+# Backend tests
+source claudecodeenv/bin/activate
+python -m pytest backend/tests/ -v
 
-### Scenario: Add a "Clear Chat" Button
+# Frontend tests
+cd frontend
+npm test
 
-```
-# 1. Start Claude Code session
-→ SessionStart hook fires
-→ Injects project context from .claude/hooks/project-context.txt
-→ Claude knows: ports (8000, 5173), commit format, test requirements
-
-# 2. You ask: "Add a clear chat button to the UI"
-→ Claude delegates to frontend-improver agent (Step 6: Custom Agents)
-→ Agent analyzes ChatInterface component
-
-# 3. Generate button component
-You: "/component ClearButton A button to clear chat messages"
-→ Custom command fires (Step 4: Commands)
-→ Creates frontend/src/components/ClearButton.tsx
-
-# 4. Claude modifies ChatInterface.tsx
-→ Adds import for ClearButton
-→ Wires up onClick handler to clear messages
-→ TypeScript LSP plugin runs (Step 3: Plugins)
-→ No type errors detected ✓
-
-# 5. Try dangerous command (accidentally)
-You: "Remove all test files with rm -rf frontend/src/test"
-→ PreToolUse hook fires (Step 2: Hooks)
-→ Dangerous command detected
-→ Command BLOCKED ✓
-
-# 6. Commit changes
-You: "/commit-commands:commit"
-→ Plugin generates conventional commit (Step 3: Plugins)
-→ Message: "feat: add clear chat button with confirmation"
-→ Commit created ✓
-
-# 7. Create pull request
-You: "Create a PR for this feature"
-→ GitHub plugin fires (Step 3: Plugins)
-→ Generates PR title, description, test plan
-→ Creates PR on GitHub ✓
-
-# 8. Create architecture diagram
-You: "Create a diagram showing the new button's data flow"
-→ MCP drawio server fires (Step 7: MCP)
-→ Generates .drawio file with visual diagram ✓
+# All tests
+./run-all-tests.sh
 ```
 
-**What just happened:**
-- ✅ **CLAUDE.md** guided the process (Step 1)
-- ✅ **Hooks** blocked dangerous commands and protected files (Step 2)
-- ✅ **Plugins** caught type errors and created PR (Step 3)
-- ✅ **Custom Command** generated component (Step 4)
-- ✅ **Custom Agent** handled frontend work (Step 6)
-- ✅ **MCP Server** created diagram (Step 7)
-- ✅ **settings.json** wired it all together (Step 8)
-
-**Result:** Feature implemented, tested, committed, and PR'd - all with automated safety checks and quality verification.
+**Expected:** All 62 tests pass ✅
 
 ---
 
-## 🎯 Key Takeaways for Labcamp
+## 🎯 Workshop Guide
 
-### Productivity Gains
+**Want to learn by building this project from scratch?**
 
-1. **Safety:** Hooks prevent destructive operations and protect sensitive files
-2. **Quality:** Plugins catch type errors before runtime
-3. **Speed:** Commands and skills reduce multi-step workflows to one command
-4. **Collaboration:** Agents handle specialized tasks in parallel
-5. **Integration:** MCP connects to any external tool or service
-6. **Context:** Project rules and architecture documented in CLAUDE.md
+See [WORKSHOP.md](./WORKSHOP.md) for complete hands-on guide covering:
+- Lab 0-1: Setup & Connect Claude Code
+- Lab 2: Build app with Plan Mode
+- Lab 3: Plugins & TDD
+- Lab 4: Commands, Skills & Hooks
+- Lab 5: Agents & MCP
+- Lab 6: Documentation
+- Lab 12: Add custom news digest feature
 
-### Best Practices
-
-1. **Document everything** in CLAUDE.md (commands, rules, architecture)
-2. **Use hooks** for automated formatting and safety checks
-3. **Install plugins** for type checking and IDE features
-4. **Create commands** for common repetitive tasks
-5. **Define skills** for complex multi-step workflows
-6. **Leverage agents** for specialized work (backend, frontend, review)
-7. **Add MCP servers** for external tool integration
-8. **Centralize config** in settings.json
-
-### Common Pitfalls to Avoid
-
-❌ **Don't skip CLAUDE.md** - It's the foundation of project understanding
-❌ **Don't disable hooks** - They prevent accidents and ensure consistency
-❌ **Don't ignore plugins** - Type checking saves hours of debugging
-❌ **Don't commit secrets** - Hooks protect .env but always double-check
-❌ **Don't bypass tests** - All tests must pass before committing
+Time: ~2-3 hours | Difficulty: Intermediate
 
 ---
 
-## 📚 Additional Resources
+## 🔧 Troubleshooting
 
-### Official Documentation
+| Problem | Fix |
+|---------|-----|
+| Port in use | `lsof -ti:8000 \| xargs kill -9` (backend)<br>`lsof -ti:5173 \| xargs kill -9` (frontend) |
+| AWS error | `aws sts get-caller-identity` to verify credentials |
+| Module not found | `source claudecodeenv/bin/activate` |
+| Hooks not working | `brew install jq` |
+
+---
+
+## 📚 Documentation
+
 - **Claude Code:** [code.claude.com/docs](https://code.claude.com/docs)
-- **CLAUDE.md Guide:** [code.claude.com/docs/en/memory](https://code.claude.com/docs/en/memory)
-- **Hooks Reference:** [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks)
-- **Plugins Guide:** [code.claude.com/docs/en/discover-plugins](https://code.claude.com/docs/en/discover-plugins)
-- **MCP Specification:** [modelcontextprotocol.io](https://modelcontextprotocol.io)
-
-### Framework Documentation
-- **FastAPI:** [fastapi.tiangolo.com](https://fastapi.tiangolo.com/)
-- **Strands SDK:** [strandsagents.com/docs](https://strandsagents.com/docs/)
-- **React:** [react.dev](https://react.dev/)
-- **Tailwind CSS:** [tailwindcss.com](https://tailwindcss.com/)
-
-### Community & Support
-- **GitHub Issues:** [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
-- **Plugin Marketplace:** [claude.com/plugins](https://claude.com/plugins)
-- **MCP Servers:** [github.com/modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers)
-
----
-
-## 🎨 Real-World Example: Transforming the Grey UI
-
-**Problem:** The frontend appeared grey and washed out despite having a dark glassmorphism design in the code.
-
-**Solution:** Used multiple Claude Code features working together to diagnose and fix the issue.
-
-### Step-by-Step Workflow
-
-#### 1. Visual Inspection (MCP + Custom Agent)
-```
-User: "The frontend is just grey with no colors, why?"
-Claude: [Launches frontend-visual-inspector agent]
-```
-
-**What happened:**
-- Agent used **chrome-devtools MCP server** to take screenshots
-- Analyzed the UI and identified the problem:
-  - Low opacity colors (blue-500/10, purple-500/10)
-  - Over-transparent glassmorphism (white/[0.02])
-  - Dark slate backgrounds making accents invisible
-
-**Screenshot captured:**
-![Before: Grey, washed-out UI with minimal color]
-
-#### 2. Visual Improvements (Custom Agent + Tool Use)
-```
-Claude: [Launches frontend-improver agent]
-```
-
-**What happened:**
-- Agent modified 4 component files simultaneously:
-  - `App.tsx` - Boosted gradient blob opacity (/10 → /20)
-  - `ChatInterface.tsx` - Enhanced glassmorphism surfaces
-  - `MessageList.tsx` - Purple-tinted assistant messages
-  - `MessageInput.tsx` - More prominent input field
-
-**Changes made:**
-- Doubled background gradient opacity for vibrant blue/purple glow
-- Brightened glassmorphism surfaces (white/[0.02] → white/[0.05])
-- Bold gradients on icons (blue-500 to purple-600)
-- Color-coded capability pills (blue for weather, purple for math)
-- Enhanced focus states with glowing effects
-
-#### 3. Problem Discovery (MCP Browser Tools)
-```
-Claude: [Takes screenshot after changes]
-Result: Still showing grey/white!
-```
-
-**What happened:**
-- Used **chrome-devtools MCP** to reload page and take fresh screenshot
-- Used `evaluate_script` to inspect computed styles:
-  ```javascript
-  classList: ["bg-gradient-to-br", "from-slate-900", "via-slate-800"]
-  backgroundImage: "none"  // ❌ Classes present but CSS not applied!
-  ```
-
-**Root cause identified:** Tailwind CSS v4 compatibility issue
-
-#### 4. Fix Applied (Direct Tool Use)
-```
-Claude: [Reads package.json, identifies Tailwind v4]
-```
-
-**What happened:**
-- Discovered project uses Tailwind v4 (`tailwindcss: ^4.2.2`)
-- Tailwind v4 changed import syntax
-- **Old (v3):** `@tailwind base; @tailwind components; @tailwind utilities;`
-- **New (v4):** `@import "tailwindcss";`
-
-**Fix:**
-```diff
-- @tailwind base;
-- @tailwind components;
-- @tailwind utilities;
-+ @import "tailwindcss";
-```
-
-#### 5. Verification (MCP + Testing)
-```
-Claude: [Reloads page with cache clear, takes screenshot]
-```
-
-**Result:** ✅ **Success!**
-
-**Screenshot captured:**
-![After: Vibrant dark theme with blue/purple gradients, glassmorphism effects, color-coded elements]
-
-**Visual improvements confirmed:**
-- ✅ Dark gradient background visible (slate-900 to slate-800)
-- ✅ Blue and purple ambient glows in corners
-- ✅ Glassmorphism card with frosted glass effect
-- ✅ Vibrant emerald status badge
-- ✅ Color-coded capability pills (blue, purple, neutral)
-- ✅ Bold gradient on empty state icon
-- ✅ Enhanced input field with better contrast
-
-#### 6. Quality Assurance (Hooks + Testing)
-```
-Claude: [Runs test suite before committing]
-```
-
-**What happened:**
-- **Testing hook** automatically triggered
-- Backend: 43 tests passed ✅
-- Frontend: 19 tests passed ✅
-- No regressions introduced
-
-#### 7. Commit and Push (Plugin + Convention)
-```
-Claude: [Creates conventional commit and pushes]
-```
-
-**Commit message:**
-```
-feat: enhance UI with vibrant colors and fix Tailwind v4 compatibility
-
-Visual improvements:
-- Increase gradient blob opacity from /10 to /20
-- Brighten glassmorphism surfaces
-- Bold gradients on empty state icon
-- Color-coded capability pills
-
-Technical fix:
-- Fix Tailwind CSS v4 compatibility
-```
-
-### Features Used in This Workflow
-
-| Feature | How It Was Used |
-|---------|----------------|
-| **Custom Agents** | frontend-visual-inspector + frontend-improver agents |
-| **MCP Servers** | chrome-devtools for screenshots, browser automation, script evaluation |
-| **Direct Tools** | Read (inspect code), Edit (fix CSS), Bash (run tests) |
-| **Hooks** | Testing hook verified no regressions |
-| **Plugins** | TypeScript LSP caught any type errors in component changes |
-| **CLAUDE.md** | Guided testing requirements and commit format |
-| **settings.json** | Enabled MCP servers and configured hooks |
-
-### Key Takeaways
-
-1. **Multi-agent collaboration** - Visual-inspector diagnosed, frontend-improver fixed
-2. **MCP integration** - Browser automation provided real-time visual feedback
-3. **Root cause analysis** - DevTools revealed CSS wasn't applying despite correct classes
-4. **Automated testing** - Hooks ensured quality throughout the workflow
-5. **Professional workflow** - From diagnosis to fix to commit, all automated
-
-#### 8. Bonus: Scrolling Bug Fix (Multi-Agent Workflow)
-
-After the visual improvements, a critical UX bug was discovered:
-
-**Problem:** First message hides the header - user can't see the top of the app.
-
-**Diagnosis Flow:**
-```
-User: "First message goes to top, I can't see the header"
-Claude: [Launches frontend-visual-inspector agent]
-```
-
-**What happened:**
-- Agent took screenshots and analyzed scroll behavior
-- Identified root cause: `scrollIntoView()` scrolling entire PAGE instead of container
-- Found the bug in ChatInterface.tsx line 14: `messagesEndRef.current?.scrollIntoView()`
-- When container isn't scrollable, it searches parent and finds document/body
-- This pushed header out of viewport
-
-**Fix Flow:**
-```
-Claude: [Launches frontend-improver agent with specific fix instructions]
-```
-
-**Solution applied:**
-- Changed from `scrollIntoView()` to direct scroll control (`scrollTop = scrollHeight`)
-- Added `messageListRef` pointing to the container
-- Added `overscroll-behavior-contain` CSS to prevent scroll bubbling
-- Updated MessageList to accept `containerRef` prop
-
-**Result:**
-- ✅ Header always stays visible
-- ✅ Scroll properly contained within message container
-- ✅ Page-level scroll never triggered
-- ✅ All 62 tests pass
-- ✅ Committed: `fix: prevent header from hiding when first message is sent`
-
----
-
-**Time saved:** What would have taken 30+ minutes of manual debugging, browser refreshing, and trial-and-error was completed in minutes with Claude Code's integrated tooling.
-
-**Final Result:** A production-ready, visually stunning dark theme with glassmorphism effects, vibrant color accents, and smooth scroll behavior - all tested and committed with zero regressions.
+- **Strands SDK:** [strandsagents.com/docs](https://strandsagents.com/docs)
+- **FastAPI:** [fastapi.tiangolo.com](https://fastapi.tiangolo.com)
+- **React:** [react.dev](https://react.dev)
 
 ---
 
 ## 🤝 Contributing
 
-This project is for educational purposes (ClaudeCode Labcamp). To contribute:
+1. Fork repo
+2. Create feature branch (`git checkout -b feature/name`)
+3. Commit changes (`git commit -m 'feat: add feature'`)
+4. Push branch (`git push origin feature/name`)
+5. Open Pull Request
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-**Commit Format:** Use conventional commits (feat:, fix:, chore:, docs:, test:)
+**Commit format:** Conventional commits (feat:, fix:, chore:, docs:, test:)
 
 ---
 
 ## 📄 License
 
-This project is part of the ClaudeCode Labcamp learning environment.
+Educational project for ClaudeCode Labcamp.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Built with [Claude 4](https://www.anthropic.com/claude) via Amazon Bedrock
-- Powered by [Strands Agents SDK](https://strandsagents.com/)
-- UI components styled with [Tailwind CSS](https://tailwindcss.com/)
-- Development accelerated with [Claude Code](https://claude.ai/code)
+Built with:
+- [Claude 4](https://www.anthropic.com/claude) via Amazon Bedrock
+- [Strands Agents SDK](https://strandsagents.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Claude Code](https://claude.ai/code)
 
 ---
 
 **Happy coding! 🚀**
 
-*This project demonstrates how Claude Code's 8 core features work together to boost daily productivity through automation, safety, and verification.*
+*Built to demonstrate Claude Code's automation, safety, and verification features.*
