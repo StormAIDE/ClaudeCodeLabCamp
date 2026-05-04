@@ -1508,27 +1508,37 @@ Backend:
    - fetch_[topic]_articles(subtopic, days=7): fetches from feedparser,
      strips HTML with BeautifulSoup, validates URL scheme (http/https only),
      returns list of {title, url, summary, published_date, subtopic}
-   - search_[topic]_news(subtopic, days=7): agent tool that queries the DB
-     cache and returns formatted markdown; rejects subtopics not in the allowlist
+   - search_[topic]_news(subtopic, days=7): agent tool used by the chatbot;
+     queries ONLY the DB cache via db.get_[topic]_articles() — never fetches
+     from RSS directly; if the DB has no articles return a plain "no articles
+     found" string (do not fall back to live RSS); reject invalid subtopics
+     with an error string, not an exception
    - TOPIC_TOOL_SCHEMAS: list with the tool's JSON schema (enum field
      constrains the AI to the allowlist)
    - TOPIC_TOOL_DISPATCH: dict mapping tool name to function
 
+   Key rule: the chatbot reads only from the DB. Live RSS fetching belongs
+   to the background scraper (main.py) and the digest page endpoint only.
+   This is what makes the pre-scrape architecture work.
+
 2. backend/database/db.py — add two new methods:
    - add_[topic]_article(title, url, summary, subtopic, published_date):
      validates subtopic against allowlist before inserting; uses
-     INSERT OR IGNORE so duplicates are silently skipped; all SQL uses
-     ? placeholders only
+     INSERT OR IGNORE so duplicates are silently skipped (depends on the
+     unique index added by _migrate_add_url_unique_index); all SQL uses
+     ? placeholders only; topic is a hardcoded string literal, never user input
    - get_[topic]_articles(subtopic=None, limit=10): two separate
      parameterised queries (one for all articles, one filtered by subtopic);
      topic column is a hardcoded string literal, never user input
-   - add a _migrate_add_url_unique_index migration and call it from init_db
+   - add _migrate_add_url_unique_index and call it from init_db so
+     INSERT OR IGNORE actually deduplicates on the url column
 
 3. backend/api/endpoints/[topic].py
    - _VALID_SUBTOPICS = frozenset(TOPIC_SUBTOPICS) at module level
    - GET /[topic]?subtopic=...&limit=... : validates subtopic against
      frozenset before any DB call (HTTP 400 if invalid); limit bounded
-     ge=1, le=50; on empty result auto-fetches from RSS and re-queries
+     ge=1, le=50; if DB result is empty, fetch from RSS, insert into DB,
+     then re-query — this is the ONLY place live RSS is triggered on demand
    - GET /[topic]/subtopics: returns TOPIC_SUBTOPICS list
 
 4. backend/services/agent_service.py
@@ -1690,7 +1700,7 @@ The digest you just built uses **SQL keyword search** (`LIKE '%query%'`) to matc
 The agent picks the right tool automatically:
 - Broad topic question → calls `search_news` against general RSS feeds
 - Specific keyword query (e.g. "Boston Dynamics") → calls `search_all_news`, a `SQL LIKE '%query%'` scan across all cached article titles and summaries
-- Your custom topic → calls `search_[topic]_news` against your specialist feeds
+- Your custom topic → calls `search_[topic]_news`, a DB-only read from the cache your digest page pre-scraped
 
 **Why pre-scrape instead of fetching live on every question?**
 
