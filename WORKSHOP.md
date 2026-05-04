@@ -1492,115 +1492,28 @@ Then paste this prompt, filling in your topic and sub-topics:
 ```
 I want to add a "[YOUR TOPIC]" news digest page to this project.
 
-The page should work like this:
-- A dedicated tab in the navigation
-- Sub-topic filter chips: [LIST YOUR SUBTOPICS]
-- Articles fetched from RSS feeds per sub-topic and cached in SQLite
-- Auto-fetch from feeds when the DB cache is empty for a sub-topic
-- 60-second auto-refresh interval in the UI
+Topic: [YOUR TOPIC]
+Sub-topics: [LIST YOUR SUBTOPICS]
+RSS feeds: [LIST 1-2 FEED URLS PER SUBTOPIC — ask Claude to suggest some if unsure]
 
-Architecture to implement (full stack):
+What it should do:
+- Scrape RSS feeds on a schedule and store articles in the existing SQLite DB
+- A dedicated page in the navigation with sub-topic filter chips
+- The digest page fetches from RSS if the DB cache is empty for a sub-topic,
+  otherwise serves from cache; auto-refreshes every 60 seconds
+- The chatbot agent must query ONLY from the DB — it never fetches from RSS
+  directly; if the DB has no articles for a query it returns "no articles found"
 
-Backend:
-1. backend/tools/[topic]_tools.py
-   - TOPIC_SUBTOPICS: list of allowed subtopic strings (the allowlist)
-   - TOPIC_RSS_FEEDS: dict mapping each subtopic to a list of RSS feed URLs
-   - fetch_[topic]_articles(subtopic, days=7): fetches from feedparser,
-     strips HTML with BeautifulSoup, validates URL scheme (http/https only),
-     returns list of {title, url, summary, published_date, subtopic}
-   - search_[topic]_news(subtopic, days=7): agent tool used by the chatbot;
-     queries ONLY the DB cache via db.get_[topic]_articles() — never fetches
-     from RSS directly; if the DB has no articles return a plain "no articles
-     found" string (do not fall back to live RSS); reject invalid subtopics
-     with an error string, not an exception
-   - TOPIC_TOOL_SCHEMAS: list with the tool's JSON schema (enum field
-     constrains the AI to the allowlist)
-   - TOPIC_TOOL_DISPATCH: dict mapping tool name to function
-
-   Key rule: the chatbot reads only from the DB. Live RSS fetching belongs
-   to the background scraper (main.py) and the digest page endpoint only.
-   This is what makes the pre-scrape architecture work.
-
-2. backend/database/db.py — add two new methods:
-   - add_[topic]_article(title, url, summary, subtopic, published_date):
-     validates subtopic against allowlist before inserting; uses
-     INSERT OR IGNORE so duplicates are silently skipped (depends on the
-     unique index added by _migrate_add_url_unique_index); all SQL uses
-     ? placeholders only; topic is a hardcoded string literal, never user input
-   - get_[topic]_articles(subtopic=None, limit=10): two separate
-     parameterised queries (one for all articles, one filtered by subtopic);
-     topic column is a hardcoded string literal, never user input
-   - add _migrate_add_url_unique_index and call it from init_db so
-     INSERT OR IGNORE actually deduplicates on the url column
-
-3. backend/api/endpoints/[topic].py
-   - _VALID_SUBTOPICS = frozenset(TOPIC_SUBTOPICS) at module level
-   - GET /[topic]?subtopic=...&limit=... : validates subtopic against
-     frozenset before any DB call (HTTP 400 if invalid); limit bounded
-     ge=1, le=50; if DB result is empty, fetch from RSS, insert into DB,
-     then re-query — this is the ONLY place live RSS is triggered on demand
-   - GET /[topic]/subtopics: returns TOPIC_SUBTOPICS list
-
-4. backend/services/agent_service.py
-   - Import TOPIC_TOOL_SCHEMAS, TOPIC_TOOL_DISPATCH, search_[topic]_news
-   - Extend ALL_TOOL_SCHEMAS and ALL_TOOL_DISPATCH to include them
-   - Add search_[topic]_news to the Bedrock tools list
-   - Add a line to SYSTEM_PROMPT describing when to use search_[topic]_news
-
-5. backend/api/routes.py
-   - Import the new endpoint module and include_router
-
-6. backend/main.py
-   - Import TOPIC_SUBTOPICS and fetch_[topic]_articles
-   - Add a scraper loop inside _scrape_all_feeds that iterates TOPIC_SUBTOPICS
-     and calls db.add_[topic]_article; log failures at debug level
-
-Frontend:
-7. frontend/src/types/api.ts — append:
-   - TOPIC_SUBTOPICS as const tuple (include 'all' as first entry)
-   - TopicSubtopic type derived from the tuple
-   - TOPIC_SUBTOPIC_LABELS array with slug + display label for each entry
-
-8. frontend/src/api/[topic].ts
-   - fetchTopicArticles(subtopic, limit=20): GET /[topic]; if subtopic
-     is 'all' omit the subtopic param; return Promise<Article[]>
-
-9. frontend/src/hooks/useTopicNews.ts
-   - React Query hook with queryKey: ['[topic]', subtopic]
-   - refetchInterval and staleTime both 60_000 ms
-
-10. frontend/src/pages/TopicPage.tsx
-    - ArticleCardSkeleton for loading state
-    - FilterChips component mapping TOPIC_SUBTOPIC_LABELS
-    - EmptyState and ErrorState components
-    - Main page: useState for active subtopic, useTopicNews hook,
-      responsive article grid (1 / md:2 / xl:3 columns)
-
-11. frontend/src/App.tsx
-    - Add '[topic]' to the View union type
-    - Add a nav button (use a distinct Tailwind colour from existing tabs)
-    - Add TopicPage to the conditional render
-
-Tests:
-12. backend/tests/test_[topic].py — mirror the robotics test file:
-    - subtopics list shape and contents
-    - invalid subtopic → error string (not exception)
-    - SQL injection string → blocked by allowlist
-    - valid subtopic with mocked DB cache
-    - fallback fetch when DB empty
-    - URL scheme validation (_is_valid_url): http, https, javascript:, empty
-    - GET /[topic]/subtopics → 200
-    - GET /[topic]?subtopic=invalid → 400
-    - GET /[topic]?limit=999 → 422
+Follow the same pattern already used in this project for the existing
+news digest pages. Look at the codebase to understand that pattern before
+planning anything.
 
 Security requirements:
-- Allowlist-validate all subtopic inputs at every layer
-  (tool function, API endpoint, DB insert)
-- Parameterised queries only — no f-strings or .format() in SQL
-- No user-controlled strings in SQL
-- URL scheme validation at RSS ingest time
+- Validate all sub-topic inputs against an allowlist at every layer
+- Parameterised SQL queries only — no string interpolation
+- Deduplicate articles so the same article is never stored twice
 
-Use a code-reviewer agent to review the security of the plan
+Use a code-reviewer agent to check the security of the plan
 and an Explore agent to map which files need to change.
 Produce a detailed step-by-step implementation plan.
 ```
