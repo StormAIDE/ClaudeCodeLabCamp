@@ -99,7 +99,7 @@ aws --version       # AWS CLI should be installed
 
 **You need to install Claude Code first!**
 
-#### Option 1: Install in VS Code (Mac - Recommended)
+#### Option 1: Install in VS Code Terminal (Mac - Recommended)
 
 **Open VS Code terminal and run:**
 
@@ -108,13 +108,23 @@ aws --version       # AWS CLI should be installed
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-**After installation:**
+**After installation, start Claude:**
 ```bash
-# Verify installation
-claudecode --version
+claude
 ```
 
-✅ You should see the Claude Code version number!
+**🔐 First-Time Setup - AWS Bedrock SSO Configuration:**
+
+When you type `claude` for the first time, you'll see a prompt to configure authentication:
+
+1. **Select authentication method**: Choose **AWS Bedrock SSO**
+2. **Enter AWS SSO profile name**: Type your profile name (e.g., `default` or your custom profile)
+3. **Enter AWS region**: Type `eu-central-1` (or your preferred region)
+4. **Follow remaining prompts** to complete setup
+5. **Press Enter to restart Claude**
+6. **Type `claude` again** - Connection will be established
+
+**✅ You should now be connected and ready to chat!**
 
 #### Option 2: Install for Other Operating Systems
 
@@ -129,11 +139,7 @@ This guide covers:
 - **Desktop App**: Download standalone app
 - **VS Code Extension**: Install directly in VS Code
 
-**✅ Test Installation:**
-```bash
-claudecode --version
-# Should display: Claude Code v[version number]
-```
+**✅ After installation, start Claude and configure AWS Bedrock SSO as described above.**
 
 **🎯 What This Enables:**
 - ✨ Chat with Claude directly from your terminal
@@ -252,7 +258,7 @@ aws sts get-caller-identity
 cd tech-news-aggregator
 
 # Start Claude Code
-claudecode
+claude
 ```
 
 **What you'll see:**
@@ -261,6 +267,8 @@ Claude Code v[version]
 Connected to: tech-news-aggregator/
 Ready to assist!
 ```
+
+**Note:** If this is your first time running Claude, refer to the AWS Bedrock SSO configuration steps in the installation section above.
 
 ### Step 1.2: Test Basic Commands
 

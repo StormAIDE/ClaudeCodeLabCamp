@@ -65,10 +65,114 @@ python -m pytest backend/tests/ -q      # Should show: 54 passed
 
 ---
 
-## Step 1 — Open the Project in Claude Code
+## Step 0.1 — Install Claude Code CLI
+
+**Before starting, install Claude Code on your machine:**
+
+### Option 1: Install on Mac/Linux
 
 ```bash
-claude .
+# Install Claude Code CLI
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Verify installation:**
+```bash
+claude --version
+# Should display: Claude Code v[version number]
+```
+
+### Option 2: Install for Other Operating Systems
+
+Follow the official installation guide:
+
+👉 **[https://code.claude.com/docs/en/quickstart](https://code.claude.com/docs/en/quickstart)**
+
+This guide covers:
+- **Windows**: Installation via PowerShell
+- **Linux**: Installation via bash script
+- **macOS**: Alternative installation methods
+- **Desktop App**: Download standalone app
+- **VS Code Extension**: Install directly in VS Code
+
+**✅ Verify installation before proceeding:**
+```bash
+claude --version
+```
+
+---
+
+## Step 0.2 — Configure AWS Profile (First-Time Setup)
+
+**Before using Claude Code, set up your AWS profile with the credentials provided:**
+
+```bash
+aws configure --profile claudecodeprofile
+```
+
+**When prompted, enter the values provided to you:**
+
+```
+AWS Access Key ID [None]: [paste your access key]
+AWS Secret Access Key [None]: [paste your secret key]
+Default region name [None]: eu-central-1
+Default output format [None]: json
+```
+
+**Set the session token (provided separately,if not asked in previous step):**
+
+```bash
+aws configure set aws_session_token [your-session-token] --profile claudecodeprofile
+```
+
+**Verify profile configured:**
+```bash
+aws sts get-caller-identity --profile claudecodeprofile
+# Should return your AWS account details
+```
+
+---
+
+## Step 0.3 — Connect Claude Code to AWS Bedrock
+
+**Now connect Claude Code to your AWS profile:**
+
+```bash
+claude
+```
+
+**First-time prompt will appear:**
+
+1. **Select authentication method**: Choose **AWS Bedrock SSO**
+2. **Enter AWS SSO profile name**: Type `claudecodeprofile`
+3. **Enter AWS region**: Type `eu-central-1`
+4. **Follow remaining prompts** to complete setup
+5. **Press Enter** to restart Claude
+6. **Type `claude` again** — connection established
+
+---
+
+## Step 1 — Open the Project in Claude Code
+
+**Once Claude Code is configured:
+
+```bash
+claude
+```
+
+**When prompted:**
+
+1. **Select authentication method**: Choose **AWS Bedrock SSO**
+2. **Enter AWS SSO profile name**: Type your profile name (e.g., `default`)
+3. **Enter AWS region**: Type `eu-central-1`
+4. **Follow remaining prompts** to complete setup
+5. **Press Enter** to restart Claude
+6. **Type `claude` again** — connection established
+
+**Once configured, open your project:**
+
+```bash
+claude
 ```
 
 Ask Claude Code to familiarise itself with the project:
