@@ -1437,7 +1437,39 @@ The digest page and the chatbot share the same database: the page scrapes specia
 
 ---
 
-### Step 12.1: Choose Your Topic and Sub-topics
+### Step 12.1: Browse the Agent Marketplace
+
+Before writing a line of code, browse **[https://app.aitmpl.com](https://app.aitmpl.com)** — a community marketplace of pre-built Claude Code components.
+
+| Category | What you will find |
+|----------|--------------------|
+| **Skills** | Slash commands — session savers, security reviews, test runners |
+| **Agents** | Specialised sub-agents — backend developer, code reviewer, debugger |
+| **Hooks** | Event-triggered automations — run tests on save, block dangerous commands |
+| **Settings** | Best-practice `.claude/settings.json` presets |
+
+> **Skills vs Agents — what is the difference?**
+>
+> **Agents** work autonomously in the background — Claude spawns them to do a task (write code, review, debug). You see the result, not every intermediate step.
+>
+> **Skills** are slash commands you invoke yourself — they guide Claude through a workflow step by step inside your session, staying fully visible the whole time.
+
+**Workshop activity:**
+1. Search for something relevant to your digest topic (e.g. `rss`, `news`, `web scraping`, `code review`, `security`)
+2. Look for agents that could help you — for example a `backend-developer` agent or a `security-reviewer` agent
+3. Install a skill by copying its `.md` file into `.claude/skills/<name>/SKILL.md` and invoke it with `/<name>`
+4. Install an agent by copying its `.md` file into `.claude/agents/<name>.md`
+
+**Useful agents for this lab:**
+- A **backend-maintainer** or **python-pro** agent to write FastAPI and database code
+- A **code-reviewer** agent to check security of each layer
+- A **frontend-improver** agent to build the React page
+
+The `/save-to-claude-md` skill is already installed in this project. Run it at the end of every session to persist what you built into `CLAUDE.md` so the next session picks up where you left off.
+
+---
+
+### Step 12.2: Choose Your Topic and Sub-topics
 
 Pick a news topic. Some ideas: `Space & Aerospace`, `Cybersecurity`, `DevOps`, `Quantum Computing`, `Green Tech`, `Gaming`, `Web3`, `Fintech`, `AR/VR`, `Open Source`
 
@@ -1447,7 +1479,7 @@ For your topic, define:
 
 ---
 
-### Step 12.2: Enter Plan Mode
+### Step 12.3: Enter Plan Mode
 
 Enter Plan Mode before writing any code:
 
@@ -1567,7 +1599,7 @@ Review the plan saved to `.claude/plans/`. Read it, ask questions, and adjust an
 
 ---
 
-### Step 12.3: Approve and Implement
+### Step 12.4: Approve and Implement
 
 Once you are happy with the plan:
 
@@ -1583,7 +1615,7 @@ Watch Claude spawn sub-agents to handle each layer.
 
 ---
 
-### Step 12.4: Run Tests
+### Step 12.5: Run Tests
 
 ```bash
 source venv/bin/activate
@@ -1600,7 +1632,7 @@ The test suite has failures. Read the output and fix them.
 
 ---
 
-### Step 12.5: Verify in the Browser
+### Step 12.6: Verify in the Browser
 
 1. Restart the backend: `python -m backend.main`
 2. Open [http://localhost:5173](http://localhost:5173)
@@ -1616,7 +1648,7 @@ The [subtopic] filter shows no articles. Trace why and fix it.
 
 ---
 
-### Step 12.6: Chat With Your Digest
+### Step 12.7: Chat With Your Digest
 
 The chatbot and your digest page share the same SQLite database. Once your page has scraped some articles, the chatbot can answer questions from that cache.
 
@@ -1634,6 +1666,89 @@ Show me the most recent [subtopic] news.
 - ✨ Shared DB architecture: pages scrape, chatbot reads from cache
 - ✨ Using backend-maintainer and frontend-improver agents in parallel
 - ✨ Code-reviewer agent validates security before implementation
+
+---
+
+### Step 12.8: Save the Session
+
+At the end of every session, run:
+
+```
+/save-to-claude-md
+```
+
+Claude will review the conversation and append a dated summary to `CLAUDE.md` covering decisions made, patterns established, files changed, and bugs fixed. The next session starts with full context already loaded.
+
+---
+
+### How This Digest Differs From RAG — and When to Use Each
+
+The digest you just built uses **SQL keyword search** (`LIKE '%query%'`) to match articles. It works immediately, requires no extra infrastructure, and handles the most common queries well. Understanding its limits — and when RAG is the right upgrade — is useful context.
+
+**How the current search works:**
+
+The agent picks the right tool automatically:
+- Broad topic question → calls `search_news` against general RSS feeds
+- Specific keyword query (e.g. "Boston Dynamics") → calls `search_all_news`, a `SQL LIKE '%query%'` scan across all cached article titles and summaries
+- Your custom topic → calls `search_[topic]_news` against your specialist feeds
+
+**Why pre-scrape instead of fetching live on every question?**
+
+| | Fetch live on every question | Pre-scraped DB cache |
+|--|------------------------------|----------------------|
+| **Response time** | 3–8 s (network + parsing) | < 1 s |
+| **RSS feed load** | Every question hits the feed servers | Feeds polled on a schedule |
+| **Duplicate work** | 10 users ask the same thing = 10 fetches | 10 users = 1 cached result |
+| **Offline resilience** | Fails if the feed is down | Still answers from cache |
+
+The digest page acts as a background scraper that continuously warms the cache. The chatbot is a reader — it benefits from everything the page already fetched.
+
+**The limit of keyword search:**
+
+```
+"Boston Dynamics"        — finds articles mentioning those exact words ✅
+"bipedal robot company"  — no match, even if the article is clearly about Boston Dynamics ❌
+"Atlas latest news"      — only matches if "Atlas" literally appears in title or summary ❌
+```
+
+**What RAG (Retrieval-Augmented Generation) adds:**
+
+RAG understands meaning, not just words. Here is how it works:
+
+1. **Embed articles on save** — when an article is stored, generate a vector embedding (a list of ~1500 numbers encoding the semantic meaning) using a model like `text-embedding-3-small` or Anthropic's embeddings API
+2. **Store the embeddings** — save those vectors alongside the article in SQLite with the `sqlite-vec` extension, or in a dedicated vector DB like pgvector, Chroma, or Qdrant
+3. **Embed the query** — at question time, embed the user's question using the same model
+4. **Similarity search** — find the articles whose vectors are mathematically closest to the query vector (cosine similarity). Closest = most similar in meaning, not wording
+5. **Ground Claude's answer** — inject the retrieved articles into the prompt; Claude reads them and answers based on real content
+
+```
+User asks: "bipedal robot company news"
+  → embed query → [0.23, -0.87, 0.45, ...]
+  → similarity search → Boston Dynamics articles score highest
+  → Claude answers grounded in those articles ✅
+```
+
+**Keyword search vs RAG — when to use which:**
+
+| | Keyword search (what we built) | Real RAG |
+|--|-------------------------------|----------|
+| Finds exact words / names | Yes | Yes |
+| Finds synonyms | No | Yes |
+| Finds by meaning / concept | No | Yes |
+| Setup complexity | None — plain SQL | Embedding model + vector store |
+| Extra cost | Free | Small cost per article embedded |
+| Best for | Company names, direct keywords | Open-ended natural language questions |
+
+For this workshop, keyword search is the right tradeoff — zero extra infrastructure, works immediately, and handles the most common queries well. RAG is the natural next step if you want to turn this into a production product.
+
+**To add RAG to this project, tell Claude Code:**
+
+```
+Add semantic search to the news chatbot using Anthropic's embeddings API.
+When articles are saved to the DB, generate embeddings and store them in a
+sqlite-vec table. Replace the LIKE search in search_all_news with a vector
+similarity search. Keep the LIKE search as a fallback if no embeddings exist.
+```
 
 ---
 
