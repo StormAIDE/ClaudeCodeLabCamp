@@ -1496,26 +1496,32 @@ Topic: [YOUR TOPIC]
 Sub-topics: [LIST YOUR SUBTOPICS]
 RSS feeds: [LIST 1-2 FEED URLS PER SUBTOPIC — ask Claude to suggest some if unsure]
 
-What it should do:
-- Scrape RSS feeds on a schedule and store articles in the existing SQLite DB
-- A dedicated page in the navigation with sub-topic filter chips
-- The digest page fetches from RSS if the DB cache is empty for a sub-topic,
-  otherwise serves from cache; auto-refreshes every 60 seconds
-- The chatbot agent must query ONLY from the DB — it never fetches from RSS
-  directly; if the DB has no articles for a query it returns "no articles found"
+This is a FastAPI + React project with a SQLite database and an AI chatbot.
+I want to add a full-stack news digest feature that works like this:
 
-Follow the same pattern already used in this project for the existing
-news digest pages. Look at the codebase to understand that pattern before
-planning anything.
+1. A background scraper runs on a schedule and fetches articles from RSS feeds,
+   storing them in the SQLite database. Deduplicate so the same article is
+   never stored twice.
+
+2. A dedicated page in the navigation shows the articles with sub-topic filter
+   chips. If the DB has no articles yet for a sub-topic, fetch from RSS on
+   demand and cache the result. Auto-refresh the page every 60 seconds.
+
+3. The AI chatbot gets a new tool that lets it answer questions about this
+   topic. The tool must read ONLY from the database — it never fetches from
+   RSS directly. If the DB has no articles it returns "no articles found".
+   This is the key rule: the digest page fills the cache, the chatbot reads
+   from it.
 
 Security requirements:
 - Validate all sub-topic inputs against an allowlist at every layer
-- Parameterised SQL queries only — no string interpolation
-- Deduplicate articles so the same article is never stored twice
+  (the agent tool, the API endpoint, and the DB insert)
+- Parameterised SQL queries only — no string interpolation in SQL
+- Only store articles with http or https URLs
 
-Use a code-reviewer agent to check the security of the plan
-and an Explore agent to map which files need to change.
-Produce a detailed step-by-step implementation plan.
+Explore the existing codebase first to understand its structure and conventions
+before planning anything. Use a code-reviewer agent to check the security of
+the plan. Produce a detailed step-by-step implementation plan.
 ```
 
 Review the plan saved to `.claude/plans/`. Read it, ask questions, and adjust anything before approving.
