@@ -807,177 +807,23 @@ Take screenshots of any issues found.
 
 ---
 
-## Lab 6: Documentation
+## Lab 6: Enhance Your App with a Keyword search for common topics that you look up
 
-### Step 6.1: Update CLAUDE.md
+### Why keyword search?
 
-**CLAUDE.md provides project-specific instructions to Claude Code.**
+Right now the chatbot can only answer questions based on whatever the agent tools return in real time. There is no memory of past articles, no way to ask "what did I read last week about Kubernetes?", and every query hits the network from scratch.
 
-**Ask Claude Code:**
-```
-Update CLAUDE.md to document the Tech News Aggregator:
-
-## Project Overview
-This is a Tech News Aggregator built with FastAPI, React, and Claude AI. It searches, categorizes, and analyzes tech news articles.
-
-## Architecture
-- Backend: Python + FastAPI + Strands SDK (port 8000)
-- Frontend: React + TypeScript + Vite (port 5173)
-- Database: SQLite at data/articles.db
-- AI: Claude via Amazon Bedrock
-
-## Agent Tools
-1. search_news(topic, days=7) - Returns mock articles for a topic
-2. categorize_article(text) - Returns category (AI/ML, Cloud/DevOps, etc.)
-3. summarize_article(url) - Returns article summary
-4. get_trending_topics() - Returns top 5 trending topics
-
-## API Endpoints
-- POST /api/v1/agent/chat - Chat with agent
-- GET /api/v1/news?topic=AI&days=7 - Get news articles
-- GET /api/v1/trending - Get trending topics
-
-## Database Schema
-```sql
-CREATE TABLE articles (
-  id INTEGER PRIMARY KEY,
-  title TEXT NOT NULL,
-  url TEXT NOT NULL,
-  summary TEXT,
-  topic TEXT,
-  published_date TEXT,
-  fetched_at TEXT DEFAULT CURRENT_TIMESTAMP
-)
-```
-
-## Development Commands
-- Start app: /start-dev
-- Generate component: /component <name> <description>
-
-## Important Files
-- backend/tools/news_tools.py - Agent tool implementations
-- backend/database/db.py - SQLite wrapper
-- frontend/src/components/NewsFeed.tsx - Main news feed UI
-- .claude/agents/visual-inspector.md - UI testing agent
-
-## Rules
-- Database should only be modified via API (protected by PreToolUse hook)
-- All tests must pass before committing
-- Use TypeScript strict mode in frontend
-- Agent tools should return formatted markdown
-```
-
-### Step 6.2: Review Configuration Files
-
-**Check your hooks configuration:**
-
-```bash
-cat .claude/settings.json
-```
-
-**Should contain:**
-```json
-{
-  "hooks": {
-    "PreToolUse:Bash": {
-      "command": ".claude/hooks/block-dangerous.sh"
-    },
-    "PreToolUse:Edit": {
-      "command": ".claude/hooks/protect-files.sh"
-    },
-    "PreToolUse:Write": {
-      "command": ".claude/hooks/protect-files.sh"
-    }
-  }
-}
-```
-
-**Check MCP servers:**
-
-```bash
-cat .mcp.json
-```
-
-**Should contain:**
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "@executeautomation/chrome-devtools-mcp-server"]
-    }
-  }
-}
-```
-
-**What This Teaches:**
-- Project documentation for AI collaboration
-- Hook configuration management
-- MCP server setup
-- Best practices for team projects
-
----
-
-## Final Verification Checklist
-
-**Before you're done, verify everything works:**
-
-### Backend Checklist
-- [ ] All 4 news tools working (`search_news`, `categorize_article`, `summarize_article`, `get_trending_topics`)
-- [ ] Database initializes at `data/articles.db`
-- [ ] `/api/v1/news` endpoint returns articles
-- [ ] `/api/v1/trending` endpoint returns topics
-- [ ] `/api/v1/agent/chat` endpoint works
-- [ ] Agent responds to news queries
-- [ ] Backend tests pass: `python -m pytest backend/tests/ -v`
-
-### Frontend Checklist
-- [ ] NewsFeed displays with topic filters
-- [ ] ArticleCard shows title, summary, topic, dates
-- [ ] TopicFilter highlights selected topic
-- [ ] Chat interface sends/receives messages
-- [ ] Two-column layout renders correctly
-- [ ] Frontend tests pass: `cd frontend && npm test`
-
-### Features Checklist
-- [ ] TypeScript LSP active (shows type errors in real-time)
-- [ ] Pyright LSP active (shows Python type errors)
-- [ ] Custom command working (`/component`)
-- [ ] Custom skill working (`/start-dev`)
-- [ ] Hooks protecting database and config files
-- [ ] Agent available (visual-inspector)
-- [ ] MCP Chrome DevTools working (can take screenshots)
-
-### Documentation Checklist
-- [ ] CLAUDE.md updated for news project
-- [ ] README.md explains the Tech News Aggregator
-- [ ] .claude/settings.json has all hooks
-- [ ] .mcp.json has MCP servers configured
-
-**Test the complete workflow:**
-
-1. Start the app: `/start-dev`
-2. Open: http://localhost:5173
-3. Ask: "What's the latest AI news this week?"
-4. Click topic filter: "Cloud/DevOps"
-5. Run tests: `python -m pytest backend/tests/ -v && cd frontend && npm test`
-6. Take screenshot: "Use visual-inspector to screenshot the news feed"
-
-**If all works:** Congratulations! Your Tech News Aggregator is complete!
-
----
-
-## Lab 12: Add Your Own News Digest Page
+A keyword search layer fixes this by keeping a local cache of articles in SQLite and matching user queries against their titles, summaries, and topics. This makes responses **instant** (no network round-trip), **reproducible** (same query, same results), and **auditable** (you can inspect exactly what the agent read). It also sets the stage for richer retrieval — once you have a structured cache, upgrading to semantic (vector) search later is straightforward.
 
 Now that the base app is running, you will extend it with a fully personalised news digest — a dedicated page that scrapes RSS feeds on a schedule, caches articles in the shared SQLite database, and lets users filter by sub-topic.
 
-The digest page and the chatbot share the same database: the page scrapes specialist feeds every 60 seconds, and the chatbot reads from that cache to answer questions like *"What has SpaceX launched lately?"* — instantly, because the data is already there.
+The digest page and the chatbot share the same database: the page scrapes specialist feeds every 60 seconds, and the chatbot reads from that cache to answer questions about a chosen topic — instantly, because the data is already there.
 
 ---
 
-### Step 12.1: Browse the Agent Marketplace
+### Step 6.1: Browse the Agent Marketplace
 
-Before writing a line of code, browse **[https://app.aitmpl.com](https://app.aitmpl.com)** — a community marketplace of pre-built Claude Code components.
+We need to plan this, but this time with agents. So before writing a line of code, browse **[https://app.aitmpl.com](https://app.aitmpl.com)** — a community marketplace of pre-built Claude Code components.
 
 | Category | What you will find |
 |----------|--------------------|
@@ -998,16 +844,9 @@ Before writing a line of code, browse **[https://app.aitmpl.com](https://app.ait
 3. Install a skill by copying its `.md` file into `.claude/skills/<name>/SKILL.md` and invoke it with `/<name>`
 4. Install an agent by copying its `.md` file into `.claude/agents/<name>.md`
 
-**Useful agents for this lab:**
-- A **backend-maintainer** or **python-pro** agent to write FastAPI and database code
-- A **code-reviewer** agent to check security of each layer
-- A **frontend-improver** agent to build the React page
-
-The `/save-to-claude-md` skill is already installed in this project. Run it at the end of every session to persist what you built into `CLAUDE.md` so the next session picks up where you left off.
-
 ---
 
-### Step 12.2: Choose Your Topic and Sub-topics
+### Step 6.2: Choose Your Topic and Sub-topics
 
 Pick a news topic. Some ideas: `Space & Aerospace`, `Cybersecurity`, `DevOps`, `Quantum Computing`, `Green Tech`, `Gaming`, `Web3`, `Fintech`, `AR/VR`, `Open Source`
 
@@ -1017,12 +856,12 @@ For your topic, define:
 
 ---
 
-### Step 12.3: Enter Plan Mode
+### Step 6.3: Enter Plan Mode
 
 Enter Plan Mode before writing any code:
 
 ```
-Press: Shift + Tab + Tab
+/plan
 ```
 
 Then paste this prompt, filling in your topic and sub-topics:
@@ -1032,7 +871,7 @@ I want to add a "[YOUR TOPIC]" news digest page to this project.
 
 Topic: [YOUR TOPIC]
 Sub-topics: [LIST YOUR SUBTOPICS]
-RSS feeds: [LIST 1-2 FEED URLS PER SUBTOPIC — ask Claude to suggest some if unsure]
+RSS feeds: [LIST 1-2 FEED URLS PER SUBTOPIC]
 
 This is a FastAPI + React project with a SQLite database and an AI chatbot.
 I want to add a full-stack news digest feature that works like this:
@@ -1066,7 +905,7 @@ Review the plan saved to `.claude/plans/`. Read it, ask questions, and adjust an
 
 ---
 
-### Step 12.4: Approve and Implement
+### Step 6.4: Approve and Implement
 
 Once you are happy with the plan:
 
@@ -1082,24 +921,7 @@ Watch Claude spawn sub-agents to handle each layer.
 
 ---
 
-### Step 12.5: Run Tests
-
-```bash
-source venv/bin/activate
-python -m pytest backend/tests/ -v
-```
-
-All original tests must still pass, plus the new tests for your topic.
-
-If there are failures:
-
-```
-The test suite has failures. Read the output and fix them.
-```
-
----
-
-### Step 12.6: Verify in the Browser
+### Step 6.5: Verify in the Browser
 
 1. Restart the backend: `python -m backend.main`
 2. Open [http://localhost:5173](http://localhost:5173)
@@ -1115,7 +937,7 @@ The [subtopic] filter shows no articles. Trace why and fix it.
 
 ---
 
-### Step 12.7: Chat With Your Digest
+### Step 6.6: Chat With Your Digest
 
 The chatbot and your digest page share the same SQLite database. Once your page has scraped some articles, the chatbot can answer questions from that cache.
 
@@ -1136,86 +958,53 @@ Show me the most recent [subtopic] news.
 
 ---
 
-### Step 12.8: Save the Session
+### Step 6.7: Save the Session
 
-At the end of every session, run:
-
-```
-/save-to-claude-md
-```
+Let Claude document everything at the end of every session. Download a skill-creator template from aitmpl.com and then let Claude use the template to create a skill which updates the Claude.md file at the end of every session.
 
 Claude will review the conversation and append a dated summary to `CLAUDE.md` covering decisions made, patterns established, files changed, and bugs fixed. The next session starts with full context already loaded.
 
 ---
 
-### How This Digest Differs From RAG — and When to Use Each
 
-The digest you just built uses **SQL keyword search** (`LIKE '%query%'`) to match articles. It works immediately, requires no extra infrastructure, and handles the most common queries well. Understanding its limits — and when RAG is the right upgrade — is useful context.
+## Advanced Usage Tips
 
-**How the current search works:**
+### Document Early
 
-The agent picks the right tool automatically:
-- Broad topic question → calls `search_news` against general RSS feeds
-- Specific keyword query (e.g. "Boston Dynamics") → calls `search_all_news`, a `SQL LIKE '%query%'` scan across all cached article titles and summaries
-- Your custom topic → calls `search_[topic]_news`, a DB-only read from the cache your digest page pre-scraped
+Write your `CLAUDE.md` as you build, not after. Each time Claude makes a decision you want repeated — a naming convention, an architectural pattern, a rule about how tools should behave — add it immediately. Waiting until the end means you will forget half of it.
 
-**Why pre-scrape instead of fetching live on every question?**
+### Split CLAUDE.md Before It Explodes
 
-| | Fetch live on every question | Pre-scraped DB cache |
-|--|------------------------------|----------------------|
-| **Response time** | 3–8 s (network + parsing) | < 1 s |
-| **RSS feed load** | Every question hits the feed servers | Feeds polled on a schedule |
-| **Duplicate work** | 10 users ask the same thing = 10 fetches | 10 users = 1 cached result |
-| **Offline resilience** | Fails if the feed is down | Still answers from cache |
-
-The digest page acts as a background scraper that continuously warms the cache. The chatbot is a reader — it benefits from everything the page already fetched.
-
-**The limit of keyword search:**
+A single `CLAUDE.md` that grows with every session becomes slow to load and hard to maintain. Instead, keep `CLAUDE.md` lean by offloading deep detail into focused reference files:
 
 ```
-"Boston Dynamics"        — finds articles mentioning those exact words ✅
-"bipedal robot company"  — no match, even if the article is clearly about Boston Dynamics ❌
-"Atlas latest news"      — only matches if "Atlas" literally appears in title or summary ❌
+CLAUDE.md                  ← high-level rules and pointers only
+docs/architecture.md       ← system design, data flow, component map
+docs/api-conventions.md    ← endpoint patterns, error shapes, auth rules
+docs/testing-guide.md      ← what to test, how to mock, coverage targets
+docs/database-schema.md    ← table definitions, indexes, migration history
 ```
 
-**What RAG (Retrieval-Augmented Generation) adds:**
-
-RAG understands meaning, not just words. Here is how it works:
-
-1. **Embed articles on save** — when an article is stored, generate a vector embedding (a list of ~1500 numbers encoding the semantic meaning) using a model like `text-embedding-3-small` or Anthropic's embeddings API
-2. **Store the embeddings** — save those vectors alongside the article in SQLite with the `sqlite-vec` extension, or in a dedicated vector DB like pgvector, Chroma, or Qdrant
-3. **Embed the query** — at question time, embed the user's question using the same model
-4. **Similarity search** — find the articles whose vectors are mathematically closest to the query vector (cosine similarity). Closest = most similar in meaning, not wording
-5. **Ground Claude's answer** — inject the retrieved articles into the prompt; Claude reads them and answers based on real content
+In `CLAUDE.md`, add a single line per file:
 
 ```
-User asks: "bipedal robot company news"
-  → embed query → [0.23, -0.87, 0.45, ...]
-  → similarity search → Boston Dynamics articles score highest
-  → Claude answers grounded in those articles ✅
+When you need details about the database schema, read docs/database-schema.md.
+When you need API conventions, read docs/api-conventions.md.
 ```
 
-**Keyword search vs RAG — when to use which:**
+Claude will load those files on demand instead of having everything in memory at once. This keeps context focused, avoids token waste, and means each doc can be maintained independently.
 
-| | Keyword search (what we built) | Real RAG |
-|--|-------------------------------|----------|
-| Finds exact words / names | Yes | Yes |
-| Finds synonyms | No | Yes |
-| Finds by meaning / concept | No | Yes |
-| Setup complexity | None — plain SQL | Embedding model + vector store |
-| Extra cost | Free | Small cost per article embedded |
-| Best for | Company names, direct keywords | Open-ended natural language questions |
+### Use `/compact` to Reclaim Context
 
-For this workshop, keyword search is the right tradeoff — zero extra infrastructure, works immediately, and handles the most common queries well. RAG is the natural next step if you want to turn this into a production product.
+Long sessions accumulate a lot of conversation history — tool outputs, error messages, intermediate reasoning. This eats into the context window and can slow Claude down or cause it to lose track of earlier instructions.
 
-**To add RAG to this project, tell Claude Code:**
+Use the built-in `/compact` command to summarise and compress the conversation history when a session gets long:
 
 ```
-Add semantic search to the news chatbot using Anthropic's embeddings API.
-When articles are saved to the DB, generate embeddings and store them in a
-sqlite-vec table. Replace the LIKE search in search_all_news with a vector
-similarity search. Keep the LIKE search as a fallback if no embeddings exist.
+/compact
 ```
+
+Claude will condense prior turns into a short summary and continue from there. This is currently one of the key limitations of Claude Code — context is finite — so making `/compact` a habit (especially before starting a new feature within the same session) helps you stay productive for longer without starting a fresh session.
 
 ---
 
@@ -1228,25 +1017,26 @@ You've successfully built a Tech News Aggregator and mastered all major Claude C
 1. Core Claude Code - File operations, terminal integration, git workflows
 2. Agent Development - Created 4 custom tools with Strands SDK
 3. Full-Stack Architecture - FastAPI backend + React frontend
-4. Database Integration - SQLite for article storage
-5. Testing - TDD with pytest and Vitest
+4. Database Integration - SQLite for article storage and smart caching
+5. Testing - TDD with pytest and Vitest (62 tests total)
 6. Plugins - TypeScript LSP, Pyright LSP for real-time type checking
-7. Custom Commands - `/component` for rapid development
+7. Custom Commands - `/component` for rapid component scaffolding
 8. Skills - `/start-dev` workflow automation
-9. Hooks - PreToolUse for safety and file protection
-10. Specialized Agents - visual-inspector for UI testing
-11. MCP Servers - Chrome DevTools for browser automation
+9. Hooks - PreToolUse for safety, PostToolUse to auto-run tests on every save
+10. Specialized Agents - backend-maintainer, code-reviewer, frontend-improver, visual-inspector
+11. MCP Servers - Chrome DevTools for browser automation, Draw.io for architecture diagrams
+12. Keyword Search - RSS scraping, SQLite caching, sub-topic filtering, DB-backed chatbot tools
 
 **What You Built:**
 
-- News Search - Find articles by topic and timeframe
-- Categorization - Auto-categorize by tech domain
-- Summarization - Generate article summaries
-- Trending Topics - See what's hot in tech
-- Article History - SQLite database
-- Chat Interface - AI-powered news assistant
-- Visual Feed - Two-column layout with filters
-- Complete Test Coverage - Backend + Frontend tests
+- Real-Time News Search - Natural language queries fetch live RSS feeds (TechCrunch, The Verge, Hacker News, AWS)
+- Auto-Categorization - Articles tagged by domain (AI/ML, Cloud, Security, DevOps, etc.)
+- Smart Caching - SQLite stores scraped articles to avoid re-fetching
+- Chat Interface - AI-powered assistant answers questions from the local article cache
+- Source Attribution - Right panel shows the exact articles used in every response
+- Keyword News Digest - Dedicated page with per-topic RSS scraper, sub-topic filter chips, and 60-second auto-refresh
+- Modern UI - Dark glassmorphism design with vibrant gradients
+- Complete Test Coverage - 43 backend tests + 19 frontend tests
 
 **Next Steps:**
 
@@ -1275,6 +1065,16 @@ You've successfully built a Tech News Aggregator and mastered all major Claude C
    - Slack/Discord notifications
    - Article comments and ratings
    - Multi-language support
+
+6. **Upgrade to RAG (Semantic Search)**
+
+   Keyword search matches exact words — it misses articles that use different phrasing for the same concept. Retrieval-Augmented Generation (RAG) solves this by turning each article into a vector embedding and finding the *semantically closest* articles to any query, even if no keywords overlap.
+
+   To add RAG on top of what you built:
+   - **Embed articles on insert** — call an embedding model (e.g. Amazon Titan Text Embeddings via Bedrock) whenever an article is stored in SQLite, and save the embedding vector alongside it.
+   - **Add a vector store** — store embeddings in a lightweight library like `chromadb` or `faiss`, keyed by article ID.
+   - **Replace the keyword lookup in the chatbot tool** — instead of `WHERE title LIKE ?`, compute the query embedding and retrieve the top-k nearest neighbours from the vector store, then load the matching articles from SQLite.
+   - **Evaluate the difference** — ask the same question with both approaches and compare relevance. Keyword search wins on precision for exact terms; RAG wins on recall for paraphrased or conceptual queries.
 
 **Share Your Work:**
 

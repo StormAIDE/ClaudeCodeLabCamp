@@ -233,8 +233,7 @@ See [WORKSHOP.md](./WORKSHOP.md) for complete hands-on guide covering:
 - Lab 3: Plugins & TDD
 - Lab 4: Commands, Skills & Hooks
 - Lab 5: Agents & MCP
-- Lab 6: Documentation
-- Lab 12: Add custom news digest feature
+- Lab 6: Add custom news digest feature
 
 Time: ~2-3 hours | Difficulty: Intermediate
 
