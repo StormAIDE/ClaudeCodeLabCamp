@@ -46,7 +46,6 @@ These cannot be installed by Claude Code - you need them first:
 python3.13 --version    # Must show 3.13.x
 node --version          # Must show 18+
 git --version           # Any recent version
-aws configure list      # Should show your profile
 ```
 
 **Claude Code will install for you:**
@@ -106,11 +105,6 @@ Default region name [None]: eu-central-1
 Default output format [None]: json
 ```
 
-**Set session token (if not asked in previous step):**
-
-```bash
-aws configure set aws_session_token [your-session-token] --profile claudecodeprofile
-```
 
 **Verify profile configured correctly:**
 
@@ -154,7 +148,7 @@ git commit -m "Initial commit"
 
 ### Step 0.2: Create Python Virtual Environment
 
-⚠️ **IMPORTANT:** Use Python 3.13 (Python 3.14 breaks pydantic-core)
+⚠️ **IMPORTANT:** Use Python 3.13
 
 ```bash
 # Create Python virtual environment with Python 3.13
@@ -175,8 +169,8 @@ source venv/bin/activate
 
 ```bash
 # Export credentials from profile to environment
-export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodeprofile)
-export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodeprofile)
+export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
 export AWS_DEFAULT_REGION=eu-central-1
 
 # Verify credentials exported
@@ -256,13 +250,13 @@ Ready to assist!
 
 ```bash
 # Check current directory
-pwd
+! pwd
 
 # List files
-ls
+! ls
 
 # Check git status  
-git status
+! git status
 ```
 
 Claude Code should respond with directory info and git status!
