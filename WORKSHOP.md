@@ -960,7 +960,7 @@ Show me the most recent [subtopic] news.
 
 ### Step 6.7: Save the Session
 
-Let Claude document everything at the end of every session. Download a skill-creator template from aitmpl.com and then let Claude use the template to create a skill which updates the Claude.md file at the end of every session.
+Let Claude document everything at the end of every session. Navigate to https://support.claude.com/en/articles/12512198-how-to-create-custom-skills and then let Claude use the template to create a skill which updates the Claude.md file at the end of every session.
 
 Claude will review the conversation and append a dated summary to `CLAUDE.md` covering decisions made, patterns established, files changed, and bugs fixed. The next session starts with full context already loaded.
 
