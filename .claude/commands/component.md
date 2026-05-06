@@ -20,7 +20,7 @@ Extract the following from the user's input:
 ## Component Generation Rules
 
 ### File Location
-- Create file at: `/Users/ka.akhtar/ClaudeCodeTest/frontend/src/components/{ComponentName}.tsx`
+- Create file at: `./frontend/src/components/{ComponentName}.tsx`
 - Use exact PascalCase naming for both component and filename
 
 ### Component Structure
@@ -100,7 +100,7 @@ interface Props {
 
 For input: `/component LoadingSpinner Shows a loading indicator`
 
-Create: `/Users/ka.akhtar/ClaudeCodeTest/frontend/src/components/LoadingSpinner.tsx`
+Create: `frontend/src/components/LoadingSpinner.tsx`
 
 ```typescript
 interface LoadingSpinnerProps {

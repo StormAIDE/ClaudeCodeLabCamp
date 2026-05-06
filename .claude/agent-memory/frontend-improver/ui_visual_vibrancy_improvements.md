@@ -67,7 +67,7 @@ Fixed the "grey washed-out" appearance of the glassmorphism UI by boosting accen
 - Pre-existing linting warnings unaffected by changes
 
 ### Files Modified
-- `/Users/ka.akhtar/ClaudeCodeTest/frontend/src/App.tsx`
-- `/Users/ka.akhtar/ClaudeCodeTest/frontend/src/components/ChatInterface.tsx`
-- `/Users/ka.akhtar/ClaudeCodeTest/frontend/src/components/MessageList.tsx`
-- `/Users/ka.akhtar/ClaudeCodeTest/frontend/src/components/MessageInput.tsx`
+- `frontend/src/App.tsx`
+- `frontend/src/components/ChatInterface.tsx`
+- `frontend/src/components/MessageList.tsx`
+- `frontend/src/components/MessageInput.tsx`
