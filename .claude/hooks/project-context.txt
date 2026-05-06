@@ -1,0 +1,37 @@
+📋 Project Context Reminder:
+
+1. **Always run tests before committing:**
+   - Backend: source claudecodeenv/bin/activate && python -m pytest backend/tests/
+   - Frontend: cd frontend && npm test -- --run
+   - All 35 tests must pass
+
+2. **Ports are fixed (never change these):**
+   - Backend: 8000
+   - Frontend: 5173
+
+3. **Commit format (conventional commits):**
+   - feat: New feature
+   - fix: Bug fix
+   - chore: Maintenance
+   - docs: Documentation
+   - test: Test changes
+   - refactor: Code restructuring
+   Example: "feat: add user authentication endpoint"
+
+4. **Files to never modify:**
+   - .env (credentials and secrets)
+   - package-lock.json, poetry.lock (managed by package managers)
+   - claudecodeenv/ (Python virtual environment)
+   - .git/ (git internals)
+
+5. **Current project focus:**
+   - ClaudeCode Labcamp educational project
+   - Full-stack AI agent with FastAPI + React
+   - Demonstrating plugins and hooks for students
+   - All changes require test coverage
+
+6. **Architecture notes:**
+   - Backend: FastAPI with Strands SDK
+   - Frontend: React 19 + TypeScript + Vite
+   - Agent: Claude 4 via Amazon Bedrock
+   - State: Zustand (client) + TanStack Query (server)
