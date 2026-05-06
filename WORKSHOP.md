@@ -4,6 +4,25 @@
 
 In this lab, you'll build your own Tech News Aggregator from scratch, learning professional development workflows with Claude Code. By the end, you'll have a working full-stack application that aggregates and analyzes tech news using AI.
 
+---
+
+## 📌 Important: Workflow Clarification
+
+**Instructor's repo is read-only reference. You'll work in your own fork:**
+
+1. **Clone instructor's repo** (StormAIDE/ClaudeCodeLabCamp - read-only reference)
+2. **Test the completed app** on `main` branch to see what you're building
+3. **Fork to your own GitHub** (creates `yourusername/ClaudeCodeLabCamp`)
+4. **Change git remote** to your fork
+5. **Create workshop branch** in your fork (`workshop/<your-name>`)
+6. **Build from scratch** on your branch following this guide
+7. **Push to your fork** (not instructor's repo)
+8. **Compare with instructor's `main`** when stuck
+
+**Two repos: Instructor's = reference (read-only). Your fork = workspace (push here).**
+
+---
+
 **Workshop Philosophy: "Add Feature → Test Feature → See The Improvement"**
 
 After adding each Claude Code service (plugins, commands, hooks, skills, agents, MCP), you'll immediately test it and see how it improves your development workflow!
@@ -34,18 +53,18 @@ After adding each Claude Code service (plugins, commands, hooks, skills, agents,
 
 These cannot be installed by Claude Code - you need them first:
 
-- [ ] **Python 3.11+** (you should already have this)
+- [ ] **Python 3.13** 
 - [ ] **Node.js 18+** (download from [nodejs.org](https://nodejs.org))
 - [ ] **Git** (download from [git-scm.com](https://git-scm.com))
 - [ ] **VS Code or terminal** (any terminal works)
 - [ ] **AWS account with Bedrock access**
-- [ ] **AWS credentials** (Access Key ID, Secret Key, Session Token)
+- [ ] **AWS credentials configured** (claudecodelabcampparticipants profile)
 
 **Check your setup:**
 ```bash
-python --version    # Must show 3.11+
-node --version      # Must show 18+
-git --version       # Any recent version
+python3.13 --version    # Must show 3.13.x
+node --version          # Must show 18+
+git --version           # Any recent version
 ```
 
 **Claude Code will install for you:**
@@ -105,11 +124,6 @@ Default region name [None]: eu-central-1
 Default output format [None]: json
 ```
 
-**Set session token (if not asked in previous step):**
-
-```bash
-aws configure set aws_session_token [your-session-token] --profile claudecodeprofile
-```
 
 **Verify profile configured correctly:**
 
@@ -118,87 +132,145 @@ aws sts get-caller-identity --profile claudecodeprofile
 # Should return your AWS account details
 ```
 
-**Export profile to environment (important!):**
-
-```bash
-export AWS_PROFILE=claudecodeprofile
-```
-
-**Note:** You'll connect Claude Code to your project in Lab 1 after creating the project folder.
+**Note:** You'll export AWS credentials to environment later (in Lab 1) before starting the backend.
 
 ---
 
-## Lab 0: Initial Setup
+## Lab 0: Setup Your Workshop Environment
 
-**Prerequisites completed:**
-- ✅ Claude Code CLI installed and verified
-- ✅ AWS profile configured (`claudecodeprofile`)
+**You should have already completed (from README):**
+- ✅ Cloned instructor's repo: `ClaudeCodeLabCamp/`
+- ✅ Tested the completed app on `main` branch
+- ✅ Virtual environment created: `claudecodeenv/`
+- ✅ Dependencies installed (backend + frontend)
+- ✅ AWS credentials exported and verified
+- ✅ Claude Code CLI installed
 
-**Now let's prepare the project environment:**
+**Now you're ready to set up your own workspace.**
 
-### Step 0.1: Create Project Folder and Setup Version Control
+---
 
-**Do this BEFORE starting Claude Code:**
-
-```bash
-# 1. Create your project folder
-mkdir tech-news-aggregator
-cd tech-news-aggregator
-
-# 2. Create README.md (so you have something to commit)
-echo "# Tech News Aggregator" > README.md
-echo "AI-powered tech news aggregation system built with Claude Code" >> README.md
-
-# 3. Initialize git repository
-git init
-git add README.md
-git commit -m "Initial commit"
-```
-
-**Why do this first?** You need an existing folder with git initialized so Claude Code can work with it.
-
-### Step 0.2: Create Python Virtual Environment
+### Step 0.1: Verify You're in the Right Place
 
 ```bash
-# Create Python virtual environment
-python -m venv venv
+# Check current directory
+pwd
+# Should show: .../ClaudeCodeLabCamp
 
-# Activate it (you'll need this activated later)
-# On Mac/Linux:
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
+# Check branch
+git branch
+# Should show: * main
+
+# Check remote
+git remote -v
+# Should show: origin  https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 ```
 
-**Why?** Python dependencies will be isolated to this project.
+---
 
-### Step 0.3: Create GitHub Repository and Push
+### Step 0.2: Fork to Your Own GitHub
 
-**Create the remote repository:**
+**Create your own fork:**
 
-1. Go to GitHub.com and create a new repository (e.g., "tech-news-aggregator")
-2. Don't initialize with README (you already have one)
-3. Copy the HTTPS URL (e.g., `https://github.com/yourusername/tech-news-aggregator.git`)
+1. Go to https://github.com/StormAIDE/ClaudeCodeLabCamp
+2. Click **Fork** button (top right)
+3. Create fork under your account: `yourusername/ClaudeCodeLabCamp`
 
-**Connect and push:**
+**Change git remote to your fork:**
 
 ```bash
-# Add remote repository
-git remote add origin https://github.com/yourusername/tech-news-aggregator.git
+# Check current remote (points to instructor's repo)
+git remote -v
+# origin  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (fetch)
+# origin  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (push)
 
-# Push to GitHub
-git branch -M main
-git push -u origin main
+# Add instructor's repo as "upstream" (for reference)
+git remote rename origin upstream
+
+# Add YOUR fork as "origin" (where you'll push)
+git remote add origin https://github.com/yourusername/ClaudeCodeLabCamp.git
+
+# Verify
+git remote -v
+# origin    https://github.com/yourusername/ClaudeCodeLabCamp.git (fetch)
+# origin    https://github.com/yourusername/ClaudeCodeLabCamp.git (push)
+# upstream  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (fetch)
+# upstream  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (push)
 ```
 
-Success! Your repository is now on GitHub.
+**Why?** You push to YOUR fork. Instructor's repo stays clean.
+
+---
+
+### Step 0.3: Create Your Workshop Branch
+
+**Create new branch for your work:**
+
+```bash
+# Create and switch to workshop branch
+git checkout -b workshop/<your-name>
+
+# Example:
+# git checkout -b workshop/john-smith
+
+# Push to YOUR fork
+git push -u origin workshop/<your-name>
+```
+
+**Why?** Build from scratch on this branch. Compare with `upstream/main` (instructor's reference) when stuck.
+
+---
+
+### Step 0.4: Clear the Workspace for Fresh Build
+
+**Start from scratch to learn by building:**
+
+```bash
+# Remove backend/frontend (you'll rebuild these)
+rm -rf backend/ frontend/
+
+# Move instructor's files to reference folder (clear they're examples)
+mkdir workshop-instructor-examples
+mv .claude workshop-instructor-examples/claude-config
+mv CLAUDE.md workshop-instructor-examples/CLAUDE.md
+
+# Create fresh Claude Code config
+mkdir .claude
+
+# Keep .mcp.json (saves time in Lab 5)
+# Keep WORKSHOP.md (this guide)
+
+# Commit clean state
+git add .
+git commit -m "chore: prepare workspace for workshop"
+git push
+```
+
+**Why this structure?**
+- `workshop-instructor-examples/` — clear it's reference material, not active config
+- Fresh `.claude/` — you build hooks/agents/skills from scratch
+- Instructor's CLAUDE.md moved — has completed app details, would confuse Claude
+- `.mcp.json` kept — Lab 5 focuses on USING MCP tools
+
+**Don't just copy instructor's files — learn by building!**
+
+---
 
 **Checklist before proceeding to Lab 1:**
-- [ ] Claude Code CLI installed and verified (`claude --version`)
-- [ ] AWS profile configured (`claudecodeprofile`) with `export AWS_PROFILE=claudecodeprofile`
-- [ ] Project folder created (`tech-news-aggregator/`)
-- [ ] Git initialized and pushed to GitHub
-- [ ] Python virtual environment created (`venv/`)
+- [ ] Forked to your GitHub account
+- [ ] Changed remotes: `origin` = your fork, `upstream` = instructor's repo
+- [ ] Created workshop branch: `workshop/<your-name>`
+- [ ] Currently on workshop branch: `git branch` shows `* workshop/<your-name>`
+- [ ] Removed `backend/`, `frontend/` folders
+- [ ] Created `workshop-instructor-examples/` folder
+- [ ] Moved `.claude/` → `workshop-instructor-examples/claude-config/`
+- [ ] Moved `CLAUDE.md` → `workshop-instructor-examples/CLAUDE.md`
+- [ ] Created fresh `.claude/` directory
+- [ ] Kept `.mcp.json` and `WORKSHOP.md`
+- [ ] Pushed workspace to YOUR fork
+- [ ] Virtual environment still activated: `source claudecodeenv/bin/activate`
+- [ ] **AWS credentials still exported in THIS terminal** (verify: `aws sts get-caller-identity`)
+- [ ] **You're in the SAME terminal** where you exported AWS creds (critical for backend)
 
 ---
 
@@ -206,20 +278,37 @@ Success! Your repository is now on GitHub.
 
 ### Step 1.1: Start Claude Code in Project Directory
 
-**Navigate to your project and start Claude:**
+**⚠️ CRITICAL: Use same terminal where you exported AWS credentials.**
+
+**Ensure you're in the repo directory and on your workshop branch:**
 
 ```bash
-# Make sure AWS profile is exported
-export AWS_PROFILE=claudecodeprofile
+# Check current directory (should be ClaudeCodeLabCamp/)
+pwd
 
-# Navigate to project
-cd tech-news-aggregator
+# Check branch (should be workshop/<your-name>)
+git branch
+
+# Verify AWS credentials still exported (MUST pass)
+aws sts get-caller-identity
+
+# If fails, re-export:
+# export AWS_ACCESS_KEY_ID=<YOUR_KEY>
+# export AWS_SECRET_ACCESS_KEY=<YOUR_SECRET>
+# export AWS_DEFAULT_REGION=eu-central-1
 
 # Start Claude Code (first time)
 claude
 ```
 
+**Why same terminal matters:**
+- Claude Code runs commands in this shell
+- Backend inherits AWS env vars from shell
+- Different terminal = no credentials = backend fails
+
 **When you run `claude` for the first time, you'll see this setup prompt:**
+
+![Claude Code First Run](ClaudeCode.png)
 
 1. **Select authentication method**: Choose **AWS Bedrock SSO**
 2. **Enter AWS SSO profile name**: Type `claudecodeprofile`
@@ -231,11 +320,17 @@ claude
 **What you'll see after setup:**
 ```
 Claude Code v[version]
-Connected to: tech-news-aggregator/
+Connected to: ClaudeCodeLabCamp/
+Branch: workshop/<your-name>
 Ready to assist!
 ```
 
-**Success!** Claude Code is now connected to your project and can read/write files, run commands, and assist with development.
+**Try asking:**
+```
+What do you see in the folder?
+```
+
+**Success!** Claude Code connected. You're on your workshop branch. Upstream/main = reference implementation.
 
 ### Step 1.2: Test Basic Commands
 
@@ -243,49 +338,64 @@ Ready to assist!
 
 ```bash
 # Check current directory
-/pwd
+! pwd
 
 # List files
-/ls
+! ls
 
 # Check git status  
-/git status
+! git status
 ```
 
 Claude Code should respond with directory info and git status!
 
-### Step 1.3: Connect GitHub CLI (Optional but Recommended)
+### Step 1.3: Create Starter CLAUDE.md
 
-**Install GitHub CLI if not installed:**
+**Ask Claude Code:**
+```
+Create a starter CLAUDE.md file with basic project info:
 
-```bash
-# Mac
-brew install gh
+- Project name: Tech News Aggregator
+- Goal: Learn Claude Code by building full-stack AI agent
+- Tech stack: Python 3.13, FastAPI, Strands SDK, React 19, TypeScript, Vite
+- Ports: Backend 8000, Frontend 5173
+- Testing: pytest (backend), Vitest (frontend)
+- AWS: Bedrock access required, credentials via environment variables
+- Git workflow: workshop/<name> branch in forked repo
 
-# Windows (via Chocolatey)
-choco install gh
+Add section: "As we build features, update this file with architecture decisions."
 
-# Linux
-# See: https://github.com/cli/cli#installation
+Keep it SHORT — detailed docs come later.
 ```
 
-**Authenticate:**
+**Why?** Claude needs basic context. Instructor's `workshop-instructor-examples/CLAUDE.md` too detailed for empty project. You'll expand this as you build.
+
+---
+
+### Step 1.4: Verify GitHub Connection
+
+**Test GitHub CLI:**
 
 ```bash
-gh auth login
-# Follow prompts to authenticate via browser
-```
-
-**Test:**
-```bash
+# View YOUR fork
 gh repo view
-# Should show your repository info
+
+# Should show: yourusername/ClaudeCodeLabCamp
+
+# Check remotes
+git remote -v
+# origin = your fork
+# upstream = instructor's repo
+
+# Verify branch pushed
+git branch -vv
+# * workshop/<your-name> [origin/workshop/<your-name>] ...
 ```
 
 **What This Enables:**
-- Create PRs from Claude Code
-- Manage issues directly
-- View PR reviews and checks
+- Push work to YOUR fork
+- Compare your branch with instructor's `upstream/main`
+- Create PRs in your fork to track progress
 
 ---
 
@@ -369,6 +479,23 @@ Claude will:
 2. Install dependencies (FastAPI, Strands SDK, React, etc.)
 3. Start FastAPI backend on port 8000
 4. Start Vite frontend on port 5173
+
+**If backend fails with AWS error:**
+```bash
+# Verify credentials in current shell
+aws sts get-caller-identity
+
+# If fails, re-export (in same terminal):
+export AWS_ACCESS_KEY_ID=<YOUR_KEY>
+export AWS_SECRET_ACCESS_KEY=<YOUR_SECRET>
+export AWS_DEFAULT_REGION=eu-central-1
+
+# Restart Claude Code
+exit  # Exit Claude Code
+claude  # Start again
+```
+
+Backend reads AWS creds from shell environment, NOT from AWS profile files.
 
 ### Step 2.3: Test the Tech News Agent
 
@@ -485,7 +612,7 @@ Check if Pyright catches this.
 - Plugin marketplace usage
 - Developer productivity tools
 
-### Step 3.3: Add a Simple Feature with TDD
+### Step 3.3: Add a Simple Feature with TDD(Test-Driven Development)
 
 **Feature to add:** Topic filter in news feed
 
@@ -527,7 +654,23 @@ Add topic filtering using TDD:
 
 ## Lab 4: Commands, Skills & Hooks
 
+**Before you start:** Browse https://app.aitmpl.com/ — marketplace has pre-built commands, skills, hooks. You can:
+- Install from marketplace (fast, battle-tested)
+- Build from scratch (learn how they work)
+- Compare marketplace vs instructor's examples in `workshop-instructor-examples/claude-config/`
+- Mix: use marketplace for some, customize others
+
+**Three reference sources:**
+1. **Marketplace** — https://app.aitmpl.com/ (community, production-ready)
+2. **Instructor's examples** — `workshop-instructor-examples/claude-config/` (workshop implementations)
+
+**Recommended approach:** Build first few from scratch (learn), then use marketplace (speed).
+
+---
+
 ### Step 4.1: Create the /component Command
+
+**Option A: Build from scratch (recommended first time)**
 
 **Ask Claude Code:**
 ```
@@ -549,6 +692,13 @@ Use the official docs format for the command file in .claude/commands/
 ```
 
 **Claude will create** `.claude/commands/component.md` with proper frontmatter and prompt template.
+
+**Option B: Install from marketplace (after learning)**
+
+1. Browse https://app.aitmpl.com/ → **Commands** tab
+2. Search "component" or "generator"
+3. Find one you like → copy `.md` file to `.claude/commands/`
+4. Customize for your project needs
 
 **Test It - Generate Your First Component:**
 
@@ -572,9 +722,15 @@ Use the official docs format for the command file in .claude/commands/
 - Component scaffolding automation
 - Time saved: 10 minutes → 30 seconds per component
 
+**Compare with instructor's:** Check `workshop-instructor-examples/claude-config/commands/` to see how instructor implemented it. Is marketplace version better? Why?
+
+---
+
 ### Step 4.2: Create the /start-dev Skill
 
 **Skills are multi-step automated workflows. Let's create one to start both servers!**
+
+**Option A: Build from scratch**
 
 **Ask Claude Code:**
 ```
@@ -610,13 +766,24 @@ Frontend running at http://localhost:5173
 Both servers are ready!
 ```
 
+**Option B: Use marketplace**
+
+1. Browse https://app.aitmpl.com/ → **Skills** tab
+2. Search "dev server" or "start"
+3. Install to `.claude/skills/start-dev/SKILL.md`
+
 **What This Teaches:**
 - Multi-step skill creation
 - Background process management
 - Error handling in skills
 - Time saved: Manual steps → One command
+- **Key decision:** Build custom vs use marketplace? Depends on project needs.
+
+---
 
 ### Step 4.3: Add PreToolUse Hook - Block Dangerous Commands
+
+**Option A: Build from scratch**
 
 **Ask Claude Code:**
 ```
@@ -675,14 +842,46 @@ Add to .claude/settings.json:
 
 **Test:** Try editing `.env` - should be blocked!
 
+**Option B: Use marketplace hooks**
+
+1. Browse https://app.aitmpl.com/ → **Hooks** tab
+2. Search "dangerous" or "protect" or "security"
+3. Install to `.claude/hooks/` and configure in `.claude/settings.json`
+
 **What This Teaches:**
 - PreToolUse hooks prevent mistakes
 - File protection for sensitive data
 - Automation without manual checks
+- **Marketplace benefit:** Battle-tested hooks save debugging time
+
+**Challenge:** Compare your hooks with `workshop-instructor-examples/claude-config/hooks/` and marketplace. Which approach is better for production?
 
 ---
 
 ## Lab 5: Agents & MCP
+
+**Before you start:** Check marketplace agents at https://app.aitmpl.com/ → **Agents** tab. Many pre-built specialists:
+- Backend developer agents
+- Code reviewers
+- Security auditors
+- Frontend improvers
+
+**How to create agents:**
+- **Recommended:** Use `/agent` command (official method, see https://code.claude.com/docs/en/sub-agents)
+- **Alternative:** Manually create `.claude/agents/<name>.md` with frontmatter
+
+**Your choice:**
+- Build custom agents (full control, learn agent design)
+- Use marketplace agents (production-ready, less work)
+- Hybrid: marketplace for common tasks, custom for project-specific needs
+
+**Reference sources:**
+- Official docs: https://code.claude.com/docs/en/sub-agents
+- Marketplace: https://app.aitmpl.com/ → **Agents** tab
+- Instructor's examples: `workshop-instructor-examples/claude-config/agents/`
+- Upstream: `git show upstream/main:.claude/agents/backend-maintainer.md`
+
+---
 
 ### Step 5.1: Understand MCP
 
@@ -736,45 +935,43 @@ Create .mcp.json file to configure Chrome DevTools MCP server:
 
 ### Step 5.3: Create Visual News Feed Inspector Agent
 
-**Ask Claude Code:**
+**Reference:** https://code.claude.com/docs/en/sub-agents
+
+**Option A: Build custom agent using /agent command**
+
+**In Claude Code, type:**
 ```
-Create an agent that uses Chrome DevTools MCP to test the news feed visually.
+/agent
+```
 
-Create .claude/agents/visual-inspector.md:
+**When prompted, provide agent details:**
+```
+Name: visual-inspector
+Description: Tests news feed UI using Chrome DevTools (screenshots, console, interaction)
+Model: sonnet
 
----
-name: visual-inspector
-description: Tests news feed UI using Chrome DevTools (screenshots, console, interaction)
-model: sonnet
----
-
-# System Prompt
+System Prompt:
 You are a frontend QA engineer testing the Tech News Aggregator UI. Use Chrome DevTools MCP tools to:
 
-1. **Navigate to app**: http://localhost:5173
-2. **Take screenshots** at key states (initial load, topic filtered, articles loaded)
-3. **Check console** for errors or warnings
-4. **Test interactions**:
-   - Click topic filter buttons
-   - Verify articles render
-   - Check responsive layout
-5. **Report issues**: Visual bugs, console errors, broken functionality
+1. Navigate to http://localhost:5173
+2. Take screenshots at key states (initial load, topic filtered, articles loaded)
+3. Check console for errors or warnings
+4. Test interactions: click topic filters, verify articles render, check responsive layout
+5. Report issues: visual bugs, console errors, broken functionality
 
-# Available MCP Tools
-- new_page(url) - Open browser to URL
-- take_screenshot(filePath) - Capture screenshot
+Available MCP Tools:
+- new_page(url) - Open browser
+- take_screenshot(filePath) - Capture screenshot  
 - click(selector) - Click element
 - get_console_messages() - Check console logs
-- wait_for(text) - Wait for text to appear
+- wait_for(text) - Wait for text
 
-# Workflow
-1. Open http://localhost:5173
-2. Screenshot: "initial-load.png"
-3. Click "AI/ML" filter
-4. Screenshot: "ai-filtered.png"
-5. Check console for errors
-6. Report findings
+Workflow: Open app → Screenshot initial load → Click "AI/ML" filter → Screenshot filtered state → Check console → Report findings
 ```
+
+**This creates** `.claude/agents/visual-inspector.md` with proper structure.
+
+**Alternative:** Manually create `.claude/agents/visual-inspector.md` with frontmatter format (see docs).
 
 **Test it:**
 
@@ -798,12 +995,25 @@ Use visual-inspector to verify:
 Take screenshots of any issues found.
 ```
 
+**Option B: Use marketplace agent for visual testing**
+
+1. Browse https://app.aitmpl.com/ → **Agents** tab
+2. Search "visual" or "frontend" or "testing"
+3. Copy agent definition
+4. Create using `/agent` command or save to `.claude/agents/<name>.md`
+
 **What This Teaches:**
 - MCP server configuration
 - Browser automation with Chrome DevTools
 - Visual testing with screenshots
 - Agent delegation for specialized tasks
 - External tool integration
+- **Decision point:** Custom agents = tailored to project. Marketplace = faster, proven patterns.
+
+**Reflection:** Compare your agent implementations with:
+1. Instructor's `workshop-instructor-examples/claude-config/agents/`
+2. Marketplace agents at https://app.aitmpl.com/ → **Agents** tab
+3. Which would you use in production? Why?
 
 ---
 
@@ -839,10 +1049,25 @@ We need to plan this, but this time with agents. So before writing a line of cod
 > **Skills** are slash commands you invoke yourself — they guide Claude through a workflow step by step inside your session, staying fully visible the whole time.
 
 **Workshop activity:**
-1. Search for something relevant to your digest topic (e.g. `rss`, `news`, `web scraping`, `code review`, `security`)
-2. Look for agents that could help you — for example a `backend-developer` agent or a `security-reviewer` agent
-3. Install a skill by copying its `.md` file into `.claude/skills/<name>/SKILL.md` and invoke it with `/<name>`
-4. Install an agent by copying its `.md` file into `.claude/agents/<name>.md`
+1. Browse https://app.aitmpl.com/ and check each tab:
+   - **Skills** tab → search "rss", "scraper", "database"
+   - **Agents** tab → search "backend", "security", "code review"
+   - **Hooks** tab → search "test", "format", "lint"
+2. Find helpers for your digest feature:
+   - Backend agent for RSS scraper logic
+   - Security reviewer for SQL validation
+   - Test runner skill for running tests after changes
+3. Install what you find:
+   - **Skills:** copy `.md` to `.claude/skills/<name>/SKILL.md`, invoke with `/<name>`
+   - **Agents:** use `/agent` command (docs: https://code.claude.com/docs/en/sub-agents) or copy `.md` to `.claude/agents/<name>.md`
+   - **Hooks:** copy to `.claude/hooks/`, add to `.claude/settings.json`
+
+**Compare three sources:**
+- **Marketplace** (https://app.aitmpl.com/) — community solutions
+- **Instructor's examples** (`workshop-instructor-examples/claude-config/`) — workshop implementations
+- **Your custom builds** from Labs 4-5 — tailored to your project
+
+**Best practice:** Use marketplace for common patterns (code review, testing), custom for project-specific logic (your news digest).
 
 ---
 
@@ -935,6 +1160,19 @@ If a filter shows no articles:
 
 ```
 The [subtopic] filter shows no articles. Trace why and fix it.
+```
+
+**Stuck? Compare with instructor's implementation:**
+
+```bash
+# Check what instructor did in specific file
+git diff upstream/main -- backend/services/agent_service.py
+
+# See all differences
+git diff upstream/main
+
+# Ask Claude Code:
+"Compare my backend/services/agent_service.py with upstream/main and show differences"
 ```
 
 ---
