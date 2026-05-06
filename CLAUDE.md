@@ -12,7 +12,8 @@ This is the **ClaudeCode Labcamp Project** - a full-stack AI agent application b
 
 **Setup:**
 ```bash
-# Activate virtual environment (ALWAYS do this first)
+# IMPORTANT: Python 3.13 required (3.14 breaks pydantic-core)
+python3.13 -m venv claudecodeenv
 source claudecodeenv/bin/activate
 
 # Install dependencies
@@ -22,9 +23,22 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
+**AWS Credentials (REQUIRED before starting backend):**
+```bash
+# Export credentials from AWS profile to environment
+export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodelabcampparticipants)
+export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodelabcampparticipants)
+export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile claudecodelabcampparticipants)
+export AWS_DEFAULT_REGION=eu-central-1
+
+# Verify
+aws sts get-caller-identity
+```
+
 **Run backend server:**
 ```bash
-# Standard way (recommended) - must use module syntax
+# AFTER exporting AWS credentials
+source claudecodeenv/bin/activate
 python -m backend.main
 
 # Or with uvicorn directly
@@ -157,8 +171,9 @@ backend/
 ```
 
 **Key architectural decisions:**
-- Configuration via Pydantic Settings (`backend/config.py`) loads from `.env`
-- Agent logic isolated in `agent_service.py` using Strands SDK
+- Configuration via Pydantic Settings (`backend/config.py`) loads from `.env` AND shell environment vars
+- **AWS Credentials**: Must be exported to environment before starting backend (pydantic reads from shell vars)
+- Agent logic isolated in `agent_service.py` using **Strands SDK only** (no anthropic SDK fallback)
 - **Dependency injection** (`api/dependencies.py`) - Singleton AgentService pattern for performance
 - **Input validation** - Pydantic validators reject empty/whitespace messages
 - **Security** - Tools use safe implementations (AST parser for math, no eval())
@@ -234,11 +249,18 @@ text = result_dict['message']['content'][0]['text']  # Extract text from respons
 - `CLAUDE_MODEL_ID` - Bedrock model ID (currently: `eu.anthropic.claude-sonnet-4-5-20250929-v1:0`)
 
 **AWS Credentials:**
-- **NOT stored in .env** - configured in terminal session via:
-  - `aws configure`, or
-  - `export AWS_ACCESS_KEY_ID=...` / `AWS_SECRET_ACCESS_KEY=...` / `AWS_SESSION_TOKEN=...`
-- Strands SDK automatically uses AWS credentials from environment
-- Required for Bedrock API access
+- **CRITICAL: NOT stored in .env** - must be exported to shell environment BEFORE starting backend
+- **Required setup:**
+  ```bash
+  export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodelabcampparticipants)
+  export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodelabcampparticipants)
+  export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile claudecodelabcampparticipants)
+  export AWS_DEFAULT_REGION=eu-central-1
+  ```
+- Pydantic Settings reads these from environment variables, not from AWS profile directly
+- Strands SDK uses these credentials for Bedrock API access
+- Verify with: `aws sts get-caller-identity`
+- **If `use_bedrock: false`** → credentials not exported before starting backend
 
 **Changing the Claude model:**
 Edit `CLAUDE_MODEL_ID` in `.env` - Strands SDK supports any Bedrock Claude model ID.
@@ -290,9 +312,11 @@ npx prettier --write <file>
 
 ## Important Notes
 
+- **Python 3.13 required** - venv MUST use Python 3.13 (3.14 breaks pydantic-core build)
 - **Do not read `claudecodeenv/` folder** - Python virtual env, wastes tokens
 - **Always activate virtual environment** before running backend: `source claudecodeenv/bin/activate`
-- **AWS credentials required** - Agent will fail without valid Bedrock access
+- **AWS credentials MUST be exported** - Export to environment before starting backend (see Configuration section)
+- **Agent will fail without Bedrock access** - Check `use_bedrock: true` at `/api/v1/agent/status`
 - **Frontend proxies API** - Vite proxies `/api` to `http://localhost:8000` (see `vite.config.ts`)
 - **All tests must pass** - Run `./run-all-tests.sh` before committing
 
@@ -300,9 +324,9 @@ npx prettier --write <file>
 
 **Backend:**
 - FastAPI (async web framework)
-- Strands Agents SDK - https://strandsagents.com/docs/user-guide/quickstart/python/
+- Strands Agents SDK only (no anthropic SDK) - https://strandsagents.com/docs/user-guide/quickstart/python/
 - Pydantic Settings (configuration)
-- Python 3.14.0
+- Python 3.13 (⚠️ 3.14 not compatible)
 
 **Frontend:**
 - React 19 with TypeScript

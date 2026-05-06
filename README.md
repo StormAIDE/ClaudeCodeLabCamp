@@ -9,10 +9,10 @@ AI-powered tech news aggregation system demonstrating professional Claude Code w
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.11 
 - Node.js 18+
 - AWS account with Bedrock access
-- AWS credentials configured
+- AWS credentials configured (`claudecodelabcampparticipants` profile)
 
 ### Installation
 
@@ -22,15 +22,8 @@ git clone https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 cd ClaudeCodeLabCamp
 git checkout test/workshop-news-aggregator
 
-# Configure AWS credentials
-aws configure
-# OR export directly:
-export AWS_ACCESS_KEY_ID=your_key
-export AWS_SECRET_ACCESS_KEY=your_secret
-export AWS_SESSION_TOKEN=your_token  # if using temporary credentials
-
-# Backend setup
-python3 -m venv claudecodeenv
+# Backend setup (Python 3.13 required)
+python3.13 -m venv claudecodeenv
 source claudecodeenv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -39,12 +32,28 @@ cp .env.example .env
 cd frontend && npm install && cd ..
 ```
 
+### AWS Credentials Setup
+
+**IMPORTANT:** Export AWS credentials to environment **before** starting backend:
+
+```bash
+# Export credentials from your AWS profile
+export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodelabcampparticipants)
+export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodelabcampparticipants)
+export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile claudecodelabcampparticipants)
+export AWS_DEFAULT_REGION=eu-central-1
+
+# Verify credentials
+aws sts get-caller-identity
+```
+
 ### Run the App
 
 **Option A: Manual (2 terminals)**
 
 Terminal 1 - Backend:
 ```bash
+# Export AWS credentials first (see above)
 source claudecodeenv/bin/activate
 python -m backend.main
 ```
@@ -57,6 +66,7 @@ npm run dev
 
 **Option B: Quick Start Script**
 ```bash
+# Export AWS credentials first (see above)
 ./start.sh
 ```
 
@@ -244,9 +254,11 @@ Time: ~2-3 hours | Difficulty: Intermediate
 | Problem | Fix |
 |---------|-----|
 | Port in use | `lsof -ti:8000 \| xargs kill -9` (backend)<br>`lsof -ti:5173 \| xargs kill -9` (frontend) |
-| AWS error | `aws sts get-caller-identity` to verify credentials |
+| AWS error | Export credentials: `export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)`<br>Verify: `aws sts get-caller-identity` |
+| `use_bedrock: false` | AWS credentials not exported to environment before starting backend |
 | Module not found | `source claudecodeenv/bin/activate` |
 | Hooks not working | `brew install jq` |
+| Python 3.14 pydantic error | Use Python 3.13: `python3.13 -m venv claudecodeenv` |
 
 ---
 

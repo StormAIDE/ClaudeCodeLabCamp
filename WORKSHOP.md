@@ -34,18 +34,19 @@ After adding each Claude Code service (plugins, commands, hooks, skills, agents,
 
 These cannot be installed by Claude Code - you need them first:
 
-- [ ] **Python 3.11+** (you should already have this)
+- [ ] **Python 3.13** 
 - [ ] **Node.js 18+** (download from [nodejs.org](https://nodejs.org))
 - [ ] **Git** (download from [git-scm.com](https://git-scm.com))
 - [ ] **VS Code or terminal** (any terminal works)
 - [ ] **AWS account with Bedrock access**
-- [ ] **AWS credentials** (Access Key ID, Secret Key, Session Token)
+- [ ] **AWS credentials configured** (claudecodelabcampparticipants profile)
 
 **Check your setup:**
 ```bash
-python --version    # Must show 3.11+
-node --version      # Must show 18+
-git --version       # Any recent version
+python3.13 --version    # Must show 3.13.x
+node --version          # Must show 18+
+git --version           # Any recent version
+aws configure list      # Should show your profile
 ```
 
 **Claude Code will install for you:**
@@ -118,13 +119,7 @@ aws sts get-caller-identity --profile claudecodeprofile
 # Should return your AWS account details
 ```
 
-**Export profile to environment (important!):**
-
-```bash
-export AWS_PROFILE=claudecodeprofile
-```
-
-**Note:** You'll connect Claude Code to your project in Lab 1 after creating the project folder.
+**Note:** You'll export AWS credentials to environment later (in Lab 1) before starting the backend.
 
 ---
 
@@ -159,11 +154,13 @@ git commit -m "Initial commit"
 
 ### Step 0.2: Create Python Virtual Environment
 
-```bash
-# Create Python virtual environment
-python -m venv venv
+⚠️ **IMPORTANT:** Use Python 3.13 (Python 3.14 breaks pydantic-core)
 
-# Activate it (you'll need this activated later)
+```bash
+# Create Python virtual environment with Python 3.13
+python3.13 -m venv venv
+
+# Activate it
 # On Mac/Linux:
 source venv/bin/activate
 # On Windows:
@@ -172,7 +169,23 @@ source venv/bin/activate
 
 **Why?** Python dependencies will be isolated to this project.
 
-### Step 0.3: Create GitHub Repository and Push
+### Step 0.3: Export AWS Credentials to Environment
+
+⚠️ **CRITICAL:** Do this BEFORE starting backend later. Backend requires these as environment variables.
+
+```bash
+# Export credentials from profile to environment
+export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodeprofile)
+export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodeprofile)
+export AWS_DEFAULT_REGION=eu-central-1
+
+# Verify credentials exported
+aws sts get-caller-identity
+```
+
+**Why this is needed:** Backend uses Pydantic Settings which reads from shell environment variables, not from AWS profile files. You'll need these exports active in your terminal when starting the backend.
+
+### Step 0.4: Create GitHub Repository and Push
 
 **Create the remote repository:**
 
@@ -195,10 +208,11 @@ Success! Your repository is now on GitHub.
 
 **Checklist before proceeding to Lab 1:**
 - [ ] Claude Code CLI installed and verified (`claude --version`)
-- [ ] AWS profile configured (`claudecodeprofile`) with `export AWS_PROFILE=claudecodeprofile`
+- [ ] AWS profile configured (`claudecodeprofile`)
+- [ ] Python 3.13 virtual environment created and activated
+- [ ] AWS credentials exported to environment (Step 0.3)
 - [ ] Project folder created (`tech-news-aggregator/`)
 - [ ] Git initialized and pushed to GitHub
-- [ ] Python virtual environment created (`venv/`)
 
 ---
 
@@ -209,15 +223,14 @@ Success! Your repository is now on GitHub.
 **Navigate to your project and start Claude:**
 
 ```bash
-# Make sure AWS profile is exported
-export AWS_PROFILE=claudecodeprofile
-
-# Navigate to project
+# Navigate to project (AWS credentials should already be exported from Step 0.3)
 cd tech-news-aggregator
 
 # Start Claude Code (first time)
 claude
 ```
+
+**NOTE:** If you opened a new terminal session, re-export AWS credentials from Step 0.3 before starting.
 
 **When you run `claude` for the first time, you'll see this setup prompt:**
 
@@ -243,13 +256,13 @@ Ready to assist!
 
 ```bash
 # Check current directory
-/pwd
+pwd
 
 # List files
-/ls
+ls
 
 # Check git status  
-/git status
+git status
 ```
 
 Claude Code should respond with directory info and git status!
