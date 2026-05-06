@@ -26,9 +26,9 @@ cp .env.example .env
 **AWS Credentials (REQUIRED before starting backend):**
 ```bash
 # Export credentials from AWS profile to environment
-export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodelabcampparticipants)
-export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodelabcampparticipants)
-export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile claudecodelabcampparticipants)
+export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile <your-profile-name>)
+export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile <your-profile-name>)
+export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile <your-profile-name>)
 export AWS_DEFAULT_REGION=eu-central-1
 
 # Verify
@@ -252,9 +252,9 @@ text = result_dict['message']['content'][0]['text']  # Extract text from respons
 - **CRITICAL: NOT stored in .env** - must be exported to shell environment BEFORE starting backend
 - **Required setup:**
   ```bash
-  export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile claudecodelabcampparticipants)
-  export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile claudecodelabcampparticipants)
-  export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile claudecodelabcampparticipants)
+  export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile <your-profile-name>)
+  export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile <your-profile-name>)
+  export AWS_SESSION_TOKEN=$(aws configure get aws_session_token --profile <your-profile-name>)
   export AWS_DEFAULT_REGION=eu-central-1
   ```
 - Pydantic Settings reads these from environment variables, not from AWS profile directly
