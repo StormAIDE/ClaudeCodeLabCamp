@@ -221,21 +221,38 @@ git push -u origin workshop/<your-name>
 
 ---
 
-### Step 0.4: Clear the Workspace (Optional)
+### Step 0.4: Clear the Workspace for Fresh Build
 
-**If you want completely fresh start:**
+**Start from scratch to learn by building:**
 
 ```bash
-# Remove backend/frontend folders (keep .claude/ and docs)
+# Remove backend/frontend (you'll rebuild these)
 rm -rf backend/ frontend/
 
-# Commit empty state
+# Move instructor's files to reference folder (clear they're examples)
+mkdir workshop-instructor-examples
+mv .claude workshop-instructor-examples/claude-config
+mv CLAUDE.md workshop-instructor-examples/CLAUDE.md
+
+# Create fresh Claude Code config
+mkdir .claude
+
+# Keep .mcp.json (saves time in Lab 5)
+# Keep WORKSHOP.md (this guide)
+
+# Commit clean state
 git add .
-git commit -m "chore: clear workspace for workshop"
+git commit -m "chore: prepare workspace for workshop"
 git push
 ```
 
-**Or keep everything and just add new files alongside.**
+**Why this structure?**
+- `workshop-instructor-examples/` — clear it's reference material, not active config
+- Fresh `.claude/` — you build hooks/agents/skills from scratch
+- Instructor's CLAUDE.md moved — has completed app details, would confuse Claude
+- `.mcp.json` kept — Lab 5 focuses on USING MCP tools
+
+**Don't just copy instructor's files — learn by building!**
 
 ---
 
@@ -244,7 +261,13 @@ git push
 - [ ] Changed remotes: `origin` = your fork, `upstream` = instructor's repo
 - [ ] Created workshop branch: `workshop/<your-name>`
 - [ ] Currently on workshop branch: `git branch` shows `* workshop/<your-name>`
-- [ ] Pushed workshop branch to YOUR fork
+- [ ] Removed `backend/`, `frontend/` folders
+- [ ] Created `workshop-instructor-examples/` folder
+- [ ] Moved `.claude/` → `workshop-instructor-examples/claude-config/`
+- [ ] Moved `CLAUDE.md` → `workshop-instructor-examples/CLAUDE.md`
+- [ ] Created fresh `.claude/` directory
+- [ ] Kept `.mcp.json` and `WORKSHOP.md`
+- [ ] Pushed workspace to YOUR fork
 - [ ] Virtual environment still activated: `source claudecodeenv/bin/activate`
 - [ ] AWS credentials still exported (check: `aws sts get-caller-identity`)
 
@@ -284,10 +307,10 @@ claude
 **What you'll see after setup:**
 ```
 Claude Code v[version]
-Connected to: ClaudeCodeLabCamp/
-Branch: workshop/<your-name>
 Ready to assist!
 ```
+**Try asking some query**
+Query: "what do you see in the folder"
 
 **Success!** Claude Code connected. You're on your workshop branch. Main branch = reference implementation.
 
@@ -308,7 +331,30 @@ Ready to assist!
 
 Claude Code should respond with directory info and git status!
 
-### Step 1.3: Verify GitHub Connection
+### Step 1.3: Create Starter CLAUDE.md
+
+**Ask Claude Code:**
+```
+Create a starter CLAUDE.md file with basic project info:
+
+- Project name: Tech News Aggregator
+- Goal: Learn Claude Code by building full-stack AI agent
+- Tech stack: Python 3.13, FastAPI, Strands SDK, React 19, TypeScript, Vite
+- Ports: Backend 8000, Frontend 5173
+- Testing: pytest (backend), Vitest (frontend)
+- AWS: Bedrock access required, credentials via environment variables
+- Git workflow: workshop/<name> branch in forked repo
+
+Add section: "As we build features, update this file with architecture decisions."
+
+Keep it SHORT — detailed docs come later.
+```
+
+**Why?** Claude needs basic context. Instructor's `workshop-instructor-examples/CLAUDE.md` too detailed for empty project. You'll expand this as you build.
+
+---
+
+### Step 1.4: Verify GitHub Connection
 
 **Test GitHub CLI:**
 
@@ -531,7 +577,7 @@ Check if Pyright catches this.
 - Plugin marketplace usage
 - Developer productivity tools
 
-### Step 3.3: Add a Simple Feature with TDD
+### Step 3.3: Add a Simple Feature with TDD(Test-Driven Development)
 
 **Feature to add:** Topic filter in news feed
 
@@ -573,7 +619,23 @@ Add topic filtering using TDD:
 
 ## Lab 4: Commands, Skills & Hooks
 
+**Before you start:** Browse https://app.aitmpl.com/ — marketplace has pre-built commands, skills, hooks. You can:
+- Install from marketplace (fast, battle-tested)
+- Build from scratch (learn how they work)
+- Compare marketplace vs instructor's examples in `workshop-instructor-examples/claude-config/`
+- Mix: use marketplace for some, customize others
+
+**Three reference sources:**
+1. **Marketplace** — https://app.aitmpl.com/ (community, production-ready)
+2. **Instructor's examples** — `workshop-instructor-examples/claude-config/` (workshop implementations)
+
+**Recommended approach:** Build first few from scratch (learn), then use marketplace (speed).
+
+---
+
 ### Step 4.1: Create the /component Command
+
+**Option A: Build from scratch (recommended first time)**
 
 **Ask Claude Code:**
 ```
@@ -595,6 +657,13 @@ Use the official docs format for the command file in .claude/commands/
 ```
 
 **Claude will create** `.claude/commands/component.md` with proper frontmatter and prompt template.
+
+**Option B: Install from marketplace (after learning)**
+
+1. Browse https://app.aitmpl.com/ → **Commands** tab
+2. Search "component" or "generator"
+3. Find one you like → copy `.md` file to `.claude/commands/`
+4. Customize for your project needs
 
 **Test It - Generate Your First Component:**
 
@@ -618,9 +687,15 @@ Use the official docs format for the command file in .claude/commands/
 - Component scaffolding automation
 - Time saved: 10 minutes → 30 seconds per component
 
+**Compare with instructor's:** Check `workshop-instructor-examples/claude-config/commands/` to see how instructor implemented it. Is marketplace version better? Why?
+
+---
+
 ### Step 4.2: Create the /start-dev Skill
 
 **Skills are multi-step automated workflows. Let's create one to start both servers!**
+
+**Option A: Build from scratch**
 
 **Ask Claude Code:**
 ```
@@ -656,13 +731,24 @@ Frontend running at http://localhost:5173
 Both servers are ready!
 ```
 
+**Option B: Use marketplace**
+
+1. Browse https://app.aitmpl.com/ → **Skills** tab
+2. Search "dev server" or "start"
+3. Install to `.claude/skills/start-dev/SKILL.md`
+
 **What This Teaches:**
 - Multi-step skill creation
 - Background process management
 - Error handling in skills
 - Time saved: Manual steps → One command
+- **Key decision:** Build custom vs use marketplace? Depends on project needs.
+
+---
 
 ### Step 4.3: Add PreToolUse Hook - Block Dangerous Commands
+
+**Option A: Build from scratch**
 
 **Ask Claude Code:**
 ```
@@ -721,14 +807,46 @@ Add to .claude/settings.json:
 
 **Test:** Try editing `.env` - should be blocked!
 
+**Option B: Use marketplace hooks**
+
+1. Browse https://app.aitmpl.com/ → **Hooks** tab
+2. Search "dangerous" or "protect" or "security"
+3. Install to `.claude/hooks/` and configure in `.claude/settings.json`
+
 **What This Teaches:**
 - PreToolUse hooks prevent mistakes
 - File protection for sensitive data
 - Automation without manual checks
+- **Marketplace benefit:** Battle-tested hooks save debugging time
+
+**Challenge:** Compare your hooks with `workshop-instructor-examples/claude-config/hooks/` and marketplace. Which approach is better for production?
 
 ---
 
 ## Lab 5: Agents & MCP
+
+**Before you start:** Check marketplace agents at https://app.aitmpl.com/ → **Agents** tab. Many pre-built specialists:
+- Backend developer agents
+- Code reviewers
+- Security auditors
+- Frontend improvers
+
+**How to create agents:**
+- **Recommended:** Use `/agent` command (official method, see https://code.claude.com/docs/en/sub-agents)
+- **Alternative:** Manually create `.claude/agents/<name>.md` with frontmatter
+
+**Your choice:**
+- Build custom agents (full control, learn agent design)
+- Use marketplace agents (production-ready, less work)
+- Hybrid: marketplace for common tasks, custom for project-specific needs
+
+**Reference sources:**
+- Official docs: https://code.claude.com/docs/en/sub-agents
+- Marketplace: https://app.aitmpl.com/ → **Agents** tab
+- Instructor's examples: `workshop-instructor-examples/claude-config/agents/`
+- Upstream: `git show upstream/main:.claude/agents/backend-maintainer.md`
+
+---
 
 ### Step 5.1: Understand MCP
 
@@ -782,45 +900,43 @@ Create .mcp.json file to configure Chrome DevTools MCP server:
 
 ### Step 5.3: Create Visual News Feed Inspector Agent
 
-**Ask Claude Code:**
+**Reference:** https://code.claude.com/docs/en/sub-agents
+
+**Option A: Build custom agent using /agent command**
+
+**In Claude Code, type:**
 ```
-Create an agent that uses Chrome DevTools MCP to test the news feed visually.
+/agent
+```
 
-Create .claude/agents/visual-inspector.md:
+**When prompted, provide agent details:**
+```
+Name: visual-inspector
+Description: Tests news feed UI using Chrome DevTools (screenshots, console, interaction)
+Model: sonnet
 
----
-name: visual-inspector
-description: Tests news feed UI using Chrome DevTools (screenshots, console, interaction)
-model: sonnet
----
-
-# System Prompt
+System Prompt:
 You are a frontend QA engineer testing the Tech News Aggregator UI. Use Chrome DevTools MCP tools to:
 
-1. **Navigate to app**: http://localhost:5173
-2. **Take screenshots** at key states (initial load, topic filtered, articles loaded)
-3. **Check console** for errors or warnings
-4. **Test interactions**:
-   - Click topic filter buttons
-   - Verify articles render
-   - Check responsive layout
-5. **Report issues**: Visual bugs, console errors, broken functionality
+1. Navigate to http://localhost:5173
+2. Take screenshots at key states (initial load, topic filtered, articles loaded)
+3. Check console for errors or warnings
+4. Test interactions: click topic filters, verify articles render, check responsive layout
+5. Report issues: visual bugs, console errors, broken functionality
 
-# Available MCP Tools
-- new_page(url) - Open browser to URL
-- take_screenshot(filePath) - Capture screenshot
+Available MCP Tools:
+- new_page(url) - Open browser
+- take_screenshot(filePath) - Capture screenshot  
 - click(selector) - Click element
 - get_console_messages() - Check console logs
-- wait_for(text) - Wait for text to appear
+- wait_for(text) - Wait for text
 
-# Workflow
-1. Open http://localhost:5173
-2. Screenshot: "initial-load.png"
-3. Click "AI/ML" filter
-4. Screenshot: "ai-filtered.png"
-5. Check console for errors
-6. Report findings
+Workflow: Open app → Screenshot initial load → Click "AI/ML" filter → Screenshot filtered state → Check console → Report findings
 ```
+
+**This creates** `.claude/agents/visual-inspector.md` with proper structure.
+
+**Alternative:** Manually create `.claude/agents/visual-inspector.md` with frontmatter format (see docs).
 
 **Test it:**
 
@@ -844,12 +960,25 @@ Use visual-inspector to verify:
 Take screenshots of any issues found.
 ```
 
+**Option B: Use marketplace agent for visual testing**
+
+1. Browse https://app.aitmpl.com/ → **Agents** tab
+2. Search "visual" or "frontend" or "testing"
+3. Copy agent definition
+4. Create using `/agent` command or save to `.claude/agents/<name>.md`
+
 **What This Teaches:**
 - MCP server configuration
 - Browser automation with Chrome DevTools
 - Visual testing with screenshots
 - Agent delegation for specialized tasks
 - External tool integration
+- **Decision point:** Custom agents = tailored to project. Marketplace = faster, proven patterns.
+
+**Reflection:** Compare your agent implementations with:
+1. Instructor's `workshop-instructor-examples/claude-config/agents/`
+2. Marketplace agents at https://app.aitmpl.com/ → **Agents** tab
+3. Which would you use in production? Why?
 
 ---
 
@@ -885,10 +1014,25 @@ We need to plan this, but this time with agents. So before writing a line of cod
 > **Skills** are slash commands you invoke yourself — they guide Claude through a workflow step by step inside your session, staying fully visible the whole time.
 
 **Workshop activity:**
-1. Search for something relevant to your digest topic (e.g. `rss`, `news`, `web scraping`, `code review`, `security`)
-2. Look for agents that could help you — for example a `backend-developer` agent or a `security-reviewer` agent
-3. Install a skill by copying its `.md` file into `.claude/skills/<name>/SKILL.md` and invoke it with `/<name>`
-4. Install an agent by copying its `.md` file into `.claude/agents/<name>.md`
+1. Browse https://app.aitmpl.com/ and check each tab:
+   - **Skills** tab → search "rss", "scraper", "database"
+   - **Agents** tab → search "backend", "security", "code review"
+   - **Hooks** tab → search "test", "format", "lint"
+2. Find helpers for your digest feature:
+   - Backend agent for RSS scraper logic
+   - Security reviewer for SQL validation
+   - Test runner skill for running tests after changes
+3. Install what you find:
+   - **Skills:** copy `.md` to `.claude/skills/<name>/SKILL.md`, invoke with `/<name>`
+   - **Agents:** use `/agent` command (docs: https://code.claude.com/docs/en/sub-agents) or copy `.md` to `.claude/agents/<name>.md`
+   - **Hooks:** copy to `.claude/hooks/`, add to `.claude/settings.json`
+
+**Compare three sources:**
+- **Marketplace** (https://app.aitmpl.com/) — community solutions
+- **Instructor's examples** (`workshop-instructor-examples/claude-config/`) — workshop implementations
+- **Your custom builds** from Labs 4-5 — tailored to your project
+
+**Best practice:** Use marketplace for common patterns (code review, testing), custom for project-specific logic (your news digest).
 
 ---
 
