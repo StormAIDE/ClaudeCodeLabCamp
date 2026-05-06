@@ -269,13 +269,16 @@ git push
 - [ ] Kept `.mcp.json` and `WORKSHOP.md`
 - [ ] Pushed workspace to YOUR fork
 - [ ] Virtual environment still activated: `source claudecodeenv/bin/activate`
-- [ ] AWS credentials still exported (check: `aws sts get-caller-identity`)
+- [ ] **AWS credentials still exported in THIS terminal** (verify: `aws sts get-caller-identity`)
+- [ ] **You're in the SAME terminal** where you exported AWS creds (critical for backend)
 
 ---
 
 ## Lab 1: Connect Claude Code to Your Project
 
 ### Step 1.1: Start Claude Code in Project Directory
+
+**⚠️ CRITICAL: Use same terminal where you exported AWS credentials.**
 
 **Ensure you're in the repo directory and on your workshop branch:**
 
@@ -286,16 +289,26 @@ pwd
 # Check branch (should be workshop/<your-name>)
 git branch
 
-# Ensure AWS credentials still exported
+# Verify AWS credentials still exported (MUST pass)
 aws sts get-caller-identity
+
+# If fails, re-export:
+# export AWS_ACCESS_KEY_ID=<YOUR_KEY>
+# export AWS_SECRET_ACCESS_KEY=<YOUR_SECRET>
+# export AWS_DEFAULT_REGION=eu-central-1
 
 # Start Claude Code (first time)
 claude
 ```
 
-**NOTE:** Use the same VS Code window/terminal where you tested the app. AWS credentials already exported.
+**Why same terminal matters:**
+- Claude Code runs commands in this shell
+- Backend inherits AWS env vars from shell
+- Different terminal = no credentials = backend fails
 
 **When you run `claude` for the first time, you'll see this setup prompt:**
+
+![Claude Code First Run](ClaudeCode.png)
 
 1. **Select authentication method**: Choose **AWS Bedrock SSO**
 2. **Enter AWS SSO profile name**: Type `claudecodeprofile`
@@ -307,12 +320,17 @@ claude
 **What you'll see after setup:**
 ```
 Claude Code v[version]
+Connected to: ClaudeCodeLabCamp/
+Branch: workshop/<your-name>
 Ready to assist!
 ```
-**Try asking some query**
-Query: "what do you see in the folder"
 
-**Success!** Claude Code connected. You're on your workshop branch. Main branch = reference implementation.
+**Try asking:**
+```
+What do you see in the folder?
+```
+
+**Success!** Claude Code connected. You're on your workshop branch. Upstream/main = reference implementation.
 
 ### Step 1.2: Test Basic Commands
 
@@ -461,6 +479,23 @@ Claude will:
 2. Install dependencies (FastAPI, Strands SDK, React, etc.)
 3. Start FastAPI backend on port 8000
 4. Start Vite frontend on port 5173
+
+**If backend fails with AWS error:**
+```bash
+# Verify credentials in current shell
+aws sts get-caller-identity
+
+# If fails, re-export (in same terminal):
+export AWS_ACCESS_KEY_ID=<YOUR_KEY>
+export AWS_SECRET_ACCESS_KEY=<YOUR_SECRET>
+export AWS_DEFAULT_REGION=eu-central-1
+
+# Restart Claude Code
+exit  # Exit Claude Code
+claude  # Start again
+```
+
+Backend reads AWS creds from shell environment, NOT from AWS profile files.
 
 ### Step 2.3: Test the Tech News Agent
 
