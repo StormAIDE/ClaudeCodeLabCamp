@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/block-dangerous.sh",
+            "command": ".claude/hooks/block-dangerous.sh",
             "statusMessage": "Checking command safety..."
           }
         ]
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/protect-files.sh",
+            "command": ".claude/hooks/protect-files.sh",
             "statusMessage": "Checking file protection..."
           }
         ]
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/run-tests.sh",
+            "command": ".claude/hooks/run-tests.sh",
             "statusMessage": "Running tests..."
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat /Users/ka.akhtar/ClaudeCodeTest/.claude/hooks/project-context.txt"
+            "command": "cat .claude/hooks/project-context.txt"
           }
         ]
       }

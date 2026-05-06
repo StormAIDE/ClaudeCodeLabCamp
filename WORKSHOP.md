@@ -567,7 +567,7 @@ npm test
 
 **In Claude Code:**
 ```
-/plugin marketplace add claude-plugins-official
+/plugin marketplace add anthropics/claude-plugins-official
 /plugin install typescript-lsp@claude-plugins-official
 /reload-plugins
 ```
@@ -674,21 +674,13 @@ Add topic filtering using TDD:
 
 **Ask Claude Code:**
 ```
-Create a custom slash command called /component following the official Claude Code documentation at https://code.claude.com/docs/en/agent-sdk/slash-commands
+Create /component command in .claude/commands/ following https://code.claude.com/docs/en/commands
 
-The command should:
-1. Accept arguments: /component <ComponentName> <description>
-2. Generate a fully-typed React + TypeScript component with:
-   - Proper TypeScript interfaces
-   - Tailwind CSS styling
-   - Clean, readable code
-   - Best practices (exported component, proper types)
-3. Save it to frontend/src/components/<ComponentName>.tsx
-4. Follow the project's existing component structure
+Accept arguments: /component <ComponentName> <description>
 
-Example usage: /component LoadingSpinner Shows a loading indicator while content is loading
+Generate fully-typed React + TypeScript component with Tailwind CSS, save to frontend/src/components/<ComponentName>.tsx
 
-Use the official docs format for the command file in .claude/commands/
+Example: /component LoadingSpinner Shows a loading indicator while content is loading
 ```
 
 **Claude will create** `.claude/commands/component.md` with proper frontmatter and prompt template.
@@ -734,21 +726,14 @@ Use the official docs format for the command file in .claude/commands/
 
 **Ask Claude Code:**
 ```
-Create a custom skill called /start-dev that automates starting the development environment.
+Create /start-dev skill in .claude/skills/ following https://code.claude.com/docs/en/skills
 
-Reference the official documentation: https://code.claude.com/docs/en/agent-sdk/skills
-
-The skill should:
-1. Check if Python virtual environment exists (venv/)
-2. Activate the virtual environment
-3. Start FastAPI backend in background on port 8000
-4. Navigate to frontend directory
-5. Start Vite dev server on port 5173
-6. Report server status with colored output
-7. Show URLs to visit (backend and frontend)
-8. Handle errors gracefully (missing dependencies, ports in use)
-
-Create the skill in .claude/skills/start-dev/ with proper SKILL.md structure.
+Should:
+- Check/activate Python venv
+- Start FastAPI backend on port 8000 (background)
+- Start Vite frontend on port 5173
+- Report status and URLs
+- Handle errors (missing deps, ports in use)
 ```
 
 **Test It:**
@@ -787,25 +772,12 @@ Both servers are ready!
 
 **Ask Claude Code:**
 ```
-Create a PreToolUse hook that blocks dangerous commands before execution.
+Create PreToolUse hook in .claude/hooks/ that blocks dangerous commands following https://code.claude.com/docs/en/hooks
 
-Reference: https://code.claude.com/docs/en/hooks/examples
+Block: rm -rf, dd, mkfs, fork bombs
+Register in .claude/settings.json under hooks.PreToolUse:Bash
 
-Add to .claude/settings.json:
-{
-  "hooks": {
-    "PreToolUse:Bash": {
-      "command": ".claude/hooks/block-dangerous.sh"
-    }
-  }
-}
-
-The hook script (.claude/hooks/block-dangerous.sh) should:
-1. Check if command contains: rm -rf, dd, mkfs, :(){ :|:& };:
-2. If dangerous, return non-zero exit code with error message
-3. If safe, return 0 (allow execution)
-
-Test: Try "rm -rf /" - should be blocked!
+Test: Try "rm -rf /" - should be blocked
 ```
 
 **Test It:**
@@ -818,26 +790,12 @@ Test: Try "rm -rf /" - should be blocked!
 
 **Ask Claude Code:**
 ```
-Add a hook that protects sensitive files from being edited or deleted.
+Create PreToolUse hook in .claude/hooks/ that protects sensitive files following https://code.claude.com/docs/en/hooks
 
-Reference the official docs: https://code.claude.com/docs/en/hooks/reference
+Block edits to: data/articles.db, .env, venv/, .git/
+Register for PreToolUse:Edit and PreToolUse:Write in .claude/settings.json
 
-Create .claude/hooks/protect-files.sh that:
-1. Blocks edits to: data/articles.db, .env, venv/, .git/
-2. Returns error message explaining why
-3. Suggests safe alternatives (use API for database, use .env.example for config)
-
-Add to .claude/settings.json:
-{
-  "hooks": {
-    "PreToolUse:Edit": {
-      "command": ".claude/hooks/protect-files.sh"
-    },
-    "PreToolUse:Write": {
-      "command": ".claude/hooks/protect-files.sh"
-    }
-  }
-}
+Test: Try editing .env - should be blocked
 ```
 
 **Test:** Try editing `.env` - should be blocked!
@@ -935,43 +893,25 @@ Create .mcp.json file to configure Chrome DevTools MCP server:
 
 ### Step 5.3: Create Visual News Feed Inspector Agent
 
-**Reference:** https://code.claude.com/docs/en/sub-agents
+**Option A: Build custom agent**
 
-**Option A: Build custom agent using /agent command**
-
-**In Claude Code, type:**
+**Ask Claude Code:**
 ```
-/agent
-```
+Create visual-inspector agent in .claude/agents/ following https://code.claude.com/docs/en/agents
 
-**When prompted, provide agent details:**
-```
-Name: visual-inspector
-Description: Tests news feed UI using Chrome DevTools (screenshots, console, interaction)
-Model: sonnet
+Frontend QA engineer that:
+- Opens http://localhost:5173
+- Takes screenshots at key states
+- Checks console errors
+- Tests topic filters and article rendering
+- Reports visual bugs
 
-System Prompt:
-You are a frontend QA engineer testing the Tech News Aggregator UI. Use Chrome DevTools MCP tools to:
-
-1. Navigate to http://localhost:5173
-2. Take screenshots at key states (initial load, topic filtered, articles loaded)
-3. Check console for errors or warnings
-4. Test interactions: click topic filters, verify articles render, check responsive layout
-5. Report issues: visual bugs, console errors, broken functionality
-
-Available MCP Tools:
-- new_page(url) - Open browser
-- take_screenshot(filePath) - Capture screenshot  
-- click(selector) - Click element
-- get_console_messages() - Check console logs
-- wait_for(text) - Wait for text
-
-Workflow: Open app → Screenshot initial load → Click "AI/ML" filter → Screenshot filtered state → Check console → Report findings
+Uses Chrome DevTools MCP: new_page, take_screenshot, click, get_console_messages
 ```
 
 **This creates** `.claude/agents/visual-inspector.md` with proper structure.
 
-**Alternative:** Manually create `.claude/agents/visual-inspector.md` with frontmatter format (see docs).
+**Alternative:** Manually create `.claude/agents/visual-inspector.md` with frontmatter format (see https://code.claude.com/docs/en/agents).
 
 **Test it:**
 
