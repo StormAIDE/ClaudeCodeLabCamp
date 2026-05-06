@@ -71,10 +71,10 @@ lerna-debug.log*
 # Logs
 logs/
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# Database (excluded - we commit seed data for workshop)
+# *.db
+# *.sqlite
+# *.sqlite3
 
 # Temporary files
 *.tmp

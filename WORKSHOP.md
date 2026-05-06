@@ -58,7 +58,7 @@ These cannot be installed by Claude Code - you need them first:
 - [ ] **Git** (download from [git-scm.com](https://git-scm.com))
 - [ ] **VS Code or terminal** (any terminal works)
 - [ ] **AWS account with Bedrock access**
-- [ ] **AWS credentials configured** (claudecodelabcampparticipants profile)
+- [ ] **AWS credentials configured** (profile name provided by instructor)
 
 **Check your setup:**
 ```bash
@@ -111,8 +111,8 @@ This guide covers Windows, Linux, macOS, Desktop App, and VS Code Extension.
 **Create AWS profile with credentials provided by instructor:**
 
 ```bash
-# Create named profile
-aws configure --profile claudecodeprofile
+# Create named profile (instructor will provide profile name)
+aws configure --profile <your-profile-name>
 ```
 
 **When prompted, enter these values:**
@@ -128,7 +128,7 @@ Default output format [None]: json
 **Verify profile configured correctly:**
 
 ```bash
-aws sts get-caller-identity --profile claudecodeprofile
+aws sts get-caller-identity --profile <your-profile-name>
 # Should return your AWS account details
 ```
 
@@ -311,7 +311,7 @@ claude
 ![Claude Code First Run](ClaudeCode.png)
 
 1. **Select authentication method**: Choose **AWS Bedrock SSO**
-2. **Enter AWS SSO profile name**: Type `claudecodeprofile`
+2. **Enter AWS SSO profile name**: Type the profile name you configured (from Step 2)
 3. **Enter AWS region**: Type `eu-central-1`
 4. **Follow remaining prompts** to complete setup
 5. **Press Enter** to restart Claude
@@ -539,7 +539,7 @@ Categorize this: "New Kubernetes update improves container orchestration"
 
 **Backend tests:**
 ```bash
-source venv/bin/activate
+source claudecodeenv/bin/activate
 python -m pytest backend/tests/ -v
 ```
 
@@ -792,7 +792,7 @@ Test: Try "rm -rf /" - should be blocked
 ```
 Create PreToolUse hook in .claude/hooks/ that protects sensitive files following https://code.claude.com/docs/en/hooks
 
-Block edits to: data/articles.db, .env, venv/, .git/
+Block edits to: data/articles.db, .env, claudecodeenv/, .git/
 Register for PreToolUse:Edit and PreToolUse:Write in .claude/settings.json
 
 Test: Try editing .env - should be blocked

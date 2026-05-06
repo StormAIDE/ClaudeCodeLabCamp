@@ -45,6 +45,8 @@ aws sts get-caller-identity
 - Backend API: http://localhost:8000/docs
 - Try asking: "What are the latest AI developments?"
 
+**Note:** First query may be slow (fetching from RSS feeds). Database caches articles for faster subsequent queries. Sources appear in right panel after agent fetches articles.
+
 ---
 
 ### Workshop (Build From Scratch)
@@ -91,7 +93,7 @@ git push -u origin workshop/<your-name>
 - Node.js 18+
 - Git
 - AWS account with Bedrock access
-- AWS credentials configured (`claudecodelabcampparticipants` profile)
+- AWS credentials configured (profile name provided by instructor)
 
 **Claude Code will install:**
 - Python packages (FastAPI, Strands SDK, pytest, etc.)
