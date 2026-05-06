@@ -899,6 +899,8 @@ Security requirements:
 Explore the existing codebase first to understand its structure and conventions
 before planning anything. Use a code-reviewer agent to check the security of
 the plan. Produce a detailed step-by-step implementation plan.
+
+Suggest me the topic, the subtopics and the RSS feeds. Use suitable agents to draft the plan.
 ```
 
 Review the plan saved to `.claude/plans/`. Read it, ask questions, and adjust anything before approving.
