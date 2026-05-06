@@ -51,9 +51,16 @@ aws sts get-caller-identity
 
 **After testing the completed app above:**
 
-**1. Create new branch:**
+**1. Fork to your GitHub and set up remotes:**
 ```bash
+# Fork on GitHub: https://github.com/StormAIDE/ClaudeCodeLabCamp
+# Then change remotes:
+git remote rename origin upstream
+git remote add origin https://github.com/yourusername/ClaudeCodeLabCamp.git
+
+# Create workshop branch
 git checkout -b workshop/<your-name>
+git push -u origin workshop/<your-name>
 ```
 
 **2. Follow the workshop guide:**
@@ -66,7 +73,7 @@ git checkout -b workshop/<your-name>
 - Lab 5: Agents & MCP
 - Lab 6: Add custom news digest feature
 
-Time: ~2-3 hours | Difficulty: Intermediate
+
 
 **3. What you'll learn:**
 - Core Claude Code workflows
@@ -231,23 +238,28 @@ If tests fail, check AWS credentials exported and dependencies installed.
 **For participants:**
 
 ```
-main branch           ← Completed app (test this first)
-  ├── backend/        ← Full FastAPI implementation
-  ├── frontend/       ← Complete React app
-  ├── .claude/        ← All hooks, agents, skills, commands
-  ├── WORKSHOP.md     ← Your guide to rebuild from scratch
-  └── README.md       ← This file
+Instructor's repo (StormAIDE/ClaudeCodeLabCamp)
+  └── main branch     ← Completed app (reference, read-only)
+        ├── backend/  ← Full FastAPI implementation
+        ├── frontend/ ← Complete React app
+        ├── .claude/  ← All hooks, agents, skills, commands
+        └── WORKSHOP.md
 
-Your workshop branch  ← Create this, follow WORKSHOP.md
-  ├── <start empty>   ← Build incrementally with Claude Code
-  └── WORKSHOP.md     ← Follow labs 0-6
+Your fork (yourusername/ClaudeCodeLabCamp)
+  └── workshop/<your-name> branch  ← Your workspace
+        ├── <build here>            ← Build incrementally
+        └── Push to YOUR fork
 ```
 
 **Workflow:**
-1. Test completed app on `main` branch
-2. Create `workshop/<your-name>` branch
-3. Follow [WORKSHOP.md](./WORKSHOP.md) to rebuild from scratch
-4. Compare your implementation with `main` branch when stuck
+1. Clone instructor's repo (StormAIDE/ClaudeCodeLabCamp)
+2. Test completed app on `main` branch
+3. Fork to your GitHub account
+4. Change remotes: `origin`=your fork, `upstream`=instructor's repo
+5. Create `workshop/<your-name>` branch in your fork
+6. Follow [WORKSHOP.md](./WORKSHOP.md) to build from scratch
+7. Push to YOUR fork (not instructor's repo)
+8. Compare with `upstream/main` when stuck: `git diff upstream/main`
 
 ---
 
@@ -265,9 +277,10 @@ Your workshop branch  ← Create this, follow WORKSHOP.md
 | Python 3.14 error | Must use Python 3.13: `python3.13 -m venv claudecodeenv` |
 
 **During workshop:**
-- Stuck? Compare your code with `main` branch
-- Tests failing? Run `git diff main` to see what's different
-- Ask Claude Code: "Compare my implementation with main branch for [file]"
+- Stuck? Compare with instructor's reference: `git diff upstream/main`
+- Check specific file: `git diff upstream/main -- path/to/file`
+- Ask Claude Code: "Compare my implementation with upstream/main for [file]"
+- Tests failing? See what's different from reference implementation
 
 ---
 
@@ -283,32 +296,6 @@ Your workshop branch  ← Create this, follow WORKSHOP.md
 - **Claude Code Discord:** [discord.gg/claude-code](https://discord.gg/claude-code)
 - **GitHub Discussions:** [github.com/anthropics/claude-code/discussions](https://github.com/anthropics/claude-code/discussions)
 
----
-
-## 🎯 For Instructors
-
-**Using this repo for workshops:**
-
-1. **Preparation:**
-   - Ensure all participants have prerequisites installed
-   - Test AWS credentials work (`aws sts get-caller-identity`)
-   - Clone repo and verify tests pass on `main` branch
-
-2. **Session structure:**
-   - **10 min:** Overview + test completed app
-   - **15 min:** Lab 0-1 (Setup, connect Claude Code)
-   - **30 min:** Lab 2 (Plan Mode, build initial app)
-   - **20 min:** Lab 3 (Plugins, TDD)
-   - **25 min:** Lab 4 (Commands, skills, hooks)
-   - **20 min:** Lab 5 (Agents, MCP)
-   - **40 min:** Lab 6 (Full feature: keyword search)
-   - **10 min:** Wrap-up, share results
-
-3. **Support:**
-   - Main branch = reference implementation
-   - Participants create `workshop/<name>` branches
-   - Stuck? `git diff main` shows differences
-   - Tests failing? Check AWS credentials exported
 
 ---
 

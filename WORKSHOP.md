@@ -4,6 +4,25 @@
 
 In this lab, you'll build your own Tech News Aggregator from scratch, learning professional development workflows with Claude Code. By the end, you'll have a working full-stack application that aggregates and analyzes tech news using AI.
 
+---
+
+## 📌 Important: Workflow Clarification
+
+**Instructor's repo is read-only reference. You'll work in your own fork:**
+
+1. **Clone instructor's repo** (StormAIDE/ClaudeCodeLabCamp - read-only reference)
+2. **Test the completed app** on `main` branch to see what you're building
+3. **Fork to your own GitHub** (creates `yourusername/ClaudeCodeLabCamp`)
+4. **Change git remote** to your fork
+5. **Create workshop branch** in your fork (`workshop/<your-name>`)
+6. **Build from scratch** on your branch following this guide
+7. **Push to your fork** (not instructor's repo)
+8. **Compare with instructor's `main`** when stuck
+
+**Two repos: Instructor's = reference (read-only). Your fork = workspace (push here).**
+
+---
+
 **Workshop Philosophy: "Add Feature → Test Feature → See The Improvement"**
 
 After adding each Claude Code service (plugins, commands, hooks, skills, agents, MCP), you'll immediately test it and see how it improves your development workflow!
@@ -117,96 +136,117 @@ aws sts get-caller-identity --profile claudecodeprofile
 
 ---
 
-## Lab 0: Initial Setup
+## Lab 0: Setup Your Workshop Environment
 
-**Prerequisites completed:**
-- ✅ Claude Code CLI installed and verified
-- ✅ AWS profile configured (`claudecodeprofile`)
+**You should have already completed (from README):**
+- ✅ Cloned instructor's repo: `ClaudeCodeLabCamp/`
+- ✅ Tested the completed app on `main` branch
+- ✅ Virtual environment created: `claudecodeenv/`
+- ✅ Dependencies installed (backend + frontend)
+- ✅ AWS credentials exported and verified
+- ✅ Claude Code CLI installed
 
-**Now let's prepare the project environment:**
+**Now you're ready to set up your own workspace.**
 
-### Step 0.1: Create Project Folder and Setup Version Control
+---
 
-**Do this BEFORE starting Claude Code:**
-
-```bash
-# 1. Create your project folder
-mkdir tech-news-aggregator
-cd tech-news-aggregator
-
-# 2. Create README.md (so you have something to commit)
-echo "# Tech News Aggregator" > README.md
-echo "AI-powered tech news aggregation system built with Claude Code" >> README.md
-
-# 3. Initialize git repository
-git init
-git add README.md
-git commit -m "Initial commit"
-```
-
-**Why do this first?** You need an existing folder with git initialized so Claude Code can work with it.
-
-### Step 0.2: Create Python Virtual Environment
-
-⚠️ **IMPORTANT:** Use Python 3.13
+### Step 0.1: Verify You're in the Right Place
 
 ```bash
-# Create Python virtual environment with Python 3.13
-python3.13 -m venv venv
+# Check current directory
+pwd
+# Should show: .../ClaudeCodeLabCamp
 
-# Activate it
-# On Mac/Linux:
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
+# Check branch
+git branch
+# Should show: * main
+
+# Check remote
+git remote -v
+# Should show: origin  https://github.com/StormAIDE/ClaudeCodeLabCamp.git
 ```
 
-**Why?** Python dependencies will be isolated to this project.
+---
 
-### Step 0.3: Export AWS Credentials to Environment
+### Step 0.2: Fork to Your Own GitHub
 
-⚠️ **CRITICAL:** Do this BEFORE starting backend later. Backend requires these as environment variables.
+**Create your own fork:**
+
+1. Go to https://github.com/StormAIDE/ClaudeCodeLabCamp
+2. Click **Fork** button (top right)
+3. Create fork under your account: `yourusername/ClaudeCodeLabCamp`
+
+**Change git remote to your fork:**
 
 ```bash
-# Export credentials from profile to environment
-export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
-export AWS_DEFAULT_REGION=eu-central-1
+# Check current remote (points to instructor's repo)
+git remote -v
+# origin  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (fetch)
+# origin  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (push)
 
-# Verify credentials exported
-aws sts get-caller-identity
+# Add instructor's repo as "upstream" (for reference)
+git remote rename origin upstream
+
+# Add YOUR fork as "origin" (where you'll push)
+git remote add origin https://github.com/yourusername/ClaudeCodeLabCamp.git
+
+# Verify
+git remote -v
+# origin    https://github.com/yourusername/ClaudeCodeLabCamp.git (fetch)
+# origin    https://github.com/yourusername/ClaudeCodeLabCamp.git (push)
+# upstream  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (fetch)
+# upstream  https://github.com/StormAIDE/ClaudeCodeLabCamp.git (push)
 ```
 
-**Why this is needed:** Backend uses Pydantic Settings which reads from shell environment variables, not from AWS profile files. You'll need these exports active in your terminal when starting the backend.
+**Why?** You push to YOUR fork. Instructor's repo stays clean.
 
-### Step 0.4: Create GitHub Repository and Push
+---
 
-**Create the remote repository:**
+### Step 0.3: Create Your Workshop Branch
 
-1. Go to GitHub.com and create a new repository (e.g., "tech-news-aggregator")
-2. Don't initialize with README (you already have one)
-3. Copy the HTTPS URL (e.g., `https://github.com/yourusername/tech-news-aggregator.git`)
-
-**Connect and push:**
+**Create new branch for your work:**
 
 ```bash
-# Add remote repository
-git remote add origin https://github.com/yourusername/tech-news-aggregator.git
+# Create and switch to workshop branch
+git checkout -b workshop/<your-name>
 
-# Push to GitHub
-git branch -M main
-git push -u origin main
+# Example:
+# git checkout -b workshop/john-smith
+
+# Push to YOUR fork
+git push -u origin workshop/<your-name>
 ```
 
-Success! Your repository is now on GitHub.
+**Why?** Build from scratch on this branch. Compare with `upstream/main` (instructor's reference) when stuck.
+
+---
+
+### Step 0.4: Clear the Workspace (Optional)
+
+**If you want completely fresh start:**
+
+```bash
+# Remove backend/frontend folders (keep .claude/ and docs)
+rm -rf backend/ frontend/
+
+# Commit empty state
+git add .
+git commit -m "chore: clear workspace for workshop"
+git push
+```
+
+**Or keep everything and just add new files alongside.**
+
+---
 
 **Checklist before proceeding to Lab 1:**
-- [ ] Claude Code CLI installed and verified (`claude --version`)
-- [ ] AWS profile configured (`claudecodeprofile`)
-- [ ] Python 3.13 virtual environment created and activated
-- [ ] AWS credentials exported to environment (Step 0.3)
-- [ ] Project folder created (`tech-news-aggregator/`)
-- [ ] Git initialized and pushed to GitHub
+- [ ] Forked to your GitHub account
+- [ ] Changed remotes: `origin` = your fork, `upstream` = instructor's repo
+- [ ] Created workshop branch: `workshop/<your-name>`
+- [ ] Currently on workshop branch: `git branch` shows `* workshop/<your-name>`
+- [ ] Pushed workshop branch to YOUR fork
+- [ ] Virtual environment still activated: `source claudecodeenv/bin/activate`
+- [ ] AWS credentials still exported (check: `aws sts get-caller-identity`)
 
 ---
 
@@ -214,17 +254,23 @@ Success! Your repository is now on GitHub.
 
 ### Step 1.1: Start Claude Code in Project Directory
 
-**Navigate to your project and start Claude:**
+**Ensure you're in the repo directory and on your workshop branch:**
 
 ```bash
-# Navigate to project (AWS credentials should already be exported from Step 0.3)
-cd tech-news-aggregator
+# Check current directory (should be ClaudeCodeLabCamp/)
+pwd
+
+# Check branch (should be workshop/<your-name>)
+git branch
+
+# Ensure AWS credentials still exported
+aws sts get-caller-identity
 
 # Start Claude Code (first time)
 claude
 ```
 
-**NOTE:** If you opened a new terminal session, re-export AWS credentials from Step 0.3 before starting.
+**NOTE:** Use the same VS Code window/terminal where you tested the app. AWS credentials already exported.
 
 **When you run `claude` for the first time, you'll see this setup prompt:**
 
@@ -238,11 +284,12 @@ claude
 **What you'll see after setup:**
 ```
 Claude Code v[version]
-Connected to: tech-news-aggregator/
+Connected to: ClaudeCodeLabCamp/
+Branch: workshop/<your-name>
 Ready to assist!
 ```
 
-**Success!** Claude Code is now connected to your project and can read/write files, run commands, and assist with development.
+**Success!** Claude Code connected. You're on your workshop branch. Main branch = reference implementation.
 
 ### Step 1.2: Test Basic Commands
 
@@ -261,38 +308,30 @@ Ready to assist!
 
 Claude Code should respond with directory info and git status!
 
-### Step 1.3: Connect GitHub CLI (Optional but Recommended)
+### Step 1.3: Verify GitHub Connection
 
-**Install GitHub CLI if not installed:**
-
-```bash
-# Mac
-brew install gh
-
-# Windows (via Chocolatey)
-choco install gh
-
-# Linux
-# See: https://github.com/cli/cli#installation
-```
-
-**Authenticate:**
+**Test GitHub CLI:**
 
 ```bash
-gh auth login
-# Follow prompts to authenticate via browser
-```
-
-**Test:**
-```bash
+# View YOUR fork
 gh repo view
-# Should show your repository info
+
+# Should show: yourusername/ClaudeCodeLabCamp
+
+# Check remotes
+git remote -v
+# origin = your fork
+# upstream = instructor's repo
+
+# Verify branch pushed
+git branch -vv
+# * workshop/<your-name> [origin/workshop/<your-name>] ...
 ```
 
 **What This Enables:**
-- Create PRs from Claude Code
-- Manage issues directly
-- View PR reviews and checks
+- Push work to YOUR fork
+- Compare your branch with instructor's `upstream/main`
+- Create PRs in your fork to track progress
 
 ---
 
@@ -942,6 +981,19 @@ If a filter shows no articles:
 
 ```
 The [subtopic] filter shows no articles. Trace why and fix it.
+```
+
+**Stuck? Compare with instructor's implementation:**
+
+```bash
+# Check what instructor did in specific file
+git diff upstream/main -- backend/services/agent_service.py
+
+# See all differences
+git diff upstream/main
+
+# Ask Claude Code:
+"Compare my backend/services/agent_service.py with upstream/main and show differences"
 ```
 
 ---
